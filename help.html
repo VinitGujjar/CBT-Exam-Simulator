@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBT Exam Simulator Help</title>
+  <style>
+    :root {
+      --bg: #F8FAFC;
+      --panel: #FFFFFF;
+      --text: #1E293B;
+      --muted: #64748B;
+      --line: #D8E0EA;
+      --primary: #2563EB;
+      --soft: #EFF6FF;
+      --shadow: 0 14px 34px rgba(24, 32, 51, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+    }
+
+    .page {
+      width: min(960px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 24px 0 40px;
+    }
+
+    .hero {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px;
+      margin-bottom: 16px;
+      border-radius: 10px;
+      background: #141B2D;
+      color: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 44px;
+      height: 44px;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--primary);
+      flex: 0 0 44px;
+    }
+
+    h1,
+    h2 {
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    h1 {
+      font-size: 26px;
+    }
+
+    h2 {
+      font-size: 19px;
+      margin-bottom: 8px;
+    }
+
+    .card {
+      padding: 18px;
+      margin-bottom: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      animation: fadeUp 0.32s ease both;
+    }
+
+    .card p {
+      margin: 0 0 8px;
+      color: var(--muted);
+    }
+
+    ul {
+      margin: 8px 0 0;
+      padding-left: 22px;
+      color: var(--muted);
+    }
+
+    pre {
+      margin: 10px 0 0;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--soft);
+      color: var(--text);
+      overflow-x: auto;
+      white-space: pre-wrap;
+      font-family: Consolas, Monaco, monospace;
+    }
+
+    .back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      background: var(--primary);
+      color: #fff;
+      text-decoration: none;
+      font-weight: 800;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="hero">
+      <span class="logo" aria-hidden="true">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
+          <path d="M12 2.5L20 5.7V11.4C20 16.2 16.6 20.2 12 21.5C7.4 20.2 4 16.2 4 11.4V5.7L12 2.5Z" stroke="currentColor" stroke-width="1.8" />
+          <path d="M8.2 12.1L10.7 14.6L16 9.3" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </span>
+      <div>
+        <h1>CBT Exam Simulator Help</h1>
+        <p>Use these guidelines to prepare questions, PDFs, and AI-generated quiz text.</p>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>How to Use</h2>
+      <ul>
+        <li>Paste questions manually, import TXT/CSV, or use Extract from PDF.</li>
+        <li>Set quiz time, marks per correct answer, and negative marks per wrong answer.</li>
+        <li>Use Exam mode for real test practice. Use Practice mode when you want instant explanations.</li>
+        <li>Always review extracted PDF text once before starting the test.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Question Format</h2>
+      <pre>Section: Physics
+What is the SI unit of power?
+A) Newton
+B) Joule
+C) Watt
+D) Pascal
+Answer: C
+Explanation: Power is measured in watt. One watt equals one joule per second.</pre>
+    </section>
+
+    <section class="card">
+      <h2>Best PDF Type</h2>
+      <ul>
+        <li>Text-based PDFs work best. You should be able to select and copy text from the PDF.</li>
+        <li>Scanned/image PDFs need OCR first.</li>
+        <li>Two-column PDFs are supported, but tables, formulas, and diagrams may need manual correction.</li>
+        <li>If answers or solutions are at the end, keep them in the same PDF so the app can match by question number.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>Prompt for ChatGPT to Create Questions</h2>
+      <pre>Create MCQ questions for CBT Exam Simulator in exactly this format:
+
+Section: [topic name]
+Question text?
+A) option 1
+B) option 2
+C) option 3
+D) option 4
+Answer: A/B/C/D
+Explanation: short explanation of the correct answer
+
+Rules:
+- Use only four options: A, B, C, D.
+- Put one blank line between questions.
+- Do not use bullets, tables, markdown headings, or extra numbering.
+- Keep the answer as only one letter after "Answer:".
+- Make explanations exam-focused and concise.</pre>
+    </section>
+
+    <section class="card">
+      <h2>Prompt for Extracting a PDF with ChatGPT/AI</h2>
+      <pre>Extract all MCQs from this PDF and convert them into this exact format:
+
+Section: [subject/topic/chapter name]
+Question text?
+A) option 1
+B) option 2
+C) option 3
+D) option 4
+Answer: A/B/C/D
+Explanation: solution or reason for the correct answer
+
+Important rules:
+- If answers or solutions are at the end of the PDF, match them with the correct question number.
+- Preserve technical terms, units, formulas, and year tags like [SSC-JE-2023].
+- Do not mix two questions together.
+- Do not include page headers, footers, watermarks, or page numbers.
+- If a question has a table or assertion-reason format, rewrite it clearly as plain text.
+- Put exactly one blank line between questions.
+- Return only the final formatted questions, no extra explanation.</pre>
+    </section>
+
+    <section class="card">
+      <h2>Prompt to Fix Messy Extracted Text</h2>
+      <pre>Clean and repair this extracted quiz text for CBT Exam Simulator.
+
+Convert it into exactly this format:
+Section:
+Question
+A)
+B)
+C)
+D)
+Answer:
+Explanation:
+
+Fix these issues:
+- Separate mixed questions.
+- Remove page headers/footers.
+- Keep only four options per question.
+- Match answers and explanations correctly.
+- Keep one blank line between questions.
+- Return only the corrected quiz text.</pre>
+    </section>
+
+    <a class="back" href="index.html">Back to Simulator</a>
+  </main>
+</body>
+</html>

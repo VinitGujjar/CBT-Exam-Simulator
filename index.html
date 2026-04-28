@@ -1,0 +1,2093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBT Exam Simulator</title>
+  <style>
+    :root {
+      --bg: #F8FAFC;
+      --panel: #ffffff;
+      --text: #1E293B;
+      --muted: #64748B;
+      --line: #D8E0EA;
+      --primary: #2563EB;
+      --primary-soft: #EFF6FF;
+      --success: #22C55E;
+      --success-soft: #eaf7ef;
+      --danger: #EF4444;
+      --danger-soft: #fff0ee;
+      --warning: #a15c07;
+      --warning-soft: #fff6df;
+      --mark: #6d3ab8;
+      --mark-soft: #f1eafe;
+      --shadow: 0 14px 34px rgba(24, 32, 51, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body.dark {
+      --bg: #0F172A;
+      --panel: #111827;
+      --text: #E5E7EB;
+      --muted: #94A3B8;
+      --line: #334155;
+      --primary-soft: #172554;
+      --success-soft: #052E1A;
+      --danger-soft: #3B0A0A;
+      --warning-soft: #3A2605;
+      --mark-soft: #261443;
+      --shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+    }
+
+    body.mobile-mode .app {
+      max-width: 430px;
+    }
+
+    body.desktop-mode .app {
+      min-width: min(1180px, calc(100% - 28px));
+    }
+
+    button,
+    textarea,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 14px;
+      cursor: pointer;
+      background: var(--primary);
+      color: #fff;
+      font-weight: 700;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, background 0.18s ease;
+    }
+
+    button:hover {
+      filter: brightness(0.96);
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.16);
+    }
+
+    button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+
+    .app {
+      width: min(1180px, calc(100% - 28px));
+      margin: 0 auto;
+      padding: 18px 0 28px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      background: #141b2d;
+      color: #fff;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .topbar h1 {
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #fff;
+      color: var(--primary);
+      flex: 0 0 40px;
+    }
+
+    .top-meta {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .top-question {
+      min-width: 96px;
+      padding: 8px 10px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 6px;
+      text-align: center;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .timer {
+      min-width: 120px;
+      padding: 8px 12px;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 6px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .timer.warning {
+      background: #7c2d12;
+      border-color: #fdba74;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      animation: fadeUp 0.35s ease both;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .setup {
+      padding: 20px;
+    }
+
+    .setup h2,
+    .result-page h2 {
+      margin: 0 0 10px;
+      font-size: 24px;
+    }
+
+    .hint {
+      margin: 0 0 12px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .format {
+      margin: 0 0 14px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fafc;
+      color: #344054;
+      overflow-x: auto;
+      white-space: pre-wrap;
+    }
+
+    .help-box {
+      display: none;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 260px;
+      resize: vertical;
+      padding: 13px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      line-height: 1.5;
+      color: var(--text);
+      background: #fff;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    textarea:focus,
+    .field input:focus,
+    .field select:focus,
+    .tool-row select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+      outline: 0;
+    }
+
+    body.dark textarea,
+    body.dark .field input,
+    body.dark .field select,
+    body.dark .tool-row select,
+    body.dark .format {
+      background: #0B1220;
+      color: #E5E7EB;
+      border-color: #334155;
+    }
+
+    body.dark textarea::placeholder,
+    body.dark input::placeholder {
+      color: #94A3B8;
+    }
+
+    .setup-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+      margin: 14px 0;
+    }
+
+    .tool-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 12px 0;
+    }
+
+    .tool-row select {
+      min-width: 140px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      background: var(--panel);
+    }
+
+    .side-tools {
+      position: fixed;
+      right: 18px;
+      top: 110px;
+      z-index: 20;
+      display: grid;
+      gap: 9px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: color-mix(in srgb, var(--panel) 92%, transparent);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+      animation: slideIn 0.35s ease both;
+    }
+
+    .tool-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      width: 128px;
+      min-height: 40px;
+      padding: 9px 10px;
+      background: #e8edf4;
+      color: #1f2a44;
+    }
+
+    body.dark .tool-button {
+      background: #1E293B;
+      color: #E5E7EB;
+    }
+
+    .tool-button.primary-tool {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .tool-icon {
+      width: 18px;
+      height: 18px;
+      flex: 0 0 18px;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .pdf-status {
+      display: none;
+      margin: 10px 0 0;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--primary-soft);
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .history-panel {
+      margin-top: 14px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    body.dark .history-panel {
+      background: #0B1220;
+    }
+
+    .history-panel h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .history-list {
+      display: grid;
+      gap: 7px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .practice-feedback {
+      display: none;
+      margin-top: 14px;
+      padding: 12px;
+      border-left: 4px solid var(--primary);
+      border-radius: 6px;
+      background: var(--primary-soft);
+      line-height: 1.45;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .field input,
+    .field select {
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      background: #fff;
+    }
+
+    body.dark .field input,
+    body.dark .field select,
+    body.dark .check-field {
+      background: #0B1220;
+      color: #E5E7EB;
+      border-color: #334155;
+    }
+
+    body.dark .field input::placeholder {
+      color: #94A3B8;
+    }
+
+    .check-field {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 38px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      color: var(--text);
+      background: #fff;
+    }
+
+    .check-field input {
+      width: 16px;
+      height: 16px;
+    }
+
+    .setup-actions,
+    .result-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .secondary {
+      background: #e8edf4;
+      color: #1f2a44;
+    }
+
+    body.dark .secondary {
+      background: #1E293B;
+      color: #E5E7EB;
+      border: 1px solid #334155;
+    }
+
+    .danger {
+      background: var(--danger);
+    }
+
+    .mark-btn {
+      background: var(--mark);
+    }
+
+    .error {
+      display: none;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border: 1px solid #fecdca;
+      border-radius: 6px;
+      background: var(--danger-soft);
+      color: var(--danger);
+      font-weight: 700;
+    }
+
+    .exam {
+      display: none;
+      grid-template-columns: minmax(0, 1fr) 292px;
+      gap: 16px;
+    }
+
+    .question-panel,
+    .side-panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .question-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 15px 16px;
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .question-body {
+      min-height: 350px;
+      padding: 18px;
+    }
+
+    .section-chip {
+      display: inline-flex;
+      width: fit-content;
+      margin-bottom: 12px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      background: #eef2f7;
+      color: #344054;
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .question-text {
+      margin: 0 0 18px;
+      font-size: 21px;
+      line-height: 1.42;
+    }
+
+    .options {
+      display: grid;
+      gap: 11px;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #fff;
+      color: var(--text);
+      text-align: left;
+      line-height: 1.4;
+      font-weight: 600;
+      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+    }
+
+    .option:hover {
+      background: #f8fafc;
+      border-color: #b7c6e6;
+      transform: translateX(2px);
+    }
+
+    body.dark .option {
+      background: #0B1220;
+      color: var(--text);
+    }
+
+    body.dark .option:hover {
+      background: #111C30;
+    }
+
+    .option.selected {
+      background: var(--primary-soft);
+      border-color: var(--primary);
+      color: #153a88;
+    }
+
+    .option-key {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex: 0 0 30px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #e8edf4;
+      color: #1f2a44;
+      font-weight: 800;
+    }
+
+    .selected .option-key {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .question-actions {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 15px 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .side-panel {
+      align-self: start;
+      padding: 16px;
+    }
+
+    .side-panel h2 {
+      margin: 0 0 12px;
+      font-size: 18px;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 9px;
+      margin-bottom: 14px;
+    }
+
+    .stat {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 7px;
+      background: #f8fafc;
+    }
+
+    body.dark .stat,
+    body.dark .analysis-card,
+    body.dark .not-attempted {
+      background: #0B1220;
+    }
+
+    .stat strong {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 20px;
+    }
+
+    .stat span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .palette {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+    }
+
+    .palette button {
+      aspect-ratio: 1;
+      padding: 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      color: #1f2a44;
+      font-weight: 800;
+    }
+
+    .palette .current {
+      border: 3px solid var(--primary);
+    }
+
+    .palette .answered {
+      background: var(--success-soft);
+      color: var(--success);
+      border-color: #8bd3a8;
+    }
+
+    .palette .unanswered {
+      background: var(--warning-soft);
+      color: var(--warning);
+      border-color: #f2c46d;
+    }
+
+    .palette .marked {
+      background: var(--mark-soft);
+      color: var(--mark);
+      border-color: #c4a7f0;
+    }
+
+    .legend {
+      display: grid;
+      gap: 8px;
+      margin-top: 15px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .legend span::before {
+      content: "";
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      margin-right: 7px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      background: #fff;
+      vertical-align: -1px;
+    }
+
+    .legend .answered-dot::before {
+      background: var(--success-soft);
+      border-color: #8bd3a8;
+    }
+
+    .legend .unanswered-dot::before {
+      background: var(--warning-soft);
+      border-color: #f2c46d;
+    }
+
+    .legend .marked-dot::before {
+      background: var(--mark-soft);
+      border-color: #c4a7f0;
+    }
+
+    .result-page {
+      display: none;
+      padding: 20px;
+    }
+
+    .score-card {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .analysis-card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: #f8fafc;
+    }
+
+    .analysis-card h3 {
+      margin: 0 0 8px;
+      font-size: 16px;
+    }
+
+    .analysis-card p {
+      margin: 5px 0;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .review-item {
+      margin-top: 12px;
+      padding: 15px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .review-item.correct {
+      border-color: #8bd3a8;
+      background: var(--success-soft);
+    }
+
+    .review-item.wrong {
+      border-color: #fecdca;
+      background: var(--danger-soft);
+    }
+
+    .review-item.not-attempted {
+      background: #f8fafc;
+    }
+
+    .review-item h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+      line-height: 1.4;
+    }
+
+    .review-options {
+      display: grid;
+      gap: 7px;
+      margin: 10px 0;
+    }
+
+    .review-option {
+      display: flex;
+      gap: 10px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      font-weight: 700;
+    }
+
+    .review-option.correct-option {
+      border-color: #75c596;
+      background: #dff6e8;
+      color: var(--success);
+    }
+
+    .review-option.user-wrong-option {
+      border-color: #f2a39e;
+      background: #ffe1de;
+      color: var(--danger);
+    }
+
+    .answer-line {
+      margin: 7px 0;
+      color: #344054;
+    }
+
+    .explanation {
+      margin-top: 10px;
+      padding: 10px 12px;
+      border-left: 4px solid var(--primary);
+      border-radius: 5px;
+      background: #f5f8ff;
+      color: #344054;
+      line-height: 1.45;
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .topbar,
+      .result-actions,
+      .setup,
+      .exam {
+        display: none !important;
+      }
+
+      .result-page {
+        display: block !important;
+        box-shadow: none;
+        border: 0;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .side-tools {
+        position: static;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin-bottom: 14px;
+      }
+
+      .tool-button {
+        width: 100%;
+      }
+
+      .setup-grid,
+      .score-card,
+      .analysis-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .exam {
+        grid-template-columns: 1fr;
+      }
+
+      .side-panel {
+        order: -1;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .app {
+        width: min(100% - 20px, 1180px);
+      }
+
+      .topbar,
+      .question-actions,
+      .setup-actions,
+      .result-actions {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .setup-grid,
+      .score-card,
+      .analysis-grid {
+        grid-template-columns: 1fr;
+      }
+
+      button {
+        width: 100%;
+      }
+
+      .palette button {
+        width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <div class="topbar">
+      <div class="brand">
+        <span class="logo" aria-hidden="true">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+            <path d="M12 2.5L20 5.7V11.4C20 16.2 16.6 20.2 12 21.5C7.4 20.2 4 16.2 4 11.4V5.7L12 2.5Z" stroke="currentColor" stroke-width="1.8" />
+            <path d="M8.2 12.1L10.7 14.6L16 9.3" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" />
+          </svg>
+        </span>
+        <h1>CBT Exam Simulator</h1>
+      </div>
+      <div class="top-meta">
+        <div id="top-question" class="top-question">Q 0/0</div>
+        <div id="timer" class="timer">00:00</div>
+      </div>
+    </div>
+
+    <aside class="side-tools" aria-label="Quick tools">
+      <button type="button" class="tool-button primary-tool" onclick="openHelpPage()" title="Open help in a new tab">
+        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 17H12.01M9.2 9.3A3 3 0 0 1 12 7.5C13.7 7.5 15 8.6 15 10.1C15 11.3 14.3 12 13.2 12.7C12.4 13.2 12 13.8 12 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M21 12A9 9 0 1 1 3 12A9 9 0 0 1 21 12Z" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        Help
+      </button>
+      <button id="themeToggle" type="button" class="tool-button" onclick="toggleThemeMode()" title="Switch theme">
+        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3V5M12 19V21M4.2 4.2L5.6 5.6M18.4 18.4L19.8 19.8M3 12H5M19 12H21M4.2 19.8L5.6 18.4M18.4 5.6L19.8 4.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          <path d="M16 12A4 4 0 1 1 8 12A4 4 0 0 1 16 12Z" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        Dark
+      </button>
+      <button id="viewToggle" type="button" class="tool-button" onclick="toggleViewMode()" title="Switch mobile/desktop preview">
+        <svg id="viewIcon" class="tool-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M8 2H16C17.1 2 18 2.9 18 4V20C18 21.1 17.1 22 16 22H8C6.9 22 6 21.1 6 20V4C6 2.9 6.9 2 8 2Z" stroke="currentColor" stroke-width="2"/>
+          <path d="M11 18H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+        Mobile
+      </button>
+      <button type="button" class="tool-button" onclick="setViewMode('auto')" title="Return to responsive auto layout">Auto</button>
+    </aside>
+
+    <section id="setup" class="panel setup">
+      <h2>Create Test</h2>
+      <p class="hint">Paste questions manually or extract text from a PDF. Explanation and section are optional.</p>
+      <div class="tool-row">
+        <button type="button" class="secondary" onclick="document.getElementById('pdfInput').click()">Extract from PDF</button>
+        <button type="button" class="secondary" onclick="document.getElementById('fileInput').click()">Import TXT/CSV</button>
+        <input id="pdfInput" type="file" accept=".pdf,application/pdf" style="display: none;" onchange="importPdf(event)">
+        <input id="fileInput" type="file" accept=".txt,.csv" style="display: none;" onchange="importFile(event)">
+      </div>
+      <div id="pdfStatus" class="pdf-status"></div>
+      <pre class="format">Section: Physics
+What is the SI unit of power?
+A) Newton
+B) Joule
+C) Watt
+D) Pascal
+Answer: C
+Explanation: Power is measured in watt. One watt means one joule of work per second.</pre>
+
+      <details class="help-box">
+        <summary>Help and Guidelines</summary>
+        <div class="help-content">
+          <section>
+            <h3>How to Use</h3>
+            <ul>
+              <li>Paste questions in the format shown above, or use Extract from PDF.</li>
+              <li>Set quiz time, marks per correct answer, and negative marks per wrong answer.</li>
+              <li>Use Exam mode for real test practice. Use Practice mode when you want explanations while solving.</li>
+              <li>After importing a PDF, always review the extracted questions once before starting.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Best PDF Type</h3>
+            <ul>
+              <li>Text-based PDFs work best. You should be able to select/copy text from the PDF.</li>
+              <li>Scanned/image PDFs need OCR first. This browser app cannot reliably read images as text.</li>
+              <li>Two-column PDFs are supported, but formulas, tables, and diagrams may need manual correction.</li>
+              <li>If answers/solutions are at the end, keep them in the same PDF. The app will try to match them by question number.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Prompt for ChatGPT to Create Questions</h3>
+            <p>Copy this prompt into ChatGPT when you want it to make questions for this app:</p>
+            <pre class="prompt-box">Create MCQ questions for CBT Exam Simulator in exactly this format:
+
+Section: [topic name]
+Question text?
+A) option 1
+B) option 2
+C) option 3
+D) option 4
+Answer: A/B/C/D
+Explanation: short explanation of the correct answer
+
+Rules:
+- Use only four options: A, B, C, D.
+- Put one blank line between questions.
+- Do not use bullets, tables, markdown headings, or extra numbering.
+- Keep the answer as only one letter after "Answer:".
+- Make explanations exam-focused and concise.</pre>
+          </section>
+
+          <section>
+            <h3>Prompt for Extracting a PDF with ChatGPT/AI</h3>
+            <p>Upload your PDF to ChatGPT or another AI and use this prompt:</p>
+            <pre class="prompt-box">Extract all MCQs from this PDF and convert them into this exact format:
+
+Section: [subject/topic/chapter name]
+Question text?
+A) option 1
+B) option 2
+C) option 3
+D) option 4
+Answer: A/B/C/D
+Explanation: solution or reason for the correct answer
+
+Important rules:
+- If answers or solutions are at the end of the PDF, match them with the correct question number.
+- Preserve technical terms, units, formulas, and year tags like [SSC-JE-2023].
+- Do not mix two questions together.
+- Do not include page headers, footers, watermarks, or page numbers.
+- If a question has a table or assertion-reason format, rewrite it clearly as plain text.
+- Put exactly one blank line between questions.
+- Return only the final formatted questions, no extra explanation.</pre>
+          </section>
+
+          <section>
+            <h3>Prompt to Fix Extracted Text</h3>
+            <p>If the app or PDF extraction gives mixed text, paste that text into ChatGPT with this:</p>
+            <pre class="prompt-box">Clean and repair this extracted quiz text for CBT Exam Simulator.
+
+Convert it into exactly this format:
+Section:
+Question
+A)
+B)
+C)
+D)
+Answer:
+Explanation:
+
+Fix these issues:
+- Separate mixed questions.
+- Remove page headers/footers.
+- Keep only four options per question.
+- Match answers and explanations correctly.
+- Keep one blank line between questions.
+- Return only the corrected quiz text.</pre>
+          </section>
+        </div>
+      </details>
+
+      <textarea id="input" placeholder="Paste your questions here..."></textarea>
+
+      <div class="setup-grid">
+        <label class="field">
+          Quiz time
+          <input id="minutes" type="number" min="1" max="300" value="30">
+        </label>
+
+        <label class="field">
+          Marks per correct
+          <input id="positiveMarks" type="number" min="0.01" step="0.01" value="1">
+        </label>
+
+        <label class="field">
+          Negative per wrong
+          <input id="negativeMarksInput" type="number" min="0" step="0.01" value="0.25">
+        </label>
+
+        <label class="field">
+          Test mode
+          <select id="testMode">
+            <option value="exam" selected>Exam mode</option>
+            <option value="practice">Practice mode</option>
+          </select>
+        </label>
+
+        <label class="field">
+          Question order
+          <select id="questionOrder">
+            <option value="same" selected>Same order</option>
+            <option value="random">Random order</option>
+          </select>
+        </label>
+
+        <label class="field">
+          Option order
+          <select id="optionOrder">
+            <option value="same" selected>Same order</option>
+            <option value="random">Random order</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="setup-actions">
+        <button type="button" onclick="startQuiz()">Start Quiz</button>
+        <button type="button" class="secondary" onclick="loadSample()">Load Sample</button>
+        <button type="button" class="secondary" onclick="loadMistakeNotebook()">Review Mistakes</button>
+      </div>
+
+      <div class="history-panel">
+        <h3>Recent Test History</h3>
+        <div id="history-list" class="history-list">No saved tests yet.</div>
+      </div>
+
+      <div id="error" class="error"></div>
+    </section>
+
+    <section id="exam" class="exam">
+      <div class="question-panel">
+        <div class="question-header">
+          <span id="question-count"></span>
+          <span id="question-status"></span>
+        </div>
+
+        <div class="question-body">
+          <span id="section-chip" class="section-chip"></span>
+          <h2 id="question-text" class="question-text"></h2>
+          <div id="options" class="options"></div>
+          <div id="practice-feedback" class="practice-feedback"></div>
+        </div>
+
+        <div class="question-actions">
+          <div>
+            <button type="button" class="secondary" onclick="previousQuestion()">Previous</button>
+            <button type="button" class="secondary" onclick="clearAnswer()">Clear</button>
+            <button type="button" class="mark-btn" onclick="toggleMark()">Mark</button>
+          </div>
+          <div>
+            <button type="button" onclick="nextQuestion()">Save & Next</button>
+            <button type="button" class="danger" onclick="confirmSubmit()">Submit</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="side-panel">
+        <h2>Question Palette</h2>
+        <div class="stats">
+          <div class="stat"><strong id="answered-count">0</strong><span>Answered</span></div>
+          <div class="stat"><strong id="unanswered-count">0</strong><span>Unanswered</span></div>
+          <div class="stat"><strong id="marked-count">0</strong><span>Marked</span></div>
+          <div class="stat"><strong id="visited-count">0</strong><span>Visited</span></div>
+        </div>
+        <div id="palette" class="palette"></div>
+        <div class="legend">
+          <span class="answered-dot">Answered</span>
+          <span class="unanswered-dot">Visited, not answered</span>
+          <span class="marked-dot">Marked for review</span>
+          <span>Not visited</span>
+        </div>
+      </aside>
+    </section>
+
+    <section id="result" class="panel result-page"></section>
+  </main>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script>
+    let questions = [];
+    let current = 0;
+    let userAnswers = [];
+    let visited = [];
+    let marked = [];
+    let remainingSeconds = 0;
+    let totalSeconds = 0;
+    let timerId = null;
+    let submitted = false;
+    let positiveMarks = 1;
+    let negativeMarks = 0.25;
+    let testMode = 'exam';
+    let themeMode = 'light';
+    let viewMode = 'auto';
+
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function showError(message) {
+      const error = document.getElementById('error');
+      error.textContent = message;
+      error.style.display = 'block';
+    }
+
+    function clearError() {
+      const error = document.getElementById('error');
+      error.textContent = '';
+      error.style.display = 'none';
+    }
+
+    function showPdfStatus(message) {
+      const status = document.getElementById('pdfStatus');
+      status.textContent = message;
+      status.style.display = 'block';
+    }
+
+    function openHelpPage() {
+      window.open('help.html', '_blank', 'noopener');
+    }
+
+    function updateThemeButton() {
+      const button = document.getElementById('themeToggle');
+      if (!button) return;
+
+      button.lastChild.textContent = themeMode === 'dark' ? ' Light' : ' Dark';
+      button.title = themeMode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
+    }
+
+    function toggleThemeMode() {
+      themeMode = themeMode === 'dark' ? 'light' : 'dark';
+      document.body.classList.toggle('dark', themeMode === 'dark');
+      updateThemeButton();
+    }
+
+    function updateViewButton() {
+      const button = document.getElementById('viewToggle');
+      const icon = document.getElementById('viewIcon');
+      if (!button || !icon) return;
+
+      const showDesktopTarget = viewMode === 'mobile';
+      button.lastChild.textContent = showDesktopTarget ? ' Desktop' : ' Mobile';
+      button.title = showDesktopTarget ? 'Switch to desktop preview' : 'Switch to mobile preview';
+      icon.innerHTML = showDesktopTarget
+        ? '<path d="M4 5H20V16H4V5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 21H15M12 16V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
+        : '<path d="M8 2H16C17.1 2 18 2.9 18 4V20C18 21.1 17.1 22 16 22H8C6.9 22 6 21.1 6 20V4C6 2.9 6.9 2 8 2Z" stroke="currentColor" stroke-width="2"/><path d="M11 18H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
+    }
+
+    function setViewMode(mode) {
+      viewMode = mode;
+      document.body.classList.toggle('mobile-mode', viewMode === 'mobile');
+      document.body.classList.toggle('desktop-mode', viewMode === 'desktop');
+      updateViewButton();
+    }
+
+    function toggleViewMode() {
+      setViewMode(viewMode === 'mobile' ? 'desktop' : 'mobile');
+    }
+
+    function resetTopQuestion() {
+      document.getElementById('top-question').textContent = 'Q 0/0';
+    }
+
+    function shuffleArray(items) {
+      const copy = [...items];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function optionLabel(question, key) {
+      if (!key) return 'Not Attempted';
+      const option = question.options.find(item => item.key === key);
+      return option ? `${key}) ${option.text}` : key;
+    }
+
+    function questionToText(question) {
+      return [
+        `Section: ${question.section}`,
+        question.q,
+        ...question.options.map(option => `${option.key}) ${option.text}`),
+        `Answer: ${question.ans}`,
+        `Explanation: ${question.explanation || 'Add explanation here.'}`
+      ].join('\n');
+    }
+
+    function loadHistory() {
+      try {
+        return JSON.parse(localStorage.getItem('cbtExamHistory') || '[]');
+      } catch (error) {
+        return [];
+      }
+    }
+
+    function saveHistory(summary) {
+      const history = loadHistory();
+      history.unshift(summary);
+      localStorage.setItem('cbtExamHistory', JSON.stringify(history.slice(0, 10)));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const list = document.getElementById('history-list');
+      if (!list) return;
+
+      const history = loadHistory();
+      if (!history.length) {
+        list.textContent = 'No saved tests yet.';
+        return;
+      }
+
+      list.innerHTML = history.slice(0, 5).map(item => `
+        <div>${escapeHtml(item.date)} | Score ${escapeHtml(item.score)} | Accuracy ${item.accuracy}% | Attempted ${item.attempted}/${item.total}</div>
+      `).join('');
+    }
+
+    function saveMistakes(mistakes) {
+      if (!mistakes.length) return;
+
+      const existing = localStorage.getItem('cbtMistakeNotebook') || '';
+      const next = mistakes.map(questionToText).join('\n\n');
+      localStorage.setItem('cbtMistakeNotebook', existing ? `${next}\n\n${existing}` : next);
+    }
+
+    function loadMistakeNotebook() {
+      const mistakes = localStorage.getItem('cbtMistakeNotebook') || '';
+
+      if (!mistakes.trim()) {
+        showError('No mistakes saved yet. Complete a test first.');
+        return;
+      }
+
+      document.getElementById('input').value = mistakes.trim();
+      showPdfStatus('Mistake notebook loaded. Review questions, then start a revision test.');
+      clearError();
+    }
+
+    function cleanExtractedText(text) {
+      return text
+        .replace(/\r/g, '')
+        .replace(/[ \t]+/g, ' ')
+        .replace(/\s+(\d{1,4}\.\s+[A-Z][^?\n]{8,}?\?)/g, '\n$1')
+        .replace(/\s+(\d{1,4}\.\s+(?:Which|What|When|Where|Why|How|If|In|On|For|The|A|An|Identify|Match|Define)\b)/g, '\n$1')
+        .replace(/[“”]/g, '"')
+        .replace(/[‘’]/g, "'")
+        .replace(/\n{3,}/g, '\n\n')
+        .trim();
+    }
+
+    function cleanInlineText(text) {
+      return text
+        .replace(/\s+/g, ' ')
+        .replace(/\s+([,.;:?])/g, '$1')
+        .trim();
+    }
+
+    function cleanExplanationText(text) {
+      return cleanInlineText(text)
+        .replace(/(?:\s+\d{1,4}\s*[\).\:-]?\s*\(?[A-Da-d]\)\s*){2,}[\s\S]*$/i, '')
+        .replace(/\s+\d{1,4}\s*[\).\:-]?\s*\(?[A-Da-d]\)\s+\d{1,4}\s*[\).\:-]?[\s\S]*$/i, '')
+        .trim();
+    }
+
+    function normalizeAnswer(answer) {
+      const value = String(answer || '').trim().toUpperCase();
+      return /^[A-D]$/.test(value) ? value : '';
+    }
+
+    function mergeAnswerData(target, number, answer, explanation, index) {
+      const normalized = normalizeAnswer(answer);
+      if (!number || !normalized) return;
+
+      if (!target[number]) {
+        target[number] = [];
+      }
+
+      target[number].push({
+        answer: normalized,
+        explanation: explanation || '',
+        index: Number.isFinite(index) ? index : 0
+      });
+    }
+
+    function extractAnswerData(text) {
+      const answers = {};
+      const solutionPattern = /(?:^|\n)\s*(\d{1,4})\s*[\).\:-]\s*[\(\[]\s*([A-Da-d])\s*[\)\]]\s*([\s\S]*?)(?=(?:\n\s*\d{1,4}\s*[\).\:-]\s*[\(\[]\s*[A-Da-d]\s*[\)\]])|\n\s*(?:answer\s*key|answers|solutions?)\b|$)/g;
+      let solutionMatch;
+
+      while ((solutionMatch = solutionPattern.exec(text))) {
+        let explanation = cleanExplanationText(solutionMatch[3] || '');
+        if (/^(?:\d{1,4}\s*[\).\:-]\s*[\(\[]\s*[A-Da-d]\s*[\)\]]\s*){1,}/.test(explanation)) {
+          explanation = '';
+        }
+
+        mergeAnswerData(
+          answers,
+          solutionMatch[1],
+          solutionMatch[2],
+          explanation,
+          solutionMatch.index
+        );
+      }
+
+      const keyStart = text.search(/answer\s*key|correct\s*answer|answers/i);
+      const keyText = keyStart === -1 ? text : text.slice(keyStart);
+      const keyPattern = /(?:^|\s)(\d{1,4})\s*[\).\-\:]\s*[\(\[]?\s*([A-Da-d])\s*[\)\]]?/g;
+      let keyMatch;
+
+      while ((keyMatch = keyPattern.exec(keyText))) {
+        mergeAnswerData(answers, keyMatch[1], keyMatch[2], '', keyStart === -1 ? keyMatch.index : keyStart + keyMatch.index);
+      }
+
+      const inlinePattern = /(?:^|\n)\s*(\d{1,4})[\).\:-][\s\S]{0,900}?(?:answer|ans\.?|correct\s*answer)\s*[:\-]\s*[\(\[]?\s*([A-Da-d])\s*[\)\]]?/gi;
+      let inlineMatch;
+
+      while ((inlineMatch = inlinePattern.exec(text))) {
+        mergeAnswerData(answers, inlineMatch[1], inlineMatch[2], '', inlineMatch.index);
+      }
+
+      return answers;
+    }
+
+    function getAnswerDataForQuestion(answerData, number, questionIndex) {
+      const entries = answerData[number] || [];
+      if (!entries.length) return {};
+
+      return entries
+        .slice()
+        .sort((a, b) => {
+          const aDistance = a.index > questionIndex ? a.index - questionIndex : Number.MAX_SAFE_INTEGER;
+          const bDistance = b.index > questionIndex ? b.index - questionIndex : Number.MAX_SAFE_INTEGER;
+          const aScore = aDistance + (a.explanation ? 0 : 50000);
+          const bScore = bDistance + (b.explanation ? 0 : 50000);
+          return aScore - bScore;
+        })[0];
+    }
+
+    function findQuestionStarts(text) {
+      const starts = [];
+      const startPattern = /(?:^|\n)\s*(\d{1,4})\s*[\).\:-]\s+(?![\(\[]?\s*[A-Da-d]\s*[\)\]])/g;
+      let match;
+
+      while ((match = startPattern.exec(text))) {
+        starts.push({
+          number: match[1],
+          index: match.index + (match[0].startsWith('\n') ? 1 : 0)
+        });
+      }
+
+      return starts;
+    }
+
+    function extractOptionsFromBody(body) {
+      const compact = body.replace(/\n+/g, ' ');
+      const optionPattern = /(?:^|\s)[\(\[]?([A-Da-d])[\)\]]\s+([\s\S]*?)(?=(?:\s+[\(\[]?[A-Da-d][\)\]]\s+)|(?:\s+(?:answer|ans\.?|correct\s*answer)\s*[:\-])|$)/g;
+      const found = [];
+      let match;
+
+      while ((match = optionPattern.exec(compact))) {
+        const key = match[1].toUpperCase();
+        const text = cleanInlineText(match[2] || '');
+
+        if (/^[A-D]$/.test(key) && text) {
+          found.push({ key, text, index: match.index });
+        }
+      }
+
+      const unique = [];
+      ['A', 'B', 'C', 'D'].forEach(key => {
+        const option = found.find(item => item.key === key);
+        if (option) unique.push(option);
+      });
+
+      return unique.length === 4 ? unique : [];
+    }
+
+    function extractInlineAnswer(body) {
+      const match = body.match(/(?:answer|ans\.?|correct\s*answer)\s*[:\-]\s*[\(\[]?\s*([A-Da-d])\s*[\)\]]?/i);
+      return match ? normalizeAnswer(match[1]) : '';
+    }
+
+    function extractInlineExplanation(body) {
+      const match = body.match(/(?:explanation|solution)\s*[:\-]\s*([\s\S]*)/i);
+      return match ? cleanInlineText(match[1]) : '';
+    }
+
+    function getSectionFromQuestion(questionText) {
+      const yearMatch = questionText.match(/\[(SSC[\s-]*JE[^\]]*)\]/i);
+      return yearMatch ? yearMatch[1].replace(/\s+/g, ' ').trim() : 'Imported PDF';
+    }
+
+    function convertQuestionBlock(number, body, answerData, questionIndex) {
+      const options = extractOptionsFromBody(body);
+      if (options.length !== 4) return null;
+
+      const firstOptionIndex = body.search(/(?:^|\s|\n)[\(\[]?[A-Da-d][\)\]]\s+/);
+      const rawQuestion = firstOptionIndex > -1 ? body.slice(0, firstOptionIndex) : body;
+      const questionText = cleanInlineText(rawQuestion.replace(new RegExp(`^\\s*${number}\\s*[\\).\\:-]\\s*`), ''));
+      const inlineAnswer = extractInlineAnswer(body);
+      const inlineExplanation = extractInlineExplanation(body);
+      const solution = getAnswerDataForQuestion(answerData, number, questionIndex);
+      const answer = inlineAnswer || solution.answer;
+
+      if (!questionText || !answer) return null;
+
+      return [
+        `Section: ${getSectionFromQuestion(questionText)}`,
+        questionText,
+        ...options.map(option => `${option.key}) ${option.text}`),
+        `Answer: ${answer}`,
+        `Explanation: ${solution.explanation || inlineExplanation || 'Add explanation here after reviewing the extracted question.'}`
+      ].join('\n');
+    }
+
+    function convertExtractedPdfText(text) {
+      const cleanText = cleanExtractedText(text);
+
+      if (/answer\s*:/i.test(cleanText) && /^[A-D]\)\s+/im.test(cleanText)) {
+        return cleanText;
+      }
+
+      const answerData = extractAnswerData(cleanText);
+      const starts = findQuestionStarts(cleanText);
+      const converted = [];
+      const seen = new Set();
+
+      let consumedUntilStartIndex = -1;
+
+      starts.forEach((start, index) => {
+        if (index < consumedUntilStartIndex) return;
+        if (seen.has(start.number)) return;
+
+        let convertedBlock = null;
+        let consumedEndIndex = index + 1;
+
+        for (let endIndex = index + 1; endIndex <= Math.min(index + 6, starts.length); endIndex++) {
+          const next = starts[endIndex];
+          const body = cleanText.slice(start.index, next ? next.index : cleanText.length).trim();
+          convertedBlock = convertQuestionBlock(start.number, body, answerData, start.index);
+          if (convertedBlock) {
+            consumedEndIndex = endIndex;
+            break;
+          }
+        }
+
+        if (convertedBlock) {
+          converted.push(convertedBlock);
+          seen.add(start.number);
+          consumedUntilStartIndex = Math.max(consumedUntilStartIndex, consumedEndIndex);
+        }
+      });
+
+      return converted.length ? converted.join('\n\n') : cleanText;
+    }
+
+    function rowsFromItems(items) {
+      const rows = [];
+
+      items.forEach(item => {
+        const y = Math.round(item.transform[5]);
+        let row = rows.find(entry => Math.abs(entry.y - y) <= 2);
+
+        if (!row) {
+          row = { y, parts: [] };
+          rows.push(row);
+        }
+
+        row.parts.push({
+          x: item.transform[4],
+          text: item.str
+        });
+      });
+
+      return rows
+        .sort((a, b) => b.y - a.y)
+        .map(row => row.parts.sort((a, b) => a.x - b.x).map(part => part.text).join(' ').trim())
+        .filter(Boolean)
+        .join('\n');
+    }
+
+    function textContentToLines(items, pageWidth) {
+      const usefulItems = items.filter(item => String(item.str || '').trim());
+      const xValues = usefulItems.map(item => item.transform[4]);
+
+      if (!xValues.length) return '';
+
+      const minX = Math.min(...xValues);
+      const maxX = Math.max(...xValues);
+      const middle = pageWidth ? pageWidth / 2 : (minX + maxX) / 2;
+      const leftItems = usefulItems.filter(item => item.transform[4] < middle - 12);
+      const rightItems = usefulItems.filter(item => item.transform[4] >= middle - 12);
+      const hasTwoColumns =
+        leftItems.length > 20 &&
+        rightItems.length > 20 &&
+        maxX - minX > 300;
+
+      if (!hasTwoColumns) {
+        return rowsFromItems(usefulItems);
+      }
+
+      const headerItems = usefulItems.filter(item => {
+        const text = String(item.str || '').trim();
+        return /engineer|wallah|mechanical|chapterwise/i.test(text);
+      });
+
+      const bodyItems = usefulItems.filter(item => !headerItems.includes(item));
+      const leftBody = bodyItems.filter(item => item.transform[4] < middle);
+      const rightBody = bodyItems.filter(item => item.transform[4] >= middle);
+      const parts = [
+        rowsFromItems(headerItems),
+        rowsFromItems(leftBody),
+        rowsFromItems(rightBody)
+      ].filter(Boolean);
+
+      return parts.join('\n');
+    }
+
+    function parseQuiz(text) {
+      const blocks = text
+        .trim()
+        .split(/\n\s*\n/)
+        .map(block => block.trim())
+        .filter(Boolean);
+
+      if (!blocks.length) {
+        throw new Error('Please paste at least one question.');
+      }
+
+      return blocks.map((block, index) => {
+        const lines = block
+          .split('\n')
+          .map(line => line.trim())
+          .filter(Boolean);
+
+        const sectionLine = lines.find(line => /^section\s*:/i.test(line));
+        const answerLine = lines.find(line => /^answer\s*:/i.test(line));
+        const explanationLineIndex = lines.findIndex(line => /^explanation\s*:/i.test(line));
+        const optionLines = lines.filter(line => /^[A-D]\)\s+/i.test(line));
+        const questionLines = lines.filter((line, lineIndex) =>
+          !/^section\s*:/i.test(line) &&
+          !/^[A-D]\)\s+/i.test(line) &&
+          !/^answer\s*:/i.test(line) &&
+          !/^explanation\s*:/i.test(line) &&
+          (explanationLineIndex === -1 || lineIndex < explanationLineIndex)
+        );
+
+        if (!questionLines.length) {
+          throw new Error(`Question ${index + 1} is missing the question text.`);
+        }
+
+        if (optionLines.length !== 4) {
+          throw new Error(`Question ${index + 1} must have exactly four options: A), B), C), and D).`);
+        }
+
+        if (!answerLine) {
+          throw new Error(`Question ${index + 1} is missing the Answer line.`);
+        }
+
+        const answer = answerLine.split(':').slice(1).join(':').trim().toUpperCase();
+        if (!/^[A-D]$/.test(answer)) {
+          throw new Error(`Question ${index + 1} answer must be A, B, C, or D.`);
+        }
+
+        let explanation = '';
+        if (explanationLineIndex !== -1) {
+          explanation = lines
+            .slice(explanationLineIndex)
+            .join(' ')
+            .replace(/^explanation\s*:/i, '')
+            .trim();
+        }
+
+        return {
+          q: questionLines.join(' '),
+          section: sectionLine ? sectionLine.split(':').slice(1).join(':').trim() || 'General' : 'General',
+          options: optionLines.map(line => ({
+            key: line.charAt(0).toUpperCase(),
+            text: line.slice(2).trim()
+          })),
+          ans: answer,
+          explanation
+        };
+      });
+    }
+
+    function prepareQuestions(parsedQuestions) {
+      let prepared = parsedQuestions.map(question => {
+        let options = question.options;
+        let answer = question.ans;
+
+        if (document.getElementById('optionOrder').value === 'random') {
+          const shuffled = shuffleArray(question.options);
+          const letters = ['A', 'B', 'C', 'D'];
+
+          options = shuffled.map((option, index) => ({
+            key: letters[index],
+            oldKey: option.key,
+            text: option.text
+          }));
+          answer = options.find(option => option.oldKey === question.ans).key;
+          options = options.map(option => ({
+            key: option.key,
+            text: option.text
+          }));
+        }
+
+        return {
+          ...question,
+          options,
+          ans: answer
+        };
+      });
+
+      if (document.getElementById('questionOrder').value === 'random') {
+        prepared = shuffleArray(prepared);
+      }
+
+      return prepared;
+    }
+
+    function startQuiz() {
+      clearError();
+
+      let parsedQuestions;
+      try {
+        parsedQuestions = parseQuiz(document.getElementById('input').value);
+      } catch (error) {
+        showError(error.message);
+        return;
+      }
+
+      const minutes = Number(document.getElementById('minutes').value);
+      if (!Number.isFinite(minutes) || minutes < 1) {
+        showError('Please enter a valid quiz time in minutes.');
+        return;
+      }
+
+      positiveMarks = Number(document.getElementById('positiveMarks').value);
+      negativeMarks = Number(document.getElementById('negativeMarksInput').value);
+      testMode = document.getElementById('testMode').value;
+
+      if (!Number.isFinite(positiveMarks) || positiveMarks <= 0) {
+        showError('Please enter valid marks per correct question.');
+        return;
+      }
+
+      if (!Number.isFinite(negativeMarks) || negativeMarks < 0) {
+        showError('Please enter valid negative marks per wrong answer.');
+        return;
+      }
+
+      questions = prepareQuestions(parsedQuestions);
+      current = 0;
+      userAnswers = Array(questions.length).fill(null);
+      visited = Array(questions.length).fill(false);
+      marked = Array(questions.length).fill(false);
+      totalSeconds = Math.round(minutes * 60);
+      remainingSeconds = totalSeconds;
+      submitted = false;
+
+      document.getElementById('setup').style.display = 'none';
+      document.getElementById('result').style.display = 'none';
+      document.getElementById('exam').style.display = 'grid';
+
+      startTimer();
+      showQuestion();
+    }
+
+    function startTimer() {
+      clearInterval(timerId);
+      updateTimer();
+
+      timerId = setInterval(() => {
+        remainingSeconds--;
+        updateTimer();
+
+        if (remainingSeconds <= 0) {
+          submitQuiz();
+        }
+      }, 1000);
+    }
+
+    function updateTimer() {
+      const timer = document.getElementById('timer');
+      const minutes = Math.floor(Math.max(remainingSeconds, 0) / 60);
+      const seconds = Math.max(remainingSeconds, 0) % 60;
+      timer.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      timer.classList.toggle('warning', remainingSeconds <= 60 && remainingSeconds > 0);
+    }
+
+    function showQuestion() {
+      visited[current] = true;
+
+      const question = questions[current];
+      const statusParts = [];
+      if (userAnswers[current]) statusParts.push('Answered');
+      if (marked[current]) statusParts.push('Marked');
+      if (!statusParts.length) statusParts.push('Not answered');
+
+      document.getElementById('question-count').textContent = `Question ${current + 1} of ${questions.length}`;
+      document.getElementById('top-question').textContent = `Q ${current + 1}/${questions.length}`;
+      document.getElementById('question-status').textContent = statusParts.join(' | ');
+      document.getElementById('section-chip').textContent = question.section;
+      document.getElementById('question-text').textContent = question.q;
+
+      document.getElementById('options').innerHTML = question.options.map(option => {
+        const selected = userAnswers[current] === option.key ? ' selected' : '';
+        return `<button type="button" class="option${selected}" onclick="selectAnswer('${option.key}')">
+          <span class="option-key">${option.key}</span>
+          <span>${escapeHtml(option.text)}</span>
+        </button>`;
+      }).join('');
+
+      const feedback = document.getElementById('practice-feedback');
+      if (testMode === 'practice' && userAnswers[current]) {
+        const isCorrect = userAnswers[current] === question.ans;
+        feedback.style.display = 'block';
+        feedback.innerHTML = `
+          <strong>${isCorrect ? 'Correct' : 'Incorrect'}.</strong>
+          Correct answer: ${escapeHtml(optionLabel(question, question.ans))}
+          <br>${escapeHtml(question.explanation || 'No explanation added for this question.')}
+        `;
+      } else {
+        feedback.style.display = 'none';
+        feedback.textContent = '';
+      }
+
+      updatePalette();
+    }
+
+    function selectAnswer(answer) {
+      userAnswers[current] = answer;
+      showQuestion();
+    }
+
+    function previousQuestion() {
+      if (current > 0) {
+        current--;
+        showQuestion();
+      }
+    }
+
+    function nextQuestion() {
+      if (current < questions.length - 1) {
+        current++;
+        showQuestion();
+        return;
+      }
+      confirmSubmit();
+    }
+
+    function clearAnswer() {
+      userAnswers[current] = null;
+      showQuestion();
+    }
+
+    function toggleMark() {
+      marked[current] = !marked[current];
+      showQuestion();
+    }
+
+    function goToQuestion(index) {
+      current = index;
+      showQuestion();
+    }
+
+    function updatePalette() {
+      const answered = userAnswers.filter(Boolean).length;
+      const visitedCount = visited.filter(Boolean).length;
+      const markedCount = marked.filter(Boolean).length;
+
+      document.getElementById('answered-count').textContent = answered;
+      document.getElementById('unanswered-count').textContent = questions.length - answered;
+      document.getElementById('marked-count').textContent = markedCount;
+      document.getElementById('visited-count').textContent = visitedCount;
+
+      document.getElementById('palette').innerHTML = questions.map((question, index) => {
+        let status = visited[index] ? 'unanswered' : '';
+        if (userAnswers[index]) status = 'answered';
+        if (marked[index]) status = `${status} marked`.trim();
+        const currentClass = index === current ? ' current' : '';
+        return `<button type="button" class="${status}${currentClass}" onclick="goToQuestion(${index})">${index + 1}</button>`;
+      }).join('');
+    }
+
+    function confirmSubmit() {
+      const unanswered = userAnswers.filter(answer => !answer).length;
+      const message = unanswered
+        ? `You have ${unanswered} unanswered question(s). Submit quiz now?`
+        : 'Submit quiz now?';
+
+      if (confirm(message)) {
+        submitQuiz();
+      }
+    }
+
+    function submitQuiz() {
+      if (submitted) return;
+      submitted = true;
+      clearInterval(timerId);
+      showResult();
+    }
+
+    function buildSectionAnalysis() {
+      const sections = {};
+
+      questions.forEach((question, index) => {
+        if (!sections[question.section]) {
+          sections[question.section] = { total: 0, correct: 0, wrong: 0, attempted: 0 };
+        }
+
+        const section = sections[question.section];
+        const user = userAnswers[index];
+        section.total++;
+
+        if (user) section.attempted++;
+        if (user === question.ans) section.correct++;
+        if (user && user !== question.ans) section.wrong++;
+      });
+
+      return Object.entries(sections).map(([name, data]) => {
+        const accuracy = data.attempted ? Math.round((data.correct / data.attempted) * 100) : 0;
+        return `<div class="analysis-card">
+          <h3>${escapeHtml(name)}</h3>
+          <p>Total: ${data.total}</p>
+          <p>Correct: ${data.correct}</p>
+          <p>Wrong: ${data.wrong}</p>
+          <p>Accuracy: ${accuracy}%</p>
+        </div>`;
+      }).join('');
+    }
+
+    function showResult() {
+      let correctCount = 0;
+      let wrongCount = 0;
+      let attempted = 0;
+      const mistakes = [];
+
+      const reviewHtml = questions.map((question, index) => {
+        const correct = question.ans;
+        const user = userAnswers[index];
+        const status = !user ? 'not-attempted' : user === correct ? 'correct' : 'wrong';
+
+        if (user) attempted++;
+        if (user === correct) correctCount++;
+        if (user && user !== correct) {
+          wrongCount++;
+          mistakes.push(question);
+        }
+
+        const optionsHtml = question.options.map(option => {
+          const isCorrect = option.key === correct;
+          const isUserWrong = user === option.key && user !== correct;
+          const classes = [
+            'review-option',
+            isCorrect ? 'correct-option' : '',
+            isUserWrong ? 'user-wrong-option' : ''
+          ].filter(Boolean).join(' ');
+          const label = isCorrect ? 'Correct answer' : isUserWrong ? 'Your answer' : '';
+
+          return `<div class="${classes}">
+            <strong>${option.key})</strong>
+            <span>${escapeHtml(option.text)}${label ? ` - ${label}` : ''}</span>
+          </div>`;
+        }).join('');
+
+        const explanation = question.explanation
+          ? `<div class="explanation"><strong>Explanation:</strong> ${escapeHtml(question.explanation)}</div>`
+          : `<div class="explanation"><strong>Explanation:</strong> No explanation added for this question.</div>`;
+
+        return `<div class="review-item ${status}">
+          <h3>Q${index + 1}. ${escapeHtml(question.q)}</h3>
+          <p class="answer-line"><strong>Your Answer:</strong> ${escapeHtml(optionLabel(question, user))}</p>
+          <p class="answer-line"><strong>Correct Answer:</strong> ${escapeHtml(optionLabel(question, correct))}</p>
+          <p class="answer-line"><strong>Status:</strong> ${status === 'correct' ? 'Correct' : status === 'wrong' ? 'Wrong' : 'Not Attempted'}</p>
+          <div class="review-options">${optionsHtml}</div>
+          ${explanation}
+        </div>`;
+      }).join('');
+
+      const notAttempted = questions.length - attempted;
+      const positiveScore = correctCount * positiveMarks;
+      const negativeScore = wrongCount * negativeMarks;
+      const finalScore = positiveScore - negativeScore;
+      const totalPossible = questions.length * positiveMarks;
+      const percentage = totalPossible ? Math.max(0, Math.round((finalScore / totalPossible) * 100)) : 0;
+      const timeTaken = totalSeconds - remainingSeconds;
+      const takenMinutes = Math.floor(timeTaken / 60);
+      const takenSeconds = timeTaken % 60;
+      saveMistakes(mistakes);
+      saveHistory({
+        date: new Date().toLocaleString(),
+        score: `${finalScore.toFixed(2)}/${totalPossible.toFixed(2)}`,
+        accuracy: percentage,
+        attempted,
+        total: questions.length
+      });
+
+      document.getElementById('exam').style.display = 'none';
+      document.getElementById('timer').textContent = 'Finished';
+      document.getElementById('top-question').textContent = `Q ${questions.length}/${questions.length}`;
+      document.getElementById('timer').classList.remove('warning');
+
+      document.getElementById('result').style.display = 'block';
+      document.getElementById('result').innerHTML = `
+        <h2>Result</h2>
+        <p class="hint">Scoring: +${positiveMarks} for correct, -${negativeMarks} for wrong, 0 for not attempted.</p>
+        <div class="score-card">
+          <div class="stat"><strong>${finalScore.toFixed(2)}/${totalPossible.toFixed(2)}</strong><span>Final Score</span></div>
+          <div class="stat"><strong>${correctCount}</strong><span>Correct</span></div>
+          <div class="stat"><strong>${wrongCount}</strong><span>Wrong</span></div>
+          <div class="stat"><strong>${notAttempted}</strong><span>Not Attempted</span></div>
+          <div class="stat"><strong>${percentage}%</strong><span>Percentage</span></div>
+        </div>
+        <div class="score-card">
+          <div class="stat"><strong>${attempted}</strong><span>Attempted</span></div>
+          <div class="stat"><strong>${positiveScore.toFixed(2)}</strong><span>Positive Marks</span></div>
+          <div class="stat"><strong>${negativeScore.toFixed(2)}</strong><span>Negative Marks</span></div>
+          <div class="stat"><strong>${takenMinutes}:${String(takenSeconds).padStart(2, '0')}</strong><span>Time Taken</span></div>
+          <div class="stat"><strong>${marked.filter(Boolean).length}</strong><span>Marked</span></div>
+        </div>
+        <h2>Section Analysis</h2>
+        <div class="analysis-grid">${buildSectionAnalysis()}</div>
+        <div class="result-actions">
+          <button type="button" onclick="restart()">Create New Quiz</button>
+          <button type="button" class="secondary" onclick="window.print()">Save as PDF</button>
+        </div>
+        ${reviewHtml}
+      `;
+    }
+
+    function restart() {
+      clearInterval(timerId);
+      document.getElementById('timer').textContent = '00:00';
+      resetTopQuestion();
+      document.getElementById('setup').style.display = 'block';
+      document.getElementById('result').style.display = 'none';
+      document.getElementById('exam').style.display = 'none';
+    }
+
+    function importFile(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        document.getElementById('input').value = reader.result;
+        event.target.value = '';
+      };
+      reader.readAsText(file);
+    }
+
+    async function importPdf(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      if (!window.pdfjsLib) {
+        showPdfStatus('PDF extractor could not load. Please check your internet connection and try again.');
+        event.target.value = '';
+        return;
+      }
+
+      showPdfStatus('Extracting PDF text...');
+
+      try {
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        const buffer = await file.arrayBuffer();
+        const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
+        const pages = [];
+
+        for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
+          const page = await pdf.getPage(pageNumber);
+          const viewport = page.getViewport({ scale: 1 });
+          const content = await page.getTextContent();
+          const text = textContentToLines(content.items, viewport.width);
+          pages.push(text);
+        }
+
+        const extracted = pages.join('\n\n');
+        const converted = convertExtractedPdfText(extracted);
+        document.getElementById('input').value = converted;
+        showPdfStatus(`Extracted ${pdf.numPages} page(s). Review the questions once before starting the test.`);
+      } catch (error) {
+        showPdfStatus('PDF extraction failed. This can happen with scanned PDFs. Try OCR or paste the text manually.');
+      }
+
+      event.target.value = '';
+    }
+
+    function loadSample() {
+      document.getElementById('input').value = `Section: Physics
+What is the boiling point of water at standard atmospheric pressure?
+A) 50 degree Celsius
+B) 75 degree Celsius
+C) 100 degree Celsius
+D) 125 degree Celsius
+Answer: C
+Explanation: At standard atmospheric pressure, water boils at 100 degree Celsius.
+
+Section: Electrical
+Which material is the best conductor of electricity?
+A) Silver
+B) Copper
+C) Aluminium
+D) Iron
+Answer: A
+Explanation: Silver has the highest electrical conductivity among common metals.
+
+Section: Units
+What is the SI unit of power?
+A) Newton
+B) Joule
+C) Watt
+D) Pascal
+Answer: C
+Explanation: Power is the rate of doing work. Its SI unit is watt, where one watt equals one joule per second.`;
+    }
+
+    renderHistory();
+    resetTopQuestion();
+    updateThemeButton();
+    updateViewButton();
+  </script>
+</body>
+</html>

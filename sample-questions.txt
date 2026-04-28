@@ -1,0 +1,26 @@
+Section: Physics
+What is the boiling point of water at standard atmospheric pressure?
+A) 50 degree Celsius
+B) 75 degree Celsius
+C) 100 degree Celsius
+D) 125 degree Celsius
+Answer: C
+Explanation: At standard atmospheric pressure, water boils at 100 degree Celsius.
+
+Section: Electrical
+Which material is the best conductor of electricity?
+A) Silver
+B) Copper
+C) Aluminium
+D) Iron
+Answer: A
+Explanation: Silver has the highest electrical conductivity among common metals.
+
+Section: Units
+What is the SI unit of power?
+A) Newton
+B) Joule
+C) Watt
+D) Pascal
+Answer: C
+Explanation: Power is the rate of doing work. Its SI unit is watt, where one watt equals one joule per second.
