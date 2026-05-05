@@ -366,6 +366,26 @@
       font-weight: 700;
     }
 
+    .setup-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin: 14px 0;
+    }
+
+    .summary-pill {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--primary-soft);
+      color: var(--text);
+      font-weight: 800;
+    }
+
+    body.dark .summary-pill {
+      background: #0B1220;
+    }
+
     .practice-feedback {
       display: none;
       margin-top: 14px;
@@ -450,6 +470,14 @@
       background: var(--mark);
     }
 
+    .bookmark-btn {
+      background: #0F766E;
+    }
+
+    .pause-btn {
+      background: #475569;
+    }
+
     .error {
       display: none;
       margin-top: 12px;
@@ -483,6 +511,18 @@
       border-bottom: 1px solid var(--line);
       color: var(--muted);
       font-weight: 700;
+    }
+
+    .question-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .question-time {
+      color: var(--primary);
+      font-weight: 800;
     }
 
     .question-body {
@@ -657,6 +697,12 @@
       border-color: #c4a7f0;
     }
 
+    .palette .answered-marked {
+      background: linear-gradient(135deg, var(--success-soft) 0 50%, var(--mark-soft) 50% 100%);
+      color: #334155;
+      border-color: #9fbcdf;
+    }
+
     .legend {
       display: grid;
       gap: 8px;
@@ -712,6 +758,73 @@
       margin: 14px 0;
     }
 
+    .result-filters {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 16px 0 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    body.dark .result-filters {
+      background: #0B1220;
+    }
+
+    .result-filters button {
+      background: #e8edf4;
+      color: #1f2a44;
+    }
+
+    body.dark .result-filters button {
+      background: #1E293B;
+      color: #E5E7EB;
+      border: 1px solid #334155;
+    }
+
+    .result-filters button.active {
+      background: var(--primary);
+      color: #fff;
+    }
+
+    .result-filters select {
+      min-width: 180px;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--text);
+      font: inherit;
+      font-weight: 700;
+    }
+
+    .result-search {
+      min-width: 240px;
+      flex: 1;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--text);
+      font: inherit;
+      font-weight: 700;
+    }
+
+    body.dark .result-filters select {
+      background: #0B1220;
+      color: #E5E7EB;
+      border-color: #334155;
+    }
+
+    body.dark .result-search {
+      background: #0B1220;
+      color: #E5E7EB;
+      border-color: #334155;
+    }
+
     .analysis-card {
       border: 1px solid var(--line);
       border-radius: 8px;
@@ -743,13 +856,27 @@
       background: var(--success-soft);
     }
 
+    body.dark .review-item.correct {
+      background: #052E1A;
+      color: #DCFCE7;
+    }
+
     .review-item.wrong {
       border-color: #fecdca;
       background: var(--danger-soft);
     }
 
+    body.dark .review-item.wrong {
+      background: #3B0A0A;
+      color: #FEE2E2;
+    }
+
     .review-item.not-attempted {
       background: #f8fafc;
+    }
+
+    body.dark .review-item {
+      color: #E5E7EB;
     }
 
     .review-item h3 {
@@ -772,6 +899,13 @@
       border-radius: 6px;
       background: #fff;
       font-weight: 700;
+      color: var(--text);
+    }
+
+    body.dark .review-option {
+      background: #0B1220;
+      color: #E5E7EB;
+      border-color: #334155;
     }
 
     .review-option.correct-option {
@@ -780,15 +914,31 @@
       color: var(--success);
     }
 
+    body.dark .review-option.correct-option {
+      background: #064E2A;
+      color: #86EFAC;
+      border-color: #22C55E;
+    }
+
     .review-option.user-wrong-option {
       border-color: #f2a39e;
       background: #ffe1de;
       color: var(--danger);
     }
 
+    body.dark .review-option.user-wrong-option {
+      background: #4C1010;
+      color: #FCA5A5;
+      border-color: #EF4444;
+    }
+
     .answer-line {
       margin: 7px 0;
       color: #344054;
+    }
+
+    body.dark .answer-line {
+      color: #CBD5E1;
     }
 
     .explanation {
@@ -799,6 +949,12 @@
       background: #f5f8ff;
       color: #344054;
       line-height: 1.45;
+    }
+
+    body.dark .explanation {
+      background: #0B1220;
+      color: #E5E7EB;
+      border-left-color: var(--primary);
     }
 
     @media print {
@@ -924,6 +1080,7 @@
       <div class="tool-row">
         <button type="button" class="secondary" onclick="document.getElementById('pdfInput').click()">Extract from PDF</button>
         <button type="button" class="secondary" onclick="document.getElementById('fileInput').click()">Import TXT/CSV</button>
+        <button type="button" class="secondary" onclick="autoArrangeText()">Auto Arrange Text</button>
         <input id="pdfInput" type="file" accept=".pdf,application/pdf" style="display: none;" onchange="importPdf(event)">
         <input id="fileInput" type="file" accept=".txt,.csv" style="display: none;" onchange="importFile(event)">
       </div>
@@ -1079,6 +1236,16 @@ Fix these issues:
         <button type="button" onclick="startQuiz()">Start Quiz</button>
         <button type="button" class="secondary" onclick="loadSample()">Load Sample</button>
         <button type="button" class="secondary" onclick="loadMistakeNotebook()">Review Mistakes</button>
+        <button type="button" class="secondary" onclick="loadBookmarkedQuestions()">Review Bookmarks</button>
+        <button type="button" class="secondary" onclick="exportSavedData()">Export Data</button>
+        <button type="button" class="secondary" onclick="document.getElementById('dataInput').click()">Import Data</button>
+        <input id="dataInput" type="file" accept=".json,application/json" style="display: none;" onchange="importSavedData(event)">
+      </div>
+
+      <div class="setup-summary">
+        <div class="summary-pill">Ready Questions: <span id="ready-count">0</span></div>
+        <div class="summary-pill">Saved Mistakes: <span id="mistake-count">0</span></div>
+        <div class="summary-pill">Bookmarks: <span id="bookmark-count">0</span></div>
       </div>
 
       <div class="history-panel">
@@ -1093,7 +1260,10 @@ Fix these issues:
       <div class="question-panel">
         <div class="question-header">
           <span id="question-count"></span>
-          <span id="question-status"></span>
+          <span class="question-meta">
+            <span id="question-time" class="question-time">Time: 00:00</span>
+            <span id="question-status"></span>
+          </span>
         </div>
 
         <div class="question-body">
@@ -1108,6 +1278,8 @@ Fix these issues:
             <button type="button" class="secondary" onclick="previousQuestion()">Previous</button>
             <button type="button" class="secondary" onclick="clearAnswer()">Clear</button>
             <button type="button" class="mark-btn" onclick="toggleMark()">Mark</button>
+            <button type="button" class="bookmark-btn" onclick="toggleBookmarkCurrent()">Bookmark</button>
+            <button type="button" class="pause-btn" onclick="togglePause()">Pause</button>
           </div>
           <div>
             <button type="button" onclick="nextQuestion()">Save & Next</button>
@@ -1144,10 +1316,13 @@ Fix these issues:
     let userAnswers = [];
     let visited = [];
     let marked = [];
+    let questionTimes = [];
+    let questionStartedAt = 0;
     let remainingSeconds = 0;
     let totalSeconds = 0;
     let timerId = null;
     let submitted = false;
+    let paused = false;
     let positiveMarks = 1;
     let negativeMarks = 0.25;
     let testMode = 'exam';
@@ -1179,6 +1354,32 @@ Fix these issues:
       const status = document.getElementById('pdfStatus');
       status.textContent = message;
       status.style.display = 'block';
+    }
+
+    function countFormattedQuestions(text) {
+      return (text.match(/\nAnswer:\s*[A-D]/gi) || []).length;
+    }
+
+    function autoArrangeText() {
+      clearError();
+      const input = document.getElementById('input');
+      const raw = input.value.trim();
+
+      if (!raw) {
+        showError('Paste questions or import a PDF/TXT first.');
+        return;
+      }
+
+      const arranged = convertExtractedPdfText(raw);
+      input.value = arranged;
+
+      const count = countFormattedQuestions(arranged);
+      showPdfStatus(
+        count
+          ? `Auto arranged ${count} question(s). Review once before starting the test.`
+          : 'Auto arrange finished, but no complete answer-marked questions were detected. Review the text or use the AI prompt in Help.'
+      );
+      updateSetupCounts();
     }
 
     function openHelpPage() {
@@ -1252,6 +1453,41 @@ Fix these issues:
       ].join('\n');
     }
 
+    function questionSignature(question) {
+      return `${question.section}|${question.q}|${question.options.map(option => option.text).join('|')}`;
+    }
+
+    function loadJsonStorage(key, fallback) {
+      try {
+        return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
+      } catch (error) {
+        return fallback;
+      }
+    }
+
+    function loadBookmarks() {
+      return loadJsonStorage('cbtBookmarks', []);
+    }
+
+    function saveBookmarks(bookmarks) {
+      localStorage.setItem('cbtBookmarks', JSON.stringify(bookmarks));
+      updateSetupCounts();
+    }
+
+    function getMistakeQuestionCount() {
+      const mistakes = localStorage.getItem('cbtMistakeNotebook') || '';
+      return countFormattedQuestions(`\n${mistakes}`);
+    }
+
+    function updateSetupCounts() {
+      const ready = document.getElementById('ready-count');
+      const mistakes = document.getElementById('mistake-count');
+      const bookmarks = document.getElementById('bookmark-count');
+      if (ready) ready.textContent = countFormattedQuestions(`\n${document.getElementById('input').value || ''}`);
+      if (mistakes) mistakes.textContent = getMistakeQuestionCount();
+      if (bookmarks) bookmarks.textContent = loadBookmarks().length;
+    }
+
     function loadHistory() {
       try {
         return JSON.parse(localStorage.getItem('cbtExamHistory') || '[]');
@@ -1288,6 +1524,7 @@ Fix these issues:
       const existing = localStorage.getItem('cbtMistakeNotebook') || '';
       const next = mistakes.map(questionToText).join('\n\n');
       localStorage.setItem('cbtMistakeNotebook', existing ? `${next}\n\n${existing}` : next);
+      updateSetupCounts();
     }
 
     function loadMistakeNotebook() {
@@ -1301,6 +1538,77 @@ Fix these issues:
       document.getElementById('input').value = mistakes.trim();
       showPdfStatus('Mistake notebook loaded. Review questions, then start a revision test.');
       clearError();
+      updateSetupCounts();
+    }
+
+    function loadBookmarkedQuestions() {
+      const bookmarks = loadBookmarks();
+      if (!bookmarks.length) {
+        showError('No bookmarked questions saved yet.');
+        return;
+      }
+
+      document.getElementById('input').value = bookmarks.map(questionToText).join('\n\n');
+      showPdfStatus('Bookmarked questions loaded. Review questions, then start a revision test.');
+      clearError();
+      updateSetupCounts();
+    }
+
+    function toggleBookmarkCurrent() {
+      const question = questions[current];
+      const bookmarks = loadBookmarks();
+      const signature = questionSignature(question);
+      const exists = bookmarks.some(item => questionSignature(item) === signature);
+      const updated = exists
+        ? bookmarks.filter(item => questionSignature(item) !== signature)
+        : [question, ...bookmarks];
+
+      saveBookmarks(updated);
+      showQuestion();
+    }
+
+    function isCurrentBookmarked() {
+      if (!questions.length) return false;
+      const signature = questionSignature(questions[current]);
+      return loadBookmarks().some(item => questionSignature(item) === signature);
+    }
+
+    function exportSavedData() {
+      const data = {
+        history: loadHistory(),
+        mistakes: localStorage.getItem('cbtMistakeNotebook') || '',
+        bookmarks: loadBookmarks(),
+        exportedAt: new Date().toISOString()
+      };
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'cbt-exam-simulator-data.json';
+      link.click();
+      URL.revokeObjectURL(url);
+    }
+
+    function importSavedData(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const data = JSON.parse(reader.result);
+          if (Array.isArray(data.history)) localStorage.setItem('cbtExamHistory', JSON.stringify(data.history));
+          if (typeof data.mistakes === 'string') localStorage.setItem('cbtMistakeNotebook', data.mistakes);
+          if (Array.isArray(data.bookmarks)) localStorage.setItem('cbtBookmarks', JSON.stringify(data.bookmarks));
+          renderHistory();
+          updateSetupCounts();
+          showPdfStatus('Saved data imported successfully.');
+        } catch (error) {
+          showError('Could not import data. Please select a valid JSON export file.');
+        }
+        event.target.value = '';
+      };
+      reader.readAsText(file);
     }
 
     function cleanExtractedText(text) {
@@ -1722,15 +2030,19 @@ Fix these issues:
       userAnswers = Array(questions.length).fill(null);
       visited = Array(questions.length).fill(false);
       marked = Array(questions.length).fill(false);
+      questionTimes = Array(questions.length).fill(0);
+      questionStartedAt = Date.now();
       totalSeconds = Math.round(minutes * 60);
       remainingSeconds = totalSeconds;
       submitted = false;
+      paused = false;
 
       document.getElementById('setup').style.display = 'none';
       document.getElementById('result').style.display = 'none';
       document.getElementById('exam').style.display = 'grid';
 
       startTimer();
+      resetQuestionTimer();
       showQuestion();
     }
 
@@ -1739,6 +2051,7 @@ Fix these issues:
       updateTimer();
 
       timerId = setInterval(() => {
+        if (paused) return;
         remainingSeconds--;
         updateTimer();
 
@@ -1754,6 +2067,59 @@ Fix these issues:
       const seconds = Math.max(remainingSeconds, 0) % 60;
       timer.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
       timer.classList.toggle('warning', remainingSeconds <= 60 && remainingSeconds > 0);
+      updateQuestionTimerDisplay();
+    }
+
+    function formatTime(totalSecondsValue) {
+      const safeSeconds = Math.max(0, Math.floor(totalSecondsValue || 0));
+      const minutes = Math.floor(safeSeconds / 60);
+      const seconds = safeSeconds % 60;
+      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    function saveCurrentQuestionTime() {
+      if (!questions.length || !questionStartedAt) return;
+
+      const now = Date.now();
+      const elapsed = Math.max(0, Math.floor((now - questionStartedAt) / 1000));
+      questionTimes[current] = (questionTimes[current] || 0) + elapsed;
+      questionStartedAt = now;
+    }
+
+    function resetQuestionTimer() {
+      questionStartedAt = Date.now();
+      updateQuestionTimerDisplay();
+    }
+
+    function getCurrentQuestionElapsed() {
+      if (!questionStartedAt) return questionTimes[current] || 0;
+      return (questionTimes[current] || 0) + Math.max(0, Math.floor((Date.now() - questionStartedAt) / 1000));
+    }
+
+    function updateQuestionTimerDisplay() {
+      const timer = document.getElementById('question-time');
+      if (!timer || !questions.length || submitted) return;
+      timer.textContent = `${paused ? 'Paused' : 'Time'}: ${formatTime(getCurrentQuestionElapsed())}`;
+    }
+
+    function togglePause() {
+      if (testMode !== 'practice') {
+        showPdfStatus('Pause is available only in Practice mode.');
+        return;
+      }
+
+      if (!paused) {
+        saveCurrentQuestionTime();
+        paused = true;
+      } else {
+        paused = false;
+        resetQuestionTimer();
+      }
+
+      document.querySelectorAll('#options button, .question-actions button:not(.pause-btn)').forEach(button => {
+        button.disabled = paused;
+      });
+      updateQuestionTimerDisplay();
     }
 
     function showQuestion() {
@@ -1767,7 +2133,8 @@ Fix these issues:
 
       document.getElementById('question-count').textContent = `Question ${current + 1} of ${questions.length}`;
       document.getElementById('top-question').textContent = `Q ${current + 1}/${questions.length}`;
-      document.getElementById('question-status').textContent = statusParts.join(' | ');
+      document.getElementById('question-status').textContent = `${statusParts.join(' | ')}${isCurrentBookmarked() ? ' | Bookmarked' : ''}`;
+      updateQuestionTimerDisplay();
       document.getElementById('section-chip').textContent = question.section;
       document.getElementById('question-text').textContent = question.q;
 
@@ -1778,6 +2145,9 @@ Fix these issues:
           <span>${escapeHtml(option.text)}</span>
         </button>`;
       }).join('');
+      document.querySelectorAll('#options button, .question-actions button:not(.pause-btn)').forEach(button => {
+        button.disabled = paused;
+      });
 
       const feedback = document.getElementById('practice-feedback');
       if (testMode === 'practice' && userAnswers[current]) {
@@ -1803,14 +2173,18 @@ Fix these issues:
 
     function previousQuestion() {
       if (current > 0) {
+        saveCurrentQuestionTime();
         current--;
+        resetQuestionTimer();
         showQuestion();
       }
     }
 
     function nextQuestion() {
       if (current < questions.length - 1) {
+        saveCurrentQuestionTime();
         current++;
+        resetQuestionTimer();
         showQuestion();
         return;
       }
@@ -1828,7 +2202,10 @@ Fix these issues:
     }
 
     function goToQuestion(index) {
+      if (index === current) return;
+      saveCurrentQuestionTime();
       current = index;
+      resetQuestionTimer();
       showQuestion();
     }
 
@@ -1845,7 +2222,8 @@ Fix these issues:
       document.getElementById('palette').innerHTML = questions.map((question, index) => {
         let status = visited[index] ? 'unanswered' : '';
         if (userAnswers[index]) status = 'answered';
-        if (marked[index]) status = `${status} marked`.trim();
+        if (userAnswers[index] && marked[index]) status = 'answered-marked';
+        else if (marked[index]) status = `${status} marked`.trim();
         const currentClass = index === current ? ' current' : '';
         return `<button type="button" class="${status}${currentClass}" onclick="goToQuestion(${index})">${index + 1}</button>`;
       }).join('');
@@ -1864,6 +2242,7 @@ Fix these issues:
 
     function submitQuiz() {
       if (submitted) return;
+      saveCurrentQuestionTime();
       submitted = true;
       clearInterval(timerId);
       showResult();
@@ -1896,6 +2275,68 @@ Fix these issues:
           <p>Accuracy: ${accuracy}%</p>
         </div>`;
       }).join('');
+    }
+
+    function getUniqueSections() {
+      return [...new Set(questions.map(question => question.section))].sort((a, b) => a.localeCompare(b));
+    }
+
+    function filterResults(status, section, query = '') {
+      const normalizedQuery = query.trim().toLowerCase();
+      document.querySelectorAll('.review-item').forEach(item => {
+        const statusMatch = status === 'all' || item.dataset.status === status;
+        const sectionMatch = section === 'all' || item.dataset.section === section;
+        const searchMatch = !normalizedQuery || item.innerText.toLowerCase().includes(normalizedQuery);
+        item.style.display = statusMatch && sectionMatch && searchMatch ? 'block' : 'none';
+      });
+
+      document.querySelectorAll('[data-filter-status]').forEach(button => {
+        button.classList.toggle('active', button.dataset.filterStatus === status);
+      });
+    }
+
+    function handleResultFilter(status) {
+      const section = document.getElementById('sectionFilter')?.value || 'all';
+      const query = document.getElementById('resultSearch')?.value || '';
+      filterResults(status, section, query);
+    }
+
+    function handleSectionFilter() {
+      const active = document.querySelector('[data-filter-status].active');
+      const query = document.getElementById('resultSearch')?.value || '';
+      filterResults(active ? active.dataset.filterStatus : 'all', document.getElementById('sectionFilter').value, query);
+    }
+
+    function handleResultSearch() {
+      const active = document.querySelector('[data-filter-status].active');
+      const section = document.getElementById('sectionFilter')?.value || 'all';
+      filterResults(active ? active.dataset.filterStatus : 'all', section, document.getElementById('resultSearch').value);
+    }
+
+    function performanceLabel(percentage, attempted, total, averageTime) {
+      if (percentage >= 85 && attempted / total >= 0.85) return 'Excellent';
+      if (percentage >= 70) return 'Strong';
+      if (percentage >= 50) return averageTime > 90 ? 'Needs speed practice' : 'Needs accuracy work';
+      return 'Needs revision';
+    }
+
+    function buildTimeInsights() {
+      const rows = questions.map((question, index) => ({
+        index,
+        question,
+        time: questionTimes[index] || 0,
+        user: userAnswers[index]
+      }));
+      const fastestCorrect = rows.filter(row => row.user === row.question.ans).sort((a, b) => a.time - b.time)[0];
+      const slowestWrong = rows.filter(row => row.user && row.user !== row.question.ans).sort((a, b) => b.time - a.time)[0];
+      const careless = rows.filter(row => row.user && row.user !== row.question.ans && row.time <= 20).length;
+
+      return `<div class="analysis-card">
+        <h3>Time Insights</h3>
+        <p>Fastest correct: ${fastestCorrect ? `Q${fastestCorrect.index + 1} (${formatTime(fastestCorrect.time)})` : 'N/A'}</p>
+        <p>Slowest wrong: ${slowestWrong ? `Q${slowestWrong.index + 1} (${formatTime(slowestWrong.time)})` : 'N/A'}</p>
+        <p>Fast wrong attempts: ${careless}</p>
+      </div>`;
     }
 
     function showResult() {
@@ -1936,11 +2377,12 @@ Fix these issues:
           ? `<div class="explanation"><strong>Explanation:</strong> ${escapeHtml(question.explanation)}</div>`
           : `<div class="explanation"><strong>Explanation:</strong> No explanation added for this question.</div>`;
 
-        return `<div class="review-item ${status}">
+        return `<div class="review-item ${status}" data-status="${status}" data-section="${escapeHtml(question.section)}">
           <h3>Q${index + 1}. ${escapeHtml(question.q)}</h3>
           <p class="answer-line"><strong>Your Answer:</strong> ${escapeHtml(optionLabel(question, user))}</p>
           <p class="answer-line"><strong>Correct Answer:</strong> ${escapeHtml(optionLabel(question, correct))}</p>
           <p class="answer-line"><strong>Status:</strong> ${status === 'correct' ? 'Correct' : status === 'wrong' ? 'Wrong' : 'Not Attempted'}</p>
+          <p class="answer-line"><strong>Time Spent:</strong> ${formatTime(questionTimes[index] || 0)}</p>
           <div class="review-options">${optionsHtml}</div>
           ${explanation}
         </div>`;
@@ -1955,6 +2397,13 @@ Fix these issues:
       const timeTaken = totalSeconds - remainingSeconds;
       const takenMinutes = Math.floor(timeTaken / 60);
       const takenSeconds = timeTaken % 60;
+      const averageQuestionTime = questions.length
+        ? Math.round(questionTimes.reduce((sum, value) => sum + value, 0) / questions.length)
+        : 0;
+      const sectionOptions = getUniqueSections().map(section =>
+        `<option value="${escapeHtml(section)}">${escapeHtml(section)}</option>`
+      ).join('');
+      const label = performanceLabel(percentage, attempted, questions.length, averageQuestionTime);
       saveMistakes(mistakes);
       saveHistory({
         date: new Date().toLocaleString(),
@@ -1979,6 +2428,7 @@ Fix these issues:
           <div class="stat"><strong>${wrongCount}</strong><span>Wrong</span></div>
           <div class="stat"><strong>${notAttempted}</strong><span>Not Attempted</span></div>
           <div class="stat"><strong>${percentage}%</strong><span>Percentage</span></div>
+          <div class="stat"><strong>${label}</strong><span>Performance</span></div>
         </div>
         <div class="score-card">
           <div class="stat"><strong>${attempted}</strong><span>Attempted</span></div>
@@ -1986,12 +2436,24 @@ Fix these issues:
           <div class="stat"><strong>${negativeScore.toFixed(2)}</strong><span>Negative Marks</span></div>
           <div class="stat"><strong>${takenMinutes}:${String(takenSeconds).padStart(2, '0')}</strong><span>Time Taken</span></div>
           <div class="stat"><strong>${marked.filter(Boolean).length}</strong><span>Marked</span></div>
+          <div class="stat"><strong>${formatTime(averageQuestionTime)}</strong><span>Avg / Question</span></div>
         </div>
         <h2>Section Analysis</h2>
-        <div class="analysis-grid">${buildSectionAnalysis()}</div>
+        <div class="analysis-grid">${buildSectionAnalysis()}${buildTimeInsights()}</div>
         <div class="result-actions">
           <button type="button" onclick="restart()">Create New Quiz</button>
           <button type="button" class="secondary" onclick="window.print()">Save as PDF</button>
+        </div>
+        <div class="result-filters">
+          <input id="resultSearch" class="result-search" type="search" placeholder="Search question, section, explanation..." oninput="handleResultSearch()">
+          <button type="button" class="active" data-filter-status="all" onclick="handleResultFilter('all')">All</button>
+          <button type="button" data-filter-status="correct" onclick="handleResultFilter('correct')">Correct</button>
+          <button type="button" data-filter-status="wrong" onclick="handleResultFilter('wrong')">Incorrect</button>
+          <button type="button" data-filter-status="not-attempted" onclick="handleResultFilter('not-attempted')">Not Attempted</button>
+          <select id="sectionFilter" onchange="handleSectionFilter()">
+            <option value="all">All Sections</option>
+            ${sectionOptions}
+          </select>
         </div>
         ${reviewHtml}
       `;
@@ -2001,6 +2463,9 @@ Fix these issues:
       clearInterval(timerId);
       document.getElementById('timer').textContent = '00:00';
       resetTopQuestion();
+      questionTimes = [];
+      questionStartedAt = 0;
+      paused = false;
       document.getElementById('setup').style.display = 'block';
       document.getElementById('result').style.display = 'none';
       document.getElementById('exam').style.display = 'none';
@@ -2013,6 +2478,8 @@ Fix these issues:
       const reader = new FileReader();
       reader.onload = () => {
         document.getElementById('input').value = reader.result;
+        showPdfStatus('File imported. Click Auto Arrange Text if it is not already in quiz format.');
+        updateSetupCounts();
         event.target.value = '';
       };
       reader.readAsText(file);
@@ -2047,7 +2514,9 @@ Fix these issues:
         const extracted = pages.join('\n\n');
         const converted = convertExtractedPdfText(extracted);
         document.getElementById('input').value = converted;
-        showPdfStatus(`Extracted ${pdf.numPages} page(s). Review the questions once before starting the test.`);
+        const count = countFormattedQuestions(converted);
+        showPdfStatus(`Extracted ${pdf.numPages} page(s) and arranged ${count} question(s). Review once before starting the test.`);
+        updateSetupCounts();
       } catch (error) {
         showPdfStatus('PDF extraction failed. This can happen with scanned PDFs. Try OCR or paste the text manually.');
       }
@@ -2082,12 +2551,14 @@ C) Watt
 D) Pascal
 Answer: C
 Explanation: Power is the rate of doing work. Its SI unit is watt, where one watt equals one joule per second.`;
+      updateSetupCounts();
     }
 
     renderHistory();
     resetTopQuestion();
     updateThemeButton();
     updateViewButton();
+    updateSetupCounts();
   </script>
 </body>
 </html>

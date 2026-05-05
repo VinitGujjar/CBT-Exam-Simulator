@@ -15,6 +15,7 @@ A lightweight browser-based CBT exam simulator for practice tests, previous year
 - Random option order
 - Manual question paste
 - TXT/CSV import
+- Auto Arrange Text for messy pasted/imported questions
 - Browser-only PDF text extraction
 - Practice mode and exam mode
 - Mistake notebook for wrong questions
