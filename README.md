@@ -17,6 +17,8 @@ A lightweight browser-based CBT exam simulator for practice tests, previous year
 - TXT/CSV import
 - Auto Arrange Text for messy pasted/imported questions
 - Browser-only PDF text extraction
+- Local PDF.js files for better offline support
+- Question preview and missing-data checker before starting
 - Practice mode and exam mode
 - Mistake notebook for wrong questions
 - Recent test history saved in the browser
@@ -30,6 +32,7 @@ A lightweight browser-based CBT exam simulator for practice tests, previous year
 
 ```text
 Section: Physics
+Que 1
 What is the SI unit of power?
 A) Newton
 B) Joule
@@ -58,6 +61,7 @@ After extraction, review the questions once before starting the test because PDF
 Create MCQ questions for CBT Exam Simulator in exactly this format:
 
 Section: [topic name]
+Que 1
 Question text?
 A) option 1
 B) option 2
@@ -67,9 +71,14 @@ Answer: A/B/C/D
 Explanation: short explanation of the correct answer
 
 Rules:
+- Start every question with a question marker: Que 1, Que 2, Que 3, and so on.
 - Use only four options: A, B, C, D.
-- Put one blank line between questions.
+- Do not put blank lines inside one question set.
+- Keep Question, A, B, C, D, Answer, and Explanation on consecutive lines.
+- For statement/assertion questions, do not add a blank line between the question and statements.
+- Put exactly one blank line only after the full Explanation line, before the next question starts.
 - Do not use bullets, tables, markdown headings, or extra numbering.
+- Do not add introductory lines like "Here are the questions", "Sure", or "Below is the formatted quiz".
 - Keep the answer as only one letter after "Answer:".
 - Make explanations exam-focused and concise.
 ```
@@ -80,6 +89,7 @@ Rules:
 Extract all MCQs from this PDF and convert them into this exact format:
 
 Section: [subject/topic/chapter name]
+Que 1
 Question text?
 A) option 1
 B) option 2
@@ -89,12 +99,17 @@ Answer: A/B/C/D
 Explanation: solution or reason for the correct answer
 
 Important rules:
+- Start every question with a question marker: Que 1, Que 2, Que 3, and so on.
 - If answers or solutions are at the end of the PDF, match them with the correct question number.
 - Preserve technical terms, units, formulas, and year tags like [SSC-JE-2023].
 - Do not mix two questions together.
 - Do not include page headers, footers, watermarks, or page numbers.
 - If a question has a table or assertion-reason format, rewrite it clearly as plain text.
-- Put exactly one blank line between questions.
+- Do not put blank lines inside one question set.
+- Keep Question, A, B, C, D, Answer, and Explanation on consecutive lines.
+- For statement/assertion questions, do not add a blank line between the question and statements.
+- Put exactly one blank line only after the full Explanation line, before the next question starts.
+- Do not add introductory lines like "Here are the questions", "Sure", or "Below is the formatted quiz".
 - Return only the final formatted questions, no extra explanation.
 ```
 
@@ -119,6 +134,8 @@ cbt-exam-simulator/
   README.md
   sample-questions.txt
   screenshots/
+  vendor/
+    pdfjs/
 ```
 
 ## Important

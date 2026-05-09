@@ -366,11 +366,79 @@
       font-weight: 700;
     }
 
+    .history-chart {
+      display: flex;
+      align-items: end;
+      gap: 8px;
+      min-height: 100px;
+      margin-top: 12px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .history-bar {
+      flex: 1;
+      min-width: 22px;
+      border-radius: 5px 5px 0 0;
+      background: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      text-align: center;
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      padding-top: 4px;
+    }
+
     .setup-summary {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 10px;
       margin: 14px 0;
+    }
+
+    .preview-panel {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #f8fafc;
+    }
+
+    body.dark .preview-panel {
+      background: #0B1220;
+    }
+
+    .preview-grid {
+      display: grid;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .preview-card {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+    }
+
+    .preview-card.problem {
+      border-color: var(--danger);
+      background: var(--danger-soft);
+    }
+
+    .preview-card h4 {
+      margin: 0 0 8px;
+    }
+
+    .preview-card p {
+      margin: 5px 0;
+      color: var(--muted);
+      font-weight: 700;
     }
 
     .summary-pill {
@@ -1086,6 +1154,7 @@
       </div>
       <div id="pdfStatus" class="pdf-status"></div>
       <pre class="format">Section: Physics
+Que 1
 What is the SI unit of power?
 A) Newton
 B) Joule
@@ -1189,7 +1258,7 @@ Fix these issues:
         </div>
       </details>
 
-      <textarea id="input" placeholder="Paste your questions here..."></textarea>
+      <textarea id="input" placeholder="Paste your questions here..." oninput="updateSetupCounts()"></textarea>
 
       <div class="setup-grid">
         <label class="field">
@@ -1234,6 +1303,7 @@ Fix these issues:
 
       <div class="setup-actions">
         <button type="button" onclick="startQuiz()">Start Quiz</button>
+        <button type="button" class="secondary" onclick="showQuestionPreview()">Preview & Check</button>
         <button type="button" class="secondary" onclick="loadSample()">Load Sample</button>
         <button type="button" class="secondary" onclick="loadMistakeNotebook()">Review Mistakes</button>
         <button type="button" class="secondary" onclick="loadBookmarkedQuestions()">Review Bookmarks</button>
@@ -1251,6 +1321,13 @@ Fix these issues:
       <div class="history-panel">
         <h3>Recent Test History</h3>
         <div id="history-list" class="history-list">No saved tests yet.</div>
+        <div id="history-chart" class="history-chart"></div>
+      </div>
+
+      <div id="preview-panel" class="preview-panel">
+        <h3>Question Preview & Checker</h3>
+        <div id="preview-summary" class="history-list"></div>
+        <div id="preview-grid" class="preview-grid"></div>
       </div>
 
       <div id="error" class="error"></div>
@@ -1309,7 +1386,11 @@ Fix these issues:
     <section id="result" class="panel result-page"></section>
   </main>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script type="module">
+    import * as pdfjs from './vendor/pdfjs/pdf.min.mjs';
+    window.pdfjsLib = pdfjs;
+  </script>
+  <script nomodule src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
     let questions = [];
     let current = 0;
@@ -1505,17 +1586,24 @@ Fix these issues:
 
     function renderHistory() {
       const list = document.getElementById('history-list');
+      const chart = document.getElementById('history-chart');
       if (!list) return;
 
       const history = loadHistory();
       if (!history.length) {
         list.textContent = 'No saved tests yet.';
+        if (chart) chart.innerHTML = '';
         return;
       }
 
       list.innerHTML = history.slice(0, 5).map(item => `
         <div>${escapeHtml(item.date)} | Score ${escapeHtml(item.score)} | Accuracy ${item.accuracy}% | Attempted ${item.attempted}/${item.total}</div>
       `).join('');
+      if (chart) {
+        chart.innerHTML = history.slice(0, 5).reverse().map(item => `
+          <div class="history-bar" title="${escapeHtml(item.date)} - ${item.accuracy}%" style="height:${Math.max(8, item.accuracy)}%">${item.accuracy}%</div>
+        `).join('');
+      }
     }
 
     function saveMistakes(mistakes) {
@@ -1713,7 +1801,7 @@ Fix these issues:
 
     function findQuestionStarts(text) {
       const starts = [];
-      const startPattern = /(?:^|\n)\s*(\d{1,4})\s*[\).\:-]\s+(?![\(\[]?\s*[A-Da-d]\s*[\)\]])/g;
+      const startPattern = /(?:^|\n)\s*(?:(?:que|ques|question|q)\s*)?(\d{1,4})\s*[\).\:-]?\s+(?![\(\[]?\s*[A-Da-d]\s*[\)\]])/gi;
       let match;
 
       while ((match = startPattern.exec(text))) {
@@ -1771,7 +1859,7 @@ Fix these issues:
 
       const firstOptionIndex = body.search(/(?:^|\s|\n)[\(\[]?[A-Da-d][\)\]]\s+/);
       const rawQuestion = firstOptionIndex > -1 ? body.slice(0, firstOptionIndex) : body;
-      const questionText = cleanInlineText(rawQuestion.replace(new RegExp(`^\\s*${number}\\s*[\\).\\:-]\\s*`), ''));
+      const questionText = cleanInlineText(rawQuestion.replace(new RegExp(`^\\s*(?:que|ques|question|q)?\\s*${number}\\s*[\\).\\:-]?\\s*`, 'i'), ''));
       const inlineAnswer = extractInlineAnswer(body);
       const inlineExplanation = extractInlineExplanation(body);
       const solution = getAnswerDataForQuestion(answerData, number, questionIndex);
@@ -1891,12 +1979,47 @@ Fix these issues:
       return parts.join('\n');
     }
 
-    function parseQuiz(text) {
-      const blocks = text
-        .trim()
+    function splitQuestionBlocks(text) {
+      const normalized = text.trim();
+      if (!normalized) return [];
+
+      const markerPattern = /(?:^|\n)\s*(?:(?:que|ques|question|q)\s*)\d{1,4}\s*[\).\:-]?\s+/gi;
+      const markers = [...normalized.matchAll(markerPattern)];
+
+      if (markers.length >= 1) {
+        const prefix = normalized.slice(0, markers[0].index).trim();
+        const sharedSection = prefix.match(/^section\s*:.+/im)?.[0] || '';
+
+        return markers.map((marker, index) => {
+          const start = marker.index + (marker[0].startsWith('\n') ? 1 : 0);
+          const next = markers[index + 1];
+          const end = next ? next.index : normalized.length;
+          const block = normalized.slice(start, end).trim();
+          return sharedSection && !/^section\s*:/im.test(block) ? `${sharedSection}\n${block}` : block;
+        }).filter(Boolean);
+      }
+
+      return normalized
         .split(/\n\s*\n/)
         .map(block => block.trim())
         .filter(Boolean);
+    }
+
+    function cleanQuestionMarker(line) {
+      return line.replace(/^\s*(?:(?:que|ques|question|q)\s*)?\d{1,4}\s*[\).\:-]?\s*/i, '').trim();
+    }
+
+    function parseOptionLine(line) {
+      const match = line.match(/^\s*[\(\[]?([A-Da-d])[\)\].:-]\s*(.+)$/);
+      if (!match) return null;
+      return {
+        key: match[1].toUpperCase(),
+        text: match[2].trim()
+      };
+    }
+
+    function parseQuiz(text) {
+      const blocks = splitQuestionBlocks(text);
 
       if (!blocks.length) {
         throw new Error('Please paste at least one question.');
@@ -1911,14 +2034,14 @@ Fix these issues:
         const sectionLine = lines.find(line => /^section\s*:/i.test(line));
         const answerLine = lines.find(line => /^answer\s*:/i.test(line));
         const explanationLineIndex = lines.findIndex(line => /^explanation\s*:/i.test(line));
-        const optionLines = lines.filter(line => /^[A-D]\)\s+/i.test(line));
+        const optionLines = lines.map(parseOptionLine).filter(Boolean);
         const questionLines = lines.filter((line, lineIndex) =>
           !/^section\s*:/i.test(line) &&
-          !/^[A-D]\)\s+/i.test(line) &&
+          !parseOptionLine(line) &&
           !/^answer\s*:/i.test(line) &&
           !/^explanation\s*:/i.test(line) &&
           (explanationLineIndex === -1 || lineIndex < explanationLineIndex)
-        );
+        ).map((line, lineIndex) => lineIndex === 0 ? cleanQuestionMarker(line) : line).filter(Boolean);
 
         if (!questionLines.length) {
           throw new Error(`Question ${index + 1} is missing the question text.`);
@@ -1949,14 +2072,63 @@ Fix these issues:
         return {
           q: questionLines.join(' '),
           section: sectionLine ? sectionLine.split(':').slice(1).join(':').trim() || 'General' : 'General',
-          options: optionLines.map(line => ({
-            key: line.charAt(0).toUpperCase(),
-            text: line.slice(2).trim()
-          })),
+          options: optionLines,
           ans: answer,
           explanation
         };
       });
+    }
+
+    function getQuestionIssues(question, seenQuestions) {
+      const issues = [];
+      const normalizedQuestion = question.q.toLowerCase().replace(/\s+/g, ' ').trim();
+
+      if (seenQuestions.has(normalizedQuestion)) issues.push('Duplicate question');
+      if (question.options.length !== 4) issues.push('Options should be exactly 4');
+      if (!/^[A-D]$/.test(question.ans)) issues.push('Invalid or missing answer');
+      if (!question.options.some(option => option.key === question.ans)) issues.push('Answer letter not found in options');
+      if (!question.explanation) issues.push('Explanation missing');
+
+      seenQuestions.add(normalizedQuestion);
+      return issues;
+    }
+
+    function showQuestionPreview() {
+      const panel = document.getElementById('preview-panel');
+      const summary = document.getElementById('preview-summary');
+      const grid = document.getElementById('preview-grid');
+
+      try {
+        const parsed = parseQuiz(document.getElementById('input').value);
+        const seen = new Set();
+        const rows = parsed.map((question, index) => ({
+          question,
+          index,
+          issues: getQuestionIssues(question, seen)
+        }));
+        const problemCount = rows.filter(row => row.issues.length).length;
+
+        summary.innerHTML = `
+          <div>Total questions: ${parsed.length}</div>
+          <div>Need review: ${problemCount}</div>
+          <div>Ready: ${parsed.length - problemCount}</div>
+        `;
+        grid.innerHTML = rows.map(row => `
+          <div class="preview-card ${row.issues.length ? 'problem' : ''}">
+            <h4>Q${row.index + 1}. ${escapeHtml(row.question.q)}</h4>
+            <p>Section: ${escapeHtml(row.question.section)}</p>
+            <p>Options: ${row.question.options.length} | Answer: ${escapeHtml(row.question.ans || 'Missing')}</p>
+            <p>Explanation: ${row.question.explanation ? 'Added' : 'Missing'}</p>
+            <p>${row.issues.length ? `Issues: ${row.issues.map(escapeHtml).join(', ')}` : 'Looks good'}</p>
+          </div>
+        `).join('');
+        panel.style.display = 'block';
+        updateSetupCounts();
+      } catch (error) {
+        panel.style.display = 'block';
+        summary.innerHTML = `<div>${escapeHtml(error.message)}</div>`;
+        grid.innerHTML = '';
+      }
     }
 
     function prepareQuestions(parsedQuestions) {
@@ -2489,6 +2661,10 @@ Fix these issues:
       const file = event.target.files[0];
       if (!file) return;
 
+      for (let attempt = 0; attempt < 10 && !window.pdfjsLib; attempt++) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+
       if (!window.pdfjsLib) {
         showPdfStatus('PDF extractor could not load. Please check your internet connection and try again.');
         event.target.value = '';
@@ -2498,7 +2674,7 @@ Fix these issues:
       showPdfStatus('Extracting PDF text...');
 
       try {
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        pdfjsLib.GlobalWorkerOptions.workerSrc = './vendor/pdfjs/pdf.worker.min.mjs';
         const buffer = await file.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
         const pages = [];
