@@ -2,9 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CBT Exam Simulator</title>
-<link rel="icon" type="image/png" href="favicon.png?v=4">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CBT Exam Simulator</title>
   <style>
     :root {
       --bg: #F8FAFC;
@@ -368,30 +367,116 @@
     }
 
     .history-chart {
-      display: flex;
-      align-items: end;
-      gap: 8px;
-      min-height: 100px;
+      display: grid;
+      gap: 12px;
       margin-top: 12px;
-      padding: 10px;
+    }
+
+    .analytics-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+    }
+
+    .metric-card,
+    .chart-card,
+    .topic-card {
       border: 1px solid var(--line);
       border-radius: 8px;
       background: var(--panel);
+      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
     }
 
-    .history-bar {
-      flex: 1;
-      min-width: 22px;
-      border-radius: 5px 5px 0 0;
-      background: var(--primary);
-      color: #fff;
-      font-size: 11px;
+    .metric-card {
+      padding: 12px;
+    }
+
+    .metric-card strong {
+      display: block;
+      font-size: 22px;
+      color: var(--text);
+    }
+
+    .metric-card span {
+      color: var(--muted);
+      font-size: 12px;
       font-weight: 800;
-      text-align: center;
-      display: flex;
-      align-items: flex-start;
-      justify-content: center;
-      padding-top: 4px;
+      text-transform: uppercase;
+    }
+
+    .chart-grid,
+    .topic-dashboard {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .chart-card,
+    .topic-card {
+      padding: 12px;
+      overflow: hidden;
+    }
+
+    .chart-card h4,
+    .topic-card h4 {
+      margin: 0 0 10px;
+      font-size: 15px;
+    }
+
+    .chart-svg {
+      width: 100%;
+      height: 180px;
+      overflow: visible;
+    }
+
+    .chart-line {
+      fill: none;
+      stroke: var(--primary);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      stroke-dasharray: 600;
+      stroke-dashoffset: 600;
+      animation: drawLine 0.9s ease forwards;
+    }
+
+    .chart-line.accuracy-line {
+      stroke: var(--success);
+    }
+
+    .chart-point {
+      fill: var(--panel);
+      stroke: var(--primary);
+      stroke-width: 3;
+    }
+
+    .chart-point.accuracy-point {
+      stroke: var(--success);
+    }
+
+    .chart-axis {
+      stroke: var(--line);
+      stroke-width: 1;
+    }
+
+    .chart-label {
+      fill: var(--muted);
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .topic-card ul {
+      margin: 0;
+      padding-left: 18px;
+      color: var(--muted);
+      font-weight: 700;
+      line-height: 1.6;
+    }
+
+    @keyframes drawLine {
+      to {
+        stroke-dashoffset: 0;
+      }
     }
 
     .setup-summary {
@@ -539,10 +624,6 @@
       background: var(--mark);
     }
 
-    .bookmark-btn {
-      background: #0F766E;
-    }
-
     .pause-btn {
       background: #475569;
     }
@@ -686,9 +767,20 @@
       border-top: 1px solid var(--line);
     }
 
+    .question-actions > div {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
     .side-panel {
       align-self: start;
       padding: 16px;
+      position: sticky;
+      top: 16px;
+      max-height: calc(100vh - 32px);
+      overflow: auto;
     }
 
     .side-panel h2 {
@@ -732,6 +824,9 @@
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 8px;
+      max-height: 320px;
+      overflow-y: auto;
+      padding-right: 3px;
     }
 
     .palette button {
@@ -770,6 +865,44 @@
       background: linear-gradient(135deg, var(--success-soft) 0 50%, var(--mark-soft) 50% 100%);
       color: #334155;
       border-color: #9fbcdf;
+    }
+
+    .palette-tools,
+    .palette-pager {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .palette-tools input {
+      min-width: 0;
+      width: 100%;
+      padding: 9px 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      color: var(--text);
+      font: inherit;
+      font-weight: 700;
+    }
+
+    .palette-tools button,
+    .palette-pager button {
+      padding: 9px 10px;
+      white-space: nowrap;
+    }
+
+    .palette-pager {
+      align-items: center;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .palette-pager button:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
     }
 
     .legend {
@@ -1058,7 +1191,9 @@
 
       .setup-grid,
       .score-card,
-      .analysis-grid {
+      .analysis-grid,
+      .chart-grid,
+      .topic-dashboard {
         grid-template-columns: repeat(2, 1fr);
       }
 
@@ -1068,6 +1203,8 @@
 
       .side-panel {
         order: -1;
+        position: static;
+        max-height: none;
       }
     }
 
@@ -1086,7 +1223,9 @@
 
       .setup-grid,
       .score-card,
-      .analysis-grid {
+      .analysis-grid,
+      .chart-grid,
+      .topic-dashboard {
         grid-template-columns: 1fr;
       }
 
@@ -1306,8 +1445,6 @@ Fix these issues:
         <button type="button" onclick="startQuiz()">Start Quiz</button>
         <button type="button" class="secondary" onclick="showQuestionPreview()">Preview & Check</button>
         <button type="button" class="secondary" onclick="loadSample()">Load Sample</button>
-        <button type="button" class="secondary" onclick="loadMistakeNotebook()">Review Mistakes</button>
-        <button type="button" class="secondary" onclick="loadBookmarkedQuestions()">Review Bookmarks</button>
         <button type="button" class="secondary" onclick="exportSavedData()">Export Data</button>
         <button type="button" class="secondary" onclick="document.getElementById('dataInput').click()">Import Data</button>
         <input id="dataInput" type="file" accept=".json,application/json" style="display: none;" onchange="importSavedData(event)">
@@ -1316,7 +1453,6 @@ Fix these issues:
       <div class="setup-summary">
         <div class="summary-pill">Ready Questions: <span id="ready-count">0</span></div>
         <div class="summary-pill">Saved Mistakes: <span id="mistake-count">0</span></div>
-        <div class="summary-pill">Bookmarks: <span id="bookmark-count">0</span></div>
       </div>
 
       <div class="history-panel">
@@ -1353,14 +1489,15 @@ Fix these issues:
 
         <div class="question-actions">
           <div>
+            <button type="button" class="secondary" onclick="firstQuestion()">First</button>
             <button type="button" class="secondary" onclick="previousQuestion()">Previous</button>
             <button type="button" class="secondary" onclick="clearAnswer()">Clear</button>
             <button type="button" class="mark-btn" onclick="toggleMark()">Mark</button>
-            <button type="button" class="bookmark-btn" onclick="toggleBookmarkCurrent()">Bookmark</button>
             <button type="button" class="pause-btn" onclick="togglePause()">Pause</button>
           </div>
           <div>
             <button type="button" onclick="nextQuestion()">Save & Next</button>
+            <button type="button" class="secondary" onclick="lastQuestion()">Last</button>
             <button type="button" class="danger" onclick="confirmSubmit()">Submit</button>
           </div>
         </div>
@@ -1373,6 +1510,15 @@ Fix these issues:
           <div class="stat"><strong id="unanswered-count">0</strong><span>Unanswered</span></div>
           <div class="stat"><strong id="marked-count">0</strong><span>Marked</span></div>
           <div class="stat"><strong id="visited-count">0</strong><span>Visited</span></div>
+        </div>
+        <div class="palette-tools">
+          <input id="paletteSearch" type="number" min="1" placeholder="Jump to Q" onkeydown="handlePaletteSearchKey(event)">
+          <button type="button" onclick="jumpToQuestionNumber()">Go</button>
+        </div>
+        <div class="palette-pager">
+          <button id="palette-prev" type="button" class="secondary" onclick="previousPalettePage()">Previous</button>
+          <span id="palette-range">0-0</span>
+          <button id="palette-next" type="button" class="secondary" onclick="nextPalettePage()">Next</button>
         </div>
         <div id="palette" class="palette"></div>
         <div class="legend">
@@ -1410,6 +1556,8 @@ Fix these issues:
     let testMode = 'exam';
     let themeMode = 'light';
     let viewMode = 'auto';
+    let palettePage = 0;
+    const palettePageSize = 30;
 
     function escapeHtml(value) {
       return String(value)
@@ -1564,10 +1712,8 @@ Fix these issues:
     function updateSetupCounts() {
       const ready = document.getElementById('ready-count');
       const mistakes = document.getElementById('mistake-count');
-      const bookmarks = document.getElementById('bookmark-count');
       if (ready) ready.textContent = countFormattedQuestions(`\n${document.getElementById('input').value || ''}`);
       if (mistakes) mistakes.textContent = getMistakeQuestionCount();
-      if (bookmarks) bookmarks.textContent = loadBookmarks().length;
     }
 
     function loadHistory() {
@@ -1601,10 +1747,127 @@ Fix these issues:
         <div>${escapeHtml(item.date)} | Score ${escapeHtml(item.score)} | Accuracy ${item.accuracy}% | Attempted ${item.attempted}/${item.total}</div>
       `).join('');
       if (chart) {
-        chart.innerHTML = history.slice(0, 5).reverse().map(item => `
-          <div class="history-bar" title="${escapeHtml(item.date)} - ${item.accuracy}%" style="height:${Math.max(8, item.accuracy)}%">${item.accuracy}%</div>
-        `).join('');
+        chart.innerHTML = buildHistoryAnalytics(history);
       }
+    }
+
+    function getHistoryScorePercent(item) {
+      if (Number.isFinite(item.scorePercent)) return item.scorePercent;
+      const parts = String(item.score || '').split('/').map(Number);
+      if (parts.length === 2 && parts[1] > 0) return Math.max(0, Math.round((parts[0] / parts[1]) * 100));
+      return Number(item.accuracy) || 0;
+    }
+
+    function average(values) {
+      const valid = values.filter(value => Number.isFinite(value));
+      if (!valid.length) return 0;
+      return Math.round(valid.reduce((sum, value) => sum + value, 0) / valid.length);
+    }
+
+    function buildHistoryAnalytics(history) {
+      const scoreValues = history.map(getHistoryScorePercent);
+      const accuracyValues = history.map(item => Number(item.accuracy) || 0);
+      const cards = [
+        ['Total Tests', history.length],
+        ['Average Score', `${average(scoreValues)}%`],
+        ['Average Accuracy', `${average(accuracyValues)}%`],
+        ['Highest Score', `${Math.max(...scoreValues)}%`],
+        ['Lowest Score', `${Math.min(...scoreValues)}%`],
+        ['Best Accuracy', `${Math.max(...accuracyValues)}%`]
+      ].map(([label, value]) => `
+        <div class="metric-card"><strong>${value}</strong><span>${label}</span></div>
+      `).join('');
+
+      const trend = history.slice(0, 8).reverse();
+      return `
+        <div class="analytics-summary">${cards}</div>
+        <div class="chart-grid">
+          ${buildLineChart('Performance Trend', trend, getHistoryScorePercent, 'Score %', false)}
+          ${buildLineChart('Accuracy Trend', trend, item => Number(item.accuracy) || 0, 'Accuracy %', true)}
+        </div>
+        ${buildTopicDashboard(history)}
+      `;
+    }
+
+    function buildLineChart(title, items, valueGetter, label, isAccuracy) {
+      if (!items.length) {
+        return `<div class="chart-card"><h4>${title}</h4><p class="hint">Complete a test to see this chart.</p></div>`;
+      }
+
+      const width = 520;
+      const height = 180;
+      const padding = 28;
+      const points = items.map((item, index) => {
+        const value = Math.max(0, Math.min(100, Number(valueGetter(item)) || 0));
+        const x = items.length === 1
+          ? width / 2
+          : padding + (index * (width - padding * 2)) / (items.length - 1);
+        const y = height - padding - (value * (height - padding * 2)) / 100;
+        return { x, y, value, item };
+      });
+      const path = points.map((point, index) => `${index ? 'L' : 'M'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(' ');
+      const lineClass = isAccuracy ? 'chart-line accuracy-line' : 'chart-line';
+      const pointClass = isAccuracy ? 'chart-point accuracy-point' : 'chart-point';
+
+      return `<div class="chart-card">
+        <h4>${title}</h4>
+        <svg class="chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${title}">
+          <line class="chart-axis" x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}"></line>
+          <line class="chart-axis" x1="${padding}" y1="${padding}" x2="${padding}" y2="${height - padding}"></line>
+          <text class="chart-label" x="${padding}" y="16">100%</text>
+          <text class="chart-label" x="${padding}" y="${height - 6}">0%</text>
+          <path class="${lineClass}" d="${path}"></path>
+          ${points.map(point => `
+            <circle class="${pointClass}" cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="5">
+              <title>${escapeHtml(point.item.date)} - ${label}: ${point.value}%</title>
+            </circle>
+          `).join('')}
+        </svg>
+      </div>`;
+    }
+
+    function buildTopicDashboard(history) {
+      const aggregate = {};
+      history.forEach(item => {
+        Object.entries(item.sectionStats || {}).forEach(([name, data]) => {
+          if (!aggregate[name]) aggregate[name] = { total: 0, correct: 0, wrong: 0, attempted: 0 };
+          aggregate[name].total += Number(data.total) || 0;
+          aggregate[name].correct += Number(data.correct) || 0;
+          aggregate[name].wrong += Number(data.wrong) || 0;
+          aggregate[name].attempted += Number(data.attempted) || 0;
+        });
+      });
+
+      const rows = Object.entries(aggregate).map(([name, data]) => ({
+        name,
+        ...data,
+        accuracy: data.attempted ? Math.round((data.correct / data.attempted) * 100) : 0
+      }));
+      const strong = rows.filter(row => row.attempted).sort((a, b) => b.accuracy - a.accuracy).slice(0, 3);
+      const weak = rows.filter(row => row.attempted).sort((a, b) => a.accuracy - b.accuracy).slice(0, 3);
+      const mistakes = rows.sort((a, b) => b.wrong - a.wrong).slice(0, 3);
+      const renderList = (items, fallback, formatter) => items.length
+        ? `<ul>${items.map(item => `<li>${formatter(item)}</li>`).join('')}</ul>`
+        : `<p class="hint">${fallback}</p>`;
+
+      return `<div class="topic-dashboard">
+        <div class="topic-card">
+          <h4>Strong Topics</h4>
+          ${renderList(strong, 'Topic data will appear after section-based tests.', item => `${escapeHtml(item.name)} - ${item.accuracy}%`)}
+        </div>
+        <div class="topic-card">
+          <h4>Weak Topics</h4>
+          ${renderList(weak, 'Weak topics will appear after more tests.', item => `${escapeHtml(item.name)} - ${item.accuracy}%`)}
+        </div>
+        <div class="topic-card">
+          <h4>Most Mistakes</h4>
+          ${renderList(mistakes, 'Mistake counts will appear after tests.', item => `${escapeHtml(item.name)} - ${item.wrong} wrong`)}
+        </div>
+        <div class="topic-card">
+          <h4>Frequently Incorrect Questions</h4>
+          <p class="hint">Question-level frequency is ready for future saved-test comparison.</p>
+        </div>
+      </div>`;
     }
 
     function saveMistakes(mistakes) {
@@ -2200,6 +2463,7 @@ Fix these issues:
 
       questions = prepareQuestions(parsedQuestions);
       current = 0;
+      palettePage = 0;
       userAnswers = Array(questions.length).fill(null);
       visited = Array(questions.length).fill(false);
       marked = Array(questions.length).fill(false);
@@ -2297,6 +2561,7 @@ Fix these issues:
 
     function showQuestion() {
       visited[current] = true;
+      palettePage = Math.floor(current / palettePageSize);
 
       const question = questions[current];
       const statusParts = [];
@@ -2306,7 +2571,7 @@ Fix these issues:
 
       document.getElementById('question-count').textContent = `Question ${current + 1} of ${questions.length}`;
       document.getElementById('top-question').textContent = `Q ${current + 1}/${questions.length}`;
-      document.getElementById('question-status').textContent = `${statusParts.join(' | ')}${isCurrentBookmarked() ? ' | Bookmarked' : ''}`;
+      document.getElementById('question-status').textContent = statusParts.join(' | ');
       updateQuestionTimerDisplay();
       document.getElementById('section-chip').textContent = question.section;
       document.getElementById('question-text').textContent = question.q;
@@ -2353,6 +2618,14 @@ Fix these issues:
       }
     }
 
+    function firstQuestion() {
+      if (current === 0) return;
+      saveCurrentQuestionTime();
+      current = 0;
+      resetQuestionTimer();
+      showQuestion();
+    }
+
     function nextQuestion() {
       if (current < questions.length - 1) {
         saveCurrentQuestionTime();
@@ -2362,6 +2635,14 @@ Fix these issues:
         return;
       }
       confirmSubmit();
+    }
+
+    function lastQuestion() {
+      if (current === questions.length - 1) return;
+      saveCurrentQuestionTime();
+      current = questions.length - 1;
+      resetQuestionTimer();
+      showQuestion();
     }
 
     function clearAnswer() {
@@ -2378,6 +2659,7 @@ Fix these issues:
       if (index === current) return;
       saveCurrentQuestionTime();
       current = index;
+      palettePage = Math.floor(index / palettePageSize);
       resetQuestionTimer();
       showQuestion();
     }
@@ -2392,7 +2674,19 @@ Fix these issues:
       document.getElementById('marked-count').textContent = markedCount;
       document.getElementById('visited-count').textContent = visitedCount;
 
-      document.getElementById('palette').innerHTML = questions.map((question, index) => {
+      const totalPages = Math.max(1, Math.ceil(questions.length / palettePageSize));
+      palettePage = Math.min(Math.max(palettePage, 0), totalPages - 1);
+      const start = palettePage * palettePageSize;
+      const end = Math.min(start + palettePageSize, questions.length);
+      const range = document.getElementById('palette-range');
+      const previous = document.getElementById('palette-prev');
+      const next = document.getElementById('palette-next');
+      if (range) range.textContent = `${questions.length ? start + 1 : 0}-${end} of ${questions.length}`;
+      if (previous) previous.disabled = palettePage === 0;
+      if (next) next.disabled = palettePage >= totalPages - 1;
+
+      document.getElementById('palette').innerHTML = questions.slice(start, end).map((question, offset) => {
+        const index = start + offset;
         let status = visited[index] ? 'unanswered' : '';
         if (userAnswers[index]) status = 'answered';
         if (userAnswers[index] && marked[index]) status = 'answered-marked';
@@ -2400,6 +2694,35 @@ Fix these issues:
         const currentClass = index === current ? ' current' : '';
         return `<button type="button" class="${status}${currentClass}" onclick="goToQuestion(${index})">${index + 1}</button>`;
       }).join('');
+    }
+
+    function previousPalettePage() {
+      if (palettePage > 0) {
+        palettePage--;
+        updatePalette();
+      }
+    }
+
+    function nextPalettePage() {
+      if ((palettePage + 1) * palettePageSize < questions.length) {
+        palettePage++;
+        updatePalette();
+      }
+    }
+
+    function jumpToQuestionNumber() {
+      const input = document.getElementById('paletteSearch');
+      const value = Number(input?.value);
+      if (!Number.isInteger(value) || value < 1 || value > questions.length) {
+        showPdfStatus(`Enter a question number between 1 and ${questions.length}.`);
+        return;
+      }
+      goToQuestion(value - 1);
+      if (input) input.value = '';
+    }
+
+    function handlePaletteSearchKey(event) {
+      if (event.key === 'Enter') jumpToQuestionNumber();
     }
 
     function confirmSubmit() {
@@ -2421,7 +2744,7 @@ Fix these issues:
       showResult();
     }
 
-    function buildSectionAnalysis() {
+    function collectSectionStats() {
       const sections = {};
 
       questions.forEach((question, index) => {
@@ -2437,6 +2760,12 @@ Fix these issues:
         if (user === question.ans) section.correct++;
         if (user && user !== question.ans) section.wrong++;
       });
+
+      return sections;
+    }
+
+    function buildSectionAnalysis() {
+      const sections = collectSectionStats();
 
       return Object.entries(sections).map(([name, data]) => {
         const accuracy = data.attempted ? Math.round((data.correct / data.attempted) * 100) : 0;
@@ -2502,12 +2831,16 @@ Fix these issues:
       }));
       const fastestCorrect = rows.filter(row => row.user === row.question.ans).sort((a, b) => a.time - b.time)[0];
       const slowestWrong = rows.filter(row => row.user && row.user !== row.question.ans).sort((a, b) => b.time - a.time)[0];
+      const slowest = rows.slice().sort((a, b) => b.time - a.time)[0];
       const careless = rows.filter(row => row.user && row.user !== row.question.ans && row.time <= 20).length;
+      const average = rows.length ? Math.round(rows.reduce((sum, row) => sum + row.time, 0) / rows.length) : 0;
 
       return `<div class="analysis-card">
         <h3>Time Insights</h3>
         <p>Fastest correct: ${fastestCorrect ? `Q${fastestCorrect.index + 1} (${formatTime(fastestCorrect.time)})` : 'N/A'}</p>
+        <p>Slowest question: ${slowest ? `Q${slowest.index + 1} (${formatTime(slowest.time)})` : 'N/A'}</p>
         <p>Slowest wrong: ${slowestWrong ? `Q${slowestWrong.index + 1} (${formatTime(slowestWrong.time)})` : 'N/A'}</p>
+        <p>Average time: ${formatTime(average)}</p>
         <p>Fast wrong attempts: ${careless}</p>
       </div>`;
     }
@@ -2581,9 +2914,15 @@ Fix these issues:
       saveHistory({
         date: new Date().toLocaleString(),
         score: `${finalScore.toFixed(2)}/${totalPossible.toFixed(2)}`,
+        scorePercent: percentage,
         accuracy: percentage,
         attempted,
-        total: questions.length
+        total: questions.length,
+        correct: correctCount,
+        wrong: wrongCount,
+        skipped: notAttempted,
+        negativeScore: Number(negativeScore.toFixed(2)),
+        sectionStats: collectSectionStats()
       });
 
       document.getElementById('exam').style.display = 'none';
@@ -2610,6 +2949,7 @@ Fix these issues:
           <div class="stat"><strong>${takenMinutes}:${String(takenSeconds).padStart(2, '0')}</strong><span>Time Taken</span></div>
           <div class="stat"><strong>${marked.filter(Boolean).length}</strong><span>Marked</span></div>
           <div class="stat"><strong>${formatTime(averageQuestionTime)}</strong><span>Avg / Question</span></div>
+          <div class="stat"><strong>N/A</strong><span>Rank / Percentile</span></div>
         </div>
         <h2>Section Analysis</h2>
         <div class="analysis-grid">${buildSectionAnalysis()}${buildTimeInsights()}</div>
