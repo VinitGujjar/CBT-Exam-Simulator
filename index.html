@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CBT Exam Simulator</title>
-  <link rel="icon" type="image/png" href="favicon.png" sizes="32x32">
+  <link rel="icon" type="image/png" href="favicon.png" sizes="64x64">
   <link rel="apple-touch-icon" href="favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -340,8 +340,7 @@
       border-radius: var(--radius-sm);
       line-height: 1.6;
       color: var(--text);
-      background: #fff;
-      transition: border-color var(--transition), box-shadow var(--transition);
+      background: transparent;
       font-size: 14px;
     }
 
@@ -1184,19 +1183,8 @@
     <div class="topbar">
       <div class="brand">
         <span class="logo" aria-hidden="true">
-          <svg viewBox="0 0 64 64" fill="none">
-            <path d="M32 5L53 13.5V29.5C53 43.2 44.2 55 32 59C19.8 55 11 43.2 11 29.5V13.5L32 5Z" fill="url(#logoShield)" stroke="rgba(255,255,255,0.86)" stroke-width="2"/>
-            <path d="M22 32.5L28.6 39L43 23.5" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M22 32.5L28.6 39L43 23.5" stroke="#22C55E" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
-            <defs>
-              <linearGradient id="logoShield" x1="14" y1="7" x2="52" y2="55" gradientUnits="userSpaceOnUse">
-                <stop stop-color="#60A5FA"/>
-                <stop offset="0.52" stop-color="#2563EB"/>
-                <stop offset="1" stop-color="#0F172A"/>
-              </linearGradient>
-            </defs>
-          </svg>
-        </span>
+  <img src="logo.png" width="36" height="36" alt="Logo" style="border-radius:6px;object-fit:cover;">
+</span>
         <h1>CBT Exam Simulator</h1>
       </div>
       <div class="top-meta">
