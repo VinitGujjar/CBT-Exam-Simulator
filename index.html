@@ -10,11 +10,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #F0F4F8;
+      --bg: #EAF1FB;
       --panel: #ffffff;
       --text: #1A2233;
       --muted: #5A6A85;
       --line: #DDE3ED;
+      --glass: rgba(255,255,255,0.72);
+      --glass-strong: rgba(255,255,255,0.84);
+      --glass-line: rgba(255,255,255,0.52);
       --primary: #2563EB;
       --primary-soft: #EEF4FF;
       --primary-dark: #1A4FCA;
@@ -37,7 +40,10 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      background: var(--bg);
+      background:
+        radial-gradient(circle at 12% 8%, rgba(37,99,235,0.16), transparent 28%),
+        radial-gradient(circle at 88% 12%, rgba(34,197,94,0.12), transparent 26%),
+        linear-gradient(135deg, #F8FAFC 0%, var(--bg) 48%, #EEF6FF 100%);
       color: var(--text);
       font-family: 'Inter', Arial, Helvetica, sans-serif;
       font-size: 15px;
@@ -51,6 +57,9 @@
       --text: #E2E8F0;
       --muted: #8899B0;
       --line: #1E2D45;
+      --glass: rgba(17,24,39,0.72);
+      --glass-strong: rgba(15,23,42,0.86);
+      --glass-line: rgba(148,163,184,0.18);
       --primary-soft: #172554;
       --success-soft: #052E16;
       --danger-soft: #3B0A0A;
@@ -67,7 +76,7 @@
     button, textarea, input, select { font: inherit; }
 
     button {
-      border: 0;
+      border: 1px solid rgba(255,255,255,0.28);
       border-radius: var(--radius-sm);
       padding: 10px 16px;
       cursor: pointer;
@@ -79,6 +88,8 @@
       transition: transform var(--transition), box-shadow var(--transition), filter var(--transition), background var(--transition);
       position: relative;
       overflow: hidden;
+      box-shadow: 0 8px 22px rgba(37,99,235,0.18);
+      backdrop-filter: blur(12px);
     }
 
     button::after {
@@ -123,34 +134,60 @@
       padding: 16px 0 32px;
     }
 
+    .creator-credit {
+      margin: 20px 0 0;
+      text-align: center;
+      color: var(--muted);
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 12px;
+    }
+
+    .creator-credit span {
+      display: inline-flex;
+      padding: 8px 14px;
+      border: 1px solid var(--glass-line);
+      border-radius: 999px;
+      background: var(--glass);
+      box-shadow: var(--shadow-sm);
+      backdrop-filter: blur(14px);
+    }
+
     /* TOPBAR */
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 14px;
-      padding: 12px 18px;
+      padding: 16px 20px;
       margin-bottom: 18px;
-      background: linear-gradient(135deg, #0F172A 0%, #1E2D45 100%);
+      background: linear-gradient(135deg, rgba(15,23,42,0.86) 0%, rgba(30,45,69,0.74) 100%);
       color: #fff;
-      border-radius: var(--radius);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 16px;
       box-shadow: var(--shadow-lg);
       position: relative;
       overflow: hidden;
+      backdrop-filter: blur(18px);
     }
 
     .topbar::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(255,255,255,0.18), transparent 32%),
+        radial-gradient(circle at 82% 30%, rgba(37,99,235,0.26), transparent 30%);
+      pointer-events: none;
     }
 
     .topbar h1 {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.02em;
+      position: relative;
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: 0;
+      text-shadow: 0 2px 12px rgba(0,0,0,0.22);
     }
 
     .brand {
@@ -163,17 +200,25 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.15);
-      flex: 0 0 42px;
+      width: 58px;
+      height: 58px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.28);
+      flex: 0 0 58px;
       overflow: hidden;
       transition: transform var(--transition);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.35), 0 12px 26px rgba(0,0,0,0.18);
+      backdrop-filter: blur(14px);
     }
 
     .logo:hover { transform: scale(1.05); }
+
+    .logo svg {
+      width: 42px;
+      height: 42px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.18));
+    }
 
     .top-meta {
       display: flex;
@@ -187,11 +232,12 @@
       min-width: 96px;
       padding: 7px 12px;
       border: 1px solid rgba(255,255,255,0.18);
-      border-radius: var(--radius-sm);
+      border-radius: 10px;
       text-align: center;
       font-weight: 700;
       font-size: 13px;
-      background: rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(12px);
       letter-spacing: 0.02em;
     }
 
@@ -199,11 +245,12 @@
       min-width: 110px;
       padding: 7px 14px;
       border: 1px solid rgba(255,255,255,0.18);
-      border-radius: var(--radius-sm);
+      border-radius: 10px;
       text-align: center;
       font-size: 17px;
       font-weight: 800;
-      background: rgba(255,255,255,0.07);
+      background: rgba(255,255,255,0.12);
+      backdrop-filter: blur(12px);
       letter-spacing: 0.05em;
       font-variant-numeric: tabular-nums;
       transition: background var(--transition), border-color var(--transition);
@@ -222,10 +269,11 @@
 
     /* PANELS */
     .panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
+      background: var(--glass);
+      border: 1px solid var(--glass-line);
+      border-radius: 16px;
       box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
     }
 
     @keyframes fadeUp {
@@ -344,20 +392,44 @@
     }
 
     /* SIDE TOOLS */
-    .side-tools {
-      position: fixed;
-      right: 18px;
-      top: 110px;
-      z-index: 20;
+    .intro-strip {
       display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: center;
+      gap: 14px;
+      margin: -4px 0 18px;
+      padding: 14px 16px;
+      border: 1px solid var(--glass-line);
+      border-radius: 16px;
+      background: var(--glass);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+      animation: fadeUp 0.42s ease both;
+    }
+
+    .quote-card {
+      display: grid;
+      gap: 4px;
+      color: var(--text);
+    }
+
+    .quote-card strong {
+      font-size: 18px;
+      line-height: 1.35;
+      letter-spacing: 0;
+    }
+
+    .quote-card span {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .quick-tools {
+      display: flex;
+      align-items: center;
       gap: 8px;
-      padding: 10px;
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      background: color-mix(in srgb, var(--panel) 94%, transparent);
-      box-shadow: var(--shadow-lg);
-      backdrop-filter: blur(16px);
-      animation: slideIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+      flex-wrap: wrap;
     }
 
     @keyframes slideIn {
@@ -373,14 +445,16 @@
       width: 124px;
       min-height: 38px;
       padding: 8px 10px;
-      background: #EEF2F8;
+      background: var(--glass-strong);
       color: #1f2a44;
       font-size: 13px;
       font-weight: 600;
-      border-radius: var(--radius-sm);
+      border-radius: 12px;
+      border: 1px solid var(--glass-line);
+      box-shadow: 0 8px 22px rgba(15,23,42,0.08);
     }
 
-    body.dark .tool-button { background: #1A2540; color: var(--text); }
+    body.dark .tool-button { background: rgba(26,37,64,0.82); color: var(--text); }
     .tool-button.primary-tool { background: var(--primary); color: #fff; }
     .tool-button:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
 
@@ -616,8 +690,6 @@
     .danger:hover { box-shadow: 0 6px 20px rgba(220,38,38,0.25); }
     .mark-btn { background: var(--mark); }
     .mark-btn:hover { box-shadow: 0 6px 20px rgba(109,40,217,0.25); }
-    .pause-btn { background: #475569; }
-
     .error {
       display: none;
       margin-top: 12px;
@@ -1058,10 +1130,11 @@
     }
 
     @media (max-width: 900px) {
-      .side-tools {
-        position: static;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        margin-bottom: 14px;
+      .intro-strip {
+        grid-template-columns: 1fr;
+      }
+      .quick-tools {
+        justify-content: flex-start;
       }
       .tool-button { width: 100%; }
       .setup-grid, .score-card, .analysis-grid, .chart-grid, .topic-dashboard {
@@ -1073,8 +1146,18 @@
 
     @media (max-width: 560px) {
       .app { width: min(100% - 16px, 1180px); }
-      .topbar { padding: 10px 14px; }
-      .topbar h1 { font-size: 17px; }
+      .topbar { padding: 12px 14px; }
+      .topbar h1 { font-size: 19px; }
+      .logo {
+        width: 50px;
+        height: 50px;
+        flex-basis: 50px;
+      }
+      .logo svg {
+        width: 36px;
+        height: 36px;
+      }
+      .quote-card strong { font-size: 16px; }
       .setup { padding: 16px; }
       .topbar, .question-actions, .setup-actions, .result-actions {
         align-items: stretch;
@@ -1101,7 +1184,18 @@
     <div class="topbar">
       <div class="brand">
         <span class="logo" aria-hidden="true">
-          <img src="logo.png" width="38" height="38" alt="Logo" style="border-radius:8px;object-fit:cover;">
+          <svg viewBox="0 0 64 64" fill="none">
+            <path d="M32 5L53 13.5V29.5C53 43.2 44.2 55 32 59C19.8 55 11 43.2 11 29.5V13.5L32 5Z" fill="url(#logoShield)" stroke="rgba(255,255,255,0.86)" stroke-width="2"/>
+            <path d="M22 32.5L28.6 39L43 23.5" stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M22 32.5L28.6 39L43 23.5" stroke="#22C55E" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+            <defs>
+              <linearGradient id="logoShield" x1="14" y1="7" x2="52" y2="55" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#60A5FA"/>
+                <stop offset="0.52" stop-color="#2563EB"/>
+                <stop offset="1" stop-color="#0F172A"/>
+              </linearGradient>
+            </defs>
+          </svg>
         </span>
         <h1>CBT Exam Simulator</h1>
       </div>
@@ -1112,30 +1206,28 @@
       <div id="exam-progress" class="exam-progress" style="width:0%"></div>
     </div>
 
-    <aside class="side-tools" aria-label="Quick tools">
-      <button type="button" class="tool-button primary-tool" onclick="openHelpPage()" title="Open help in a new tab">
-        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 17H12.01M9.2 9.3A3 3 0 0 1 12 7.5C13.7 7.5 15 8.6 15 10.1C15 11.3 14.3 12 13.2 12.7C12.4 13.2 12 13.8 12 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M21 12A9 9 0 1 1 3 12A9 9 0 0 1 21 12Z" stroke="currentColor" stroke-width="2"/>
-        </svg>
-        Help
-      </button>
-      <button id="themeToggle" type="button" class="tool-button" onclick="toggleThemeMode()" title="Switch theme">
-        <svg class="tool-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M12 3V5M12 19V21M4.2 4.2L5.6 5.6M18.4 18.4L19.8 19.8M3 12H5M19 12H21M4.2 19.8L5.6 18.4M18.4 5.6L19.8 4.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-          <path d="M16 12A4 4 0 1 1 8 12A4 4 0 0 1 16 12Z" stroke="currentColor" stroke-width="2"/>
-        </svg>
-        Dark
-      </button>
-      <button id="viewToggle" type="button" class="tool-button" onclick="toggleViewMode()" title="Switch mobile/desktop preview">
-        <svg id="viewIcon" class="tool-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-          <path d="M8 2H16C17.1 2 18 2.9 18 4V20C18 21.1 17.1 22 16 22H8C6.9 22 6 21.1 6 20V4C6 2.9 6.9 2 8 2Z" stroke="currentColor" stroke-width="2"/>
-          <path d="M11 18H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-        </svg>
-        Mobile
-      </button>
-      <button type="button" class="tool-button" onclick="setViewMode('auto')" title="Return to responsive auto layout">Auto</button>
-    </aside>
+    <section class="intro-strip" aria-label="Motivation and quick tools">
+      <div class="quote-card">
+        <strong>"Discipline turns practice into rank."</strong>
+        <span>Stay calm, mark smart, and finish strong.</span>
+      </div>
+      <div class="quick-tools">
+        <button type="button" class="tool-button primary-tool" onclick="openHelpPage()" title="Open help in a new tab">
+          <svg class="tool-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 17H12.01M9.2 9.3A3 3 0 0 1 12 7.5C13.7 7.5 15 8.6 15 10.1C15 11.3 14.3 12 13.2 12.7C12.4 13.2 12 13.8 12 15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M21 12A9 9 0 1 1 3 12A9 9 0 0 1 21 12Z" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          Help
+        </button>
+        <button id="themeToggle" type="button" class="tool-button" onclick="toggleThemeMode()" title="Switch theme">
+          <svg class="tool-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 3V5M12 19V21M4.2 4.2L5.6 5.6M18.4 18.4L19.8 19.8M3 12H5M19 12H21M4.2 19.8L5.6 18.4M18.4 5.6L19.8 4.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M16 12A4 4 0 1 1 8 12A4 4 0 0 1 16 12Z" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          Dark
+        </button>
+      </div>
+    </section>
 
     <section id="setup" class="panel setup">
       <h2>Create Test</h2>
@@ -1166,7 +1258,7 @@ Explanation: Power is measured in watt. One watt means one joule of work per sec
             <ul>
               <li>Paste questions in the format shown above, or use Extract from PDF.</li>
               <li>Set quiz time, marks per correct answer, and negative marks per wrong answer.</li>
-              <li>Use Exam mode for real test practice. Use Practice mode when you want explanations while solving.</li>
+              <li>The test runs in exam mode, so correct answers are shown only after submission.</li>
               <li>After importing a PDF, always review the extracted questions once before starting.</li>
             </ul>
           </section>
@@ -1265,13 +1357,6 @@ Fix these issues:
           <input id="negativeMarksInput" type="number" min="0" step="0.01" value="0.25">
         </label>
         <label class="field">
-          Test mode
-          <select id="testMode">
-            <option value="exam" selected>Exam mode</option>
-            <option value="practice">Practice mode</option>
-          </select>
-        </label>
-        <label class="field">
           Question order
           <select id="questionOrder">
             <option value="same" selected>Same order</option>
@@ -1337,7 +1422,6 @@ Fix these issues:
             <button type="button" class="secondary" onclick="previousQuestion()">Previous</button>
             <button type="button" class="secondary" onclick="clearAnswer()">Clear</button>
             <button type="button" class="mark-btn" onclick="toggleMark()">Mark</button>
-            <button type="button" class="pause-btn" onclick="togglePause()">Pause</button>
           </div>
           <div>
             <button type="button" onclick="nextQuestion()">Save & Next</button>
@@ -1375,6 +1459,7 @@ Fix these issues:
     </section>
 
     <section id="result" class="panel result-page"></section>
+    <footer class="creator-credit"><span>by its_vinitgujjar</span></footer>
   </main>
 
   <script type="module">
@@ -1387,7 +1472,7 @@ Fix these issues:
     let questionTimes = [], questionStartedAt = 0, remainingSeconds = 0, totalSeconds = 0;
     let timerId = null, submitted = false, paused = false;
     let positiveMarks = 1, negativeMarks = 0.25, testMode = 'exam';
-    let themeMode = 'light', viewMode = 'auto', palettePage = 0;
+    let themeMode = 'light', palettePage = 0;
     const palettePageSize = 30;
 
     // Ripple effect
@@ -1463,26 +1548,6 @@ Fix these issues:
       updateThemeButton();
     }
 
-    function updateViewButton() {
-      const button = document.getElementById('viewToggle');
-      const icon = document.getElementById('viewIcon');
-      if (!button || !icon) return;
-      const showDesktopTarget = viewMode === 'mobile';
-      button.lastChild.textContent = showDesktopTarget ? ' Desktop' : ' Mobile';
-      button.title = showDesktopTarget ? 'Switch to desktop preview' : 'Switch to mobile preview';
-      icon.innerHTML = showDesktopTarget
-        ? '<path d="M4 5H20V16H4V5Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M9 21H15M12 16V21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>'
-        : '<path d="M8 2H16C17.1 2 18 2.9 18 4V20C18 21.1 17.1 22 16 22H8C6.9 22 6 21.1 6 20V4C6 2.9 6.9 2 8 2Z" stroke="currentColor" stroke-width="2"/><path d="M11 18H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>';
-    }
-
-    function setViewMode(mode) {
-      viewMode = mode;
-      document.body.classList.toggle('mobile-mode', viewMode === 'mobile');
-      document.body.classList.toggle('desktop-mode', viewMode === 'desktop');
-      updateViewButton();
-    }
-
-    function toggleViewMode() { setViewMode(viewMode === 'mobile' ? 'desktop' : 'mobile'); }
     function resetTopQuestion() { document.getElementById('top-question').textContent = 'Q 0/0'; }
 
     function shuffleArray(items) {
@@ -1991,7 +2056,7 @@ Fix these issues:
       if (!Number.isFinite(minutes) || minutes < 1) { showError('Please enter a valid quiz time in minutes.'); return; }
       positiveMarks = Number(document.getElementById('positiveMarks').value);
       negativeMarks = Number(document.getElementById('negativeMarksInput').value);
-      testMode = document.getElementById('testMode').value;
+      testMode = 'exam';
       if (!Number.isFinite(positiveMarks) || positiveMarks <= 0) { showError('Please enter valid marks per correct question.'); return; }
       if (!Number.isFinite(negativeMarks) || negativeMarks < 0) { showError('Please enter valid negative marks per wrong answer.'); return; }
       questions = prepareQuestions(parsedQuestions);
@@ -2052,15 +2117,7 @@ Fix these issues:
     function updateQuestionTimerDisplay() {
       const timer = document.getElementById('question-time');
       if (!timer || !questions.length || submitted) return;
-      timer.textContent = `${paused ? 'Paused' : 'Time'}: ${formatTime(getCurrentQuestionElapsed())}`;
-    }
-
-    function togglePause() {
-      if (testMode !== 'practice') { showPdfStatus('Pause is available only in Practice mode.'); return; }
-      if (!paused) { saveCurrentQuestionTime(); paused = true; }
-      else { paused = false; resetQuestionTimer(); }
-      document.querySelectorAll('#options button, .question-actions button:not(.pause-btn)').forEach(button => { button.disabled = paused; });
-      updateQuestionTimerDisplay();
+      timer.textContent = `Time: ${formatTime(getCurrentQuestionElapsed())}`;
     }
 
     function showQuestion() {
