@@ -5,130 +5,175 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CBT Exam Simulator</title>
   <link rel="icon" type="image/png" href="favicon.png" sizes="32x32">
-<link rel="apple-touch-icon" href="favicon.png">
+  <link rel="apple-touch-icon" href="favicon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #F8FAFC;
+      --bg: #F0F4F8;
       --panel: #ffffff;
-      --text: #1E293B;
-      --muted: #64748B;
-      --line: #D8E0EA;
+      --text: #1A2233;
+      --muted: #5A6A85;
+      --line: #DDE3ED;
       --primary: #2563EB;
-      --primary-soft: #EFF6FF;
-      --success: #22C55E;
-      --success-soft: #eaf7ef;
-      --danger: #EF4444;
-      --danger-soft: #fff0ee;
-      --warning: #a15c07;
-      --warning-soft: #fff6df;
-      --mark: #6d3ab8;
-      --mark-soft: #f1eafe;
-      --shadow: 0 14px 34px rgba(24, 32, 51, 0.08);
+      --primary-soft: #EEF4FF;
+      --primary-dark: #1A4FCA;
+      --success: #16A34A;
+      --success-soft: #E8F5EE;
+      --danger: #DC2626;
+      --danger-soft: #FEF0F0;
+      --warning: #92400E;
+      --warning-soft: #FEF3E2;
+      --mark: #6D28D9;
+      --mark-soft: #F0EAFF;
+      --shadow-sm: 0 1px 3px rgba(15,23,42,0.08), 0 1px 2px rgba(15,23,42,0.05);
+      --shadow: 0 4px 16px rgba(15,23,42,0.10), 0 1px 4px rgba(15,23,42,0.06);
+      --shadow-lg: 0 12px 36px rgba(15,23,42,0.13), 0 2px 8px rgba(15,23,42,0.07);
+      --radius: 10px;
+      --radius-sm: 6px;
+      --transition: 0.2s cubic-bezier(0.4,0,0.2,1);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
-      margin: 0;
       background: var(--bg);
       color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
+      font-family: 'Inter', Arial, Helvetica, sans-serif;
+      font-size: 15px;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
     }
 
     body.dark {
-      --bg: #0F172A;
+      --bg: #0B1120;
       --panel: #111827;
-      --text: #E5E7EB;
-      --muted: #94A3B8;
-      --line: #334155;
+      --text: #E2E8F0;
+      --muted: #8899B0;
+      --line: #1E2D45;
       --primary-soft: #172554;
-      --success-soft: #052E1A;
+      --success-soft: #052E16;
       --danger-soft: #3B0A0A;
-      --warning-soft: #3A2605;
-      --mark-soft: #261443;
-      --shadow: 0 14px 34px rgba(0, 0, 0, 0.24);
+      --warning-soft: #3A2004;
+      --mark-soft: #1E1040;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.3);
+      --shadow: 0 4px 16px rgba(0,0,0,0.35);
+      --shadow-lg: 0 12px 36px rgba(0,0,0,0.45);
     }
 
-    body.mobile-mode .app {
-      max-width: 430px;
-    }
+    body.mobile-mode .app { max-width: 430px; }
+    body.desktop-mode .app { min-width: min(1180px, calc(100% - 28px)); }
 
-    body.desktop-mode .app {
-      min-width: min(1180px, calc(100% - 28px));
-    }
-
-    button,
-    textarea,
-    input,
-    select {
-      font: inherit;
-    }
+    button, textarea, input, select { font: inherit; }
 
     button {
       border: 0;
-      border-radius: 6px;
-      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      padding: 10px 16px;
       cursor: pointer;
       background: var(--primary);
       color: #fff;
-      font-weight: 700;
-      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease, background 0.18s ease;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.01em;
+      transition: transform var(--transition), box-shadow var(--transition), filter var(--transition), background var(--transition);
+      position: relative;
+      overflow: hidden;
     }
 
+    button::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(255,255,255,0);
+      transition: background var(--transition);
+    }
+
+    button:hover::after { background: rgba(255,255,255,0.08); }
+    button:active { transform: translateY(1px) scale(0.98); }
+
     button:hover {
-      filter: brightness(0.96);
       transform: translateY(-1px);
-      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.16);
+      box-shadow: 0 6px 20px rgba(37,99,235,0.22);
     }
 
     button:disabled {
       cursor: not-allowed;
-      opacity: 0.55;
+      opacity: 0.5;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* Ripple */
+    .ripple {
+      position: absolute;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.35);
+      transform: scale(0);
+      animation: rippleAnim 0.5s linear;
+      pointer-events: none;
+    }
+    @keyframes rippleAnim {
+      to { transform: scale(4); opacity: 0; }
     }
 
     .app {
-      width: min(1180px, calc(100% - 28px));
+      width: min(1180px, calc(100% - 24px));
       margin: 0 auto;
-      padding: 18px 0 28px;
+      padding: 16px 0 32px;
     }
 
+    /* TOPBAR */
     .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
       gap: 14px;
-      padding: 14px 16px;
-      margin-bottom: 16px;
-      background: #141b2d;
+      padding: 12px 18px;
+      margin-bottom: 18px;
+      background: linear-gradient(135deg, #0F172A 0%, #1E2D45 100%);
       color: #fff;
-      border-radius: 8px;
-      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-lg);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .topbar::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.12), transparent);
     }
 
     .topbar h1 {
-      margin: 0;
-      font-size: 22px;
-      letter-spacing: 0;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
     }
 
     .brand {
       display: flex;
       align-items: center;
-      gap: 11px;
+      gap: 12px;
     }
 
     .logo {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      background: transparent;
-      flex: 0 0 40px;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      flex: 0 0 42px;
+      overflow: hidden;
+      transition: transform var(--transition);
     }
+
+    .logo:hover { transform: scale(1.05); }
 
     .top-meta {
       display: flex;
@@ -140,92 +185,116 @@
 
     .top-question {
       min-width: 96px;
-      padding: 8px 10px;
-      border: 1px solid rgba(255, 255, 255, 0.24);
-      border-radius: 6px;
+      padding: 7px 12px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: var(--radius-sm);
       text-align: center;
-      font-weight: 800;
-      background: rgba(255, 255, 255, 0.08);
+      font-weight: 700;
+      font-size: 13px;
+      background: rgba(255,255,255,0.07);
+      letter-spacing: 0.02em;
     }
 
     .timer {
-      min-width: 120px;
-      padding: 8px 12px;
-      border: 1px solid rgba(255, 255, 255, 0.24);
-      border-radius: 6px;
+      min-width: 110px;
+      padding: 7px 14px;
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: var(--radius-sm);
       text-align: center;
-      font-size: 18px;
+      font-size: 17px;
       font-weight: 800;
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255,255,255,0.07);
+      letter-spacing: 0.05em;
+      font-variant-numeric: tabular-nums;
+      transition: background var(--transition), border-color var(--transition);
     }
 
     .timer.warning {
-      background: #7c2d12;
-      border-color: #fdba74;
+      background: rgba(220,38,38,0.25);
+      border-color: #F87171;
+      animation: timerPulse 1s ease-in-out infinite;
     }
 
+    @keyframes timerPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); }
+      50% { box-shadow: 0 0 0 6px rgba(220,38,38,0); }
+    }
+
+    /* PANELS */
     .panel {
       background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
-      animation: fadeUp 0.35s ease both;
     }
 
     @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideRight {
+      from { opacity: 0; transform: translateX(-16px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
     .setup {
-      padding: 20px;
+      padding: 24px;
+      animation: fadeUp 0.4s ease both;
     }
 
-    .setup h2,
-    .result-page h2 {
-      margin: 0 0 10px;
-      font-size: 24px;
+    .setup h2, .result-page h2 {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 6px;
     }
 
     .hint {
-      margin: 0 0 12px;
+      margin: 0 0 14px;
       color: var(--muted);
-      line-height: 1.45;
+      line-height: 1.5;
+      font-size: 14px;
     }
 
     .format {
-      margin: 0 0 14px;
-      padding: 14px;
+      margin: 0 0 16px;
+      padding: 14px 16px;
       border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #f8fafc;
+      border-radius: var(--radius-sm);
+      background: #F8FAFC;
       color: #344054;
       overflow-x: auto;
       white-space: pre-wrap;
+      font-size: 13px;
+      line-height: 1.6;
+      border-left: 3px solid var(--primary);
     }
 
-    .help-box {
-      display: none;
+    body.dark .format {
+      background: #0B1220;
+      color: #94A3B8;
     }
+
+    .help-box { display: none; }
 
     textarea {
       width: 100%;
-      min-height: 260px;
+      min-height: 240px;
       resize: vertical;
-      padding: 13px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      line-height: 1.5;
+      padding: 14px;
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius-sm);
+      line-height: 1.6;
       color: var(--text);
       background: #fff;
-      transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;
+      transition: border-color var(--transition), box-shadow var(--transition);
+      font-size: 14px;
     }
 
     textarea:focus,
@@ -233,7 +302,7 @@
     .field select:focus,
     .tool-row select:focus {
       border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.14);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
       outline: 0;
     }
 
@@ -243,53 +312,57 @@
     body.dark .tool-row select,
     body.dark .format {
       background: #0B1220;
-      color: #E5E7EB;
-      border-color: #334155;
+      color: var(--text);
+      border-color: var(--line);
     }
 
     body.dark textarea::placeholder,
-    body.dark input::placeholder {
-      color: #94A3B8;
-    }
+    body.dark input::placeholder { color: var(--muted); }
 
     .setup-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
       gap: 12px;
-      margin: 14px 0;
+      margin: 16px 0;
     }
 
     .tool-row {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
       margin: 12px 0;
     }
 
     .tool-row select {
       min-width: 140px;
       padding: 9px 10px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius-sm);
       color: var(--text);
       background: var(--panel);
     }
 
+    /* SIDE TOOLS */
     .side-tools {
       position: fixed;
       right: 18px;
       top: 110px;
       z-index: 20;
       display: grid;
-      gap: 9px;
+      gap: 8px;
       padding: 10px;
       border: 1px solid var(--line);
-      border-radius: 10px;
-      background: color-mix(in srgb, var(--panel) 92%, transparent);
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-      animation: slideIn 0.35s ease both;
+      border-radius: 12px;
+      background: color-mix(in srgb, var(--panel) 94%, transparent);
+      box-shadow: var(--shadow-lg);
+      backdrop-filter: blur(16px);
+      animation: slideIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateX(20px); }
+      to { opacity: 1; transform: translateX(0); }
     }
 
     .tool-button {
@@ -297,258 +370,186 @@
       align-items: center;
       justify-content: center;
       gap: 7px;
-      width: 128px;
-      min-height: 40px;
-      padding: 9px 10px;
-      background: #e8edf4;
+      width: 124px;
+      min-height: 38px;
+      padding: 8px 10px;
+      background: #EEF2F8;
       color: #1f2a44;
+      font-size: 13px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
     }
 
-    body.dark .tool-button {
-      background: #1E293B;
-      color: #E5E7EB;
-    }
+    body.dark .tool-button { background: #1A2540; color: var(--text); }
+    .tool-button.primary-tool { background: var(--primary); color: #fff; }
+    .tool-button:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
 
-    .tool-button.primary-tool {
-      background: var(--primary);
-      color: #fff;
-    }
-
-    .tool-icon {
-      width: 18px;
-      height: 18px;
-      flex: 0 0 18px;
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateX(12px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
-    }
+    .tool-icon { width: 16px; height: 16px; flex: 0 0 16px; }
 
     .pdf-status {
       display: none;
       margin: 10px 0 0;
-      padding: 10px 12px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
+      padding: 10px 14px;
+      border: 1px solid rgba(37,99,235,0.2);
+      border-radius: var(--radius-sm);
       background: var(--primary-soft);
-      color: var(--text);
-      font-weight: 700;
+      color: var(--primary-dark);
+      font-weight: 600;
+      font-size: 13px;
+      animation: fadeIn 0.3s ease;
     }
 
+    body.dark .pdf-status { color: #93C5FD; }
+
+    /* HISTORY */
     .history-panel {
-      margin-top: 14px;
-      padding: 12px;
+      margin-top: 16px;
+      padding: 14px;
       border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #f8fafc;
+      border-radius: var(--radius-sm);
+      background: #F8FAFC;
     }
 
-    body.dark .history-panel {
-      background: #0B1220;
-    }
-
-    .history-panel h3 {
-      margin: 0 0 8px;
-      font-size: 16px;
-    }
+    body.dark .history-panel { background: #0B1220; }
+    .history-panel h3 { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
 
     .history-list {
       display: grid;
-      gap: 7px;
+      gap: 6px;
       color: var(--muted);
-      font-weight: 700;
+      font-weight: 500;
+      font-size: 13px;
     }
 
-    .history-chart {
-      display: grid;
-      gap: 12px;
-      margin-top: 12px;
-    }
+    .history-chart { display: grid; gap: 12px; margin-top: 14px; }
 
     .analytics-summary {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
       gap: 10px;
     }
 
-    .metric-card,
-    .chart-card,
-    .topic-card {
+    .metric-card, .chart-card, .topic-card {
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       background: var(--panel);
-      box-shadow: 0 10px 24px rgba(15, 23, 42, 0.06);
+      box-shadow: var(--shadow-sm);
     }
 
     .metric-card {
-      padding: 12px;
+      padding: 14px;
+      transition: transform var(--transition), box-shadow var(--transition);
+    }
+
+    .metric-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
     }
 
     .metric-card strong {
       display: block;
       font-size: 22px;
-      color: var(--text);
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: -0.02em;
     }
 
     .metric-card span {
       color: var(--muted);
-      font-size: 12px;
-      font-weight: 800;
+      font-size: 11px;
+      font-weight: 700;
       text-transform: uppercase;
+      letter-spacing: 0.06em;
     }
 
-    .chart-grid,
-    .topic-dashboard {
+    .chart-grid, .topic-dashboard {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 12px;
     }
 
-    .chart-card,
-    .topic-card {
-      padding: 12px;
-      overflow: hidden;
-    }
+    .chart-card, .topic-card { padding: 14px; overflow: hidden; }
+    .chart-card h4, .topic-card h4 { margin: 0 0 12px; font-size: 14px; font-weight: 700; }
 
-    .chart-card h4,
-    .topic-card h4 {
-      margin: 0 0 10px;
-      font-size: 15px;
-    }
-
-    .chart-svg {
-      width: 100%;
-      height: 180px;
-      overflow: visible;
-    }
+    .chart-svg { width: 100%; height: 180px; overflow: visible; }
 
     .chart-line {
       fill: none;
       stroke: var(--primary);
-      stroke-width: 3;
+      stroke-width: 2.5;
       stroke-linecap: round;
       stroke-linejoin: round;
       stroke-dasharray: 600;
       stroke-dashoffset: 600;
-      animation: drawLine 0.9s ease forwards;
+      animation: drawLine 1s ease forwards;
     }
 
-    .chart-line.accuracy-line {
-      stroke: var(--success);
-    }
+    .chart-line.accuracy-line { stroke: var(--success); }
+    .chart-point { fill: var(--panel); stroke: var(--primary); stroke-width: 2.5; }
+    .chart-point.accuracy-point { stroke: var(--success); }
+    .chart-axis { stroke: var(--line); stroke-width: 1; }
+    .chart-label { fill: var(--muted); font-size: 11px; font-weight: 600; }
+    .topic-card ul { margin: 0; padding-left: 18px; color: var(--muted); font-weight: 600; line-height: 1.7; font-size: 13px; }
 
-    .chart-point {
-      fill: var(--panel);
-      stroke: var(--primary);
-      stroke-width: 3;
-    }
-
-    .chart-point.accuracy-point {
-      stroke: var(--success);
-    }
-
-    .chart-axis {
-      stroke: var(--line);
-      stroke-width: 1;
-    }
-
-    .chart-label {
-      fill: var(--muted);
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .topic-card ul {
-      margin: 0;
-      padding-left: 18px;
-      color: var(--muted);
-      font-weight: 700;
-      line-height: 1.6;
-    }
-
-    @keyframes drawLine {
-      to {
-        stroke-dashoffset: 0;
-      }
-    }
+    @keyframes drawLine { to { stroke-dashoffset: 0; } }
 
     .setup-summary {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
       gap: 10px;
-      margin: 14px 0;
-    }
-
-    .preview-panel {
-      display: none;
-      margin-top: 14px;
-      padding: 14px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #f8fafc;
-    }
-
-    body.dark .preview-panel {
-      background: #0B1220;
-    }
-
-    .preview-grid {
-      display: grid;
-      gap: 10px;
-      margin-top: 10px;
-    }
-
-    .preview-card {
-      padding: 12px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      background: var(--panel);
-    }
-
-    .preview-card.problem {
-      border-color: var(--danger);
-      background: var(--danger-soft);
-    }
-
-    .preview-card h4 {
-      margin: 0 0 8px;
-    }
-
-    .preview-card p {
-      margin: 5px 0;
-      color: var(--muted);
-      font-weight: 700;
+      margin: 16px 0;
     }
 
     .summary-pill {
-      padding: 12px;
-      border: 1px solid var(--line);
-      border-radius: 8px;
+      padding: 12px 16px;
+      border: 1px solid rgba(37,99,235,0.18);
+      border-radius: var(--radius-sm);
       background: var(--primary-soft);
       color: var(--text);
-      font-weight: 800;
+      font-weight: 700;
+      font-size: 14px;
+      transition: transform var(--transition);
     }
 
-    body.dark .summary-pill {
-      background: #0B1220;
+    .summary-pill:hover { transform: translateY(-1px); }
+    body.dark .summary-pill { background: #0F1E3A; }
+
+    .preview-panel {
+      display: none;
+      margin-top: 16px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: #F8FAFC;
+      animation: fadeUp 0.3s ease;
     }
+
+    body.dark .preview-panel { background: #0B1220; }
+    .preview-grid { display: grid; gap: 10px; margin-top: 12px; }
+
+    .preview-card {
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--panel);
+      transition: transform var(--transition);
+    }
+
+    .preview-card:hover { transform: translateY(-1px); }
+    .preview-card.problem { border-color: var(--danger); background: var(--danger-soft); }
+    .preview-card h4 { margin: 0 0 8px; font-size: 14px; font-weight: 700; }
+    .preview-card p { margin: 4px 0; color: var(--muted); font-size: 13px; font-weight: 600; }
 
     .practice-feedback {
       display: none;
-      margin-top: 14px;
-      padding: 12px;
-      border-left: 4px solid var(--primary);
-      border-radius: 6px;
+      margin-top: 16px;
+      padding: 14px;
+      border-left: 3px solid var(--primary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
       background: var(--primary-soft);
-      line-height: 1.45;
+      line-height: 1.5;
+      font-size: 14px;
+      animation: fadeIn 0.3s ease;
     }
 
     .field {
@@ -556,101 +557,91 @@
       gap: 6px;
       color: var(--muted);
       font-size: 13px;
-      font-weight: 700;
+      font-weight: 600;
     }
 
-    .field input,
-    .field select {
+    .field input, .field select {
       width: 100%;
-      padding: 9px 10px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
+      padding: 9px 12px;
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius-sm);
       color: var(--text);
       background: #fff;
+      transition: border-color var(--transition), box-shadow var(--transition);
     }
 
     body.dark .field input,
     body.dark .field select,
-    body.dark .check-field {
-      background: #0B1220;
-      color: #E5E7EB;
-      border-color: #334155;
-    }
-
-    body.dark .field input::placeholder {
-      color: #94A3B8;
-    }
+    body.dark .check-field { background: #0B1220; color: var(--text); border-color: var(--line); }
 
     .check-field {
       display: flex;
       align-items: center;
       gap: 8px;
       min-height: 38px;
-      padding: 9px 10px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
+      padding: 9px 12px;
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius-sm);
       color: var(--text);
       background: #fff;
     }
 
-    .check-field input {
-      width: 16px;
-      height: 16px;
-    }
+    .check-field input { width: 16px; height: 16px; }
 
-    .setup-actions,
-    .result-actions {
+    .setup-actions, .result-actions {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
     }
 
     .secondary {
-      background: #e8edf4;
-      color: #1f2a44;
+      background: #EEF2F8;
+      color: #2D3A55;
+      box-shadow: none;
+    }
+
+    .secondary:hover {
+      background: #E2E8F5;
+      box-shadow: var(--shadow-sm);
     }
 
     body.dark .secondary {
-      background: #1E293B;
-      color: #E5E7EB;
-      border: 1px solid #334155;
+      background: #1A2540;
+      color: var(--text);
+      border: 1px solid var(--line);
     }
 
-    .danger {
-      background: var(--danger);
-    }
-
-    .mark-btn {
-      background: var(--mark);
-    }
-
-    .pause-btn {
-      background: #475569;
-    }
+    .danger { background: var(--danger); }
+    .danger:hover { box-shadow: 0 6px 20px rgba(220,38,38,0.25); }
+    .mark-btn { background: var(--mark); }
+    .mark-btn:hover { box-shadow: 0 6px 20px rgba(109,40,217,0.25); }
+    .pause-btn { background: #475569; }
 
     .error {
       display: none;
       margin-top: 12px;
-      padding: 10px 12px;
-      border: 1px solid #fecdca;
-      border-radius: 6px;
+      padding: 12px 14px;
+      border: 1px solid #FECACA;
+      border-radius: var(--radius-sm);
       background: var(--danger-soft);
       color: var(--danger);
-      font-weight: 700;
+      font-weight: 600;
+      font-size: 14px;
+      animation: fadeIn 0.3s ease;
     }
 
+    /* EXAM */
     .exam {
       display: none;
-      grid-template-columns: minmax(0, 1fr) 292px;
+      grid-template-columns: minmax(0, 1fr) 288px;
       gap: 16px;
     }
 
-    .question-panel,
-    .side-panel {
+    .question-panel, .side-panel {
       background: var(--panel);
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
     }
 
@@ -658,10 +649,11 @@
       display: flex;
       justify-content: space-between;
       gap: 12px;
-      padding: 15px 16px;
+      padding: 14px 18px;
       border-bottom: 1px solid var(--line);
       color: var(--muted);
-      font-weight: 700;
+      font-weight: 600;
+      font-size: 13px;
     }
 
     .question-meta {
@@ -671,75 +663,73 @@
       flex-wrap: wrap;
     }
 
-    .question-time {
-      color: var(--primary);
-      font-weight: 800;
-    }
+    .question-time { color: var(--primary); font-weight: 700; }
 
     .question-body {
-      min-height: 350px;
-      padding: 18px;
+      min-height: 340px;
+      padding: 22px 20px;
     }
 
     .section-chip {
       display: inline-flex;
       width: fit-content;
-      margin-bottom: 12px;
-      padding: 5px 9px;
+      margin-bottom: 14px;
+      padding: 4px 12px;
       border-radius: 999px;
-      background: #eef2f7;
-      color: #344054;
-      font-size: 13px;
-      font-weight: 800;
+      background: var(--primary-soft);
+      color: var(--primary);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border: 1px solid rgba(37,99,235,0.15);
     }
 
     .question-text {
-      margin: 0 0 18px;
-      font-size: 21px;
-      line-height: 1.42;
+      margin: 0 0 20px;
+      font-size: 19px;
+      font-weight: 600;
+      line-height: 1.5;
+      letter-spacing: -0.01em;
     }
 
-    .options {
-      display: grid;
-      gap: 11px;
-    }
+    .options { display: grid; gap: 10px; }
 
     .option {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 12px;
       width: 100%;
-      padding: 12px;
-      border: 1px solid var(--line);
-      border-radius: 7px;
+      padding: 13px 14px;
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius-sm);
       background: #fff;
       color: var(--text);
       text-align: left;
       line-height: 1.4;
-      font-weight: 600;
-      transition: transform 0.16s ease, border-color 0.16s ease, background 0.16s ease;
+      font-weight: 500;
+      font-size: 14px;
+      transition: transform var(--transition), border-color var(--transition), background var(--transition), box-shadow var(--transition);
     }
 
     .option:hover {
-      background: #f8fafc;
-      border-color: #b7c6e6;
-      transform: translateX(2px);
+      background: #F5F8FF;
+      border-color: #93B4F0;
+      transform: translateX(3px);
+      box-shadow: var(--shadow-sm);
     }
 
-    body.dark .option {
-      background: #0B1220;
-      color: var(--text);
-    }
-
-    body.dark .option:hover {
-      background: #111C30;
-    }
+    body.dark .option { background: #0D1626; }
+    body.dark .option:hover { background: #111E33; }
 
     .option.selected {
       background: var(--primary-soft);
       border-color: var(--primary);
-      color: #153a88;
+      color: #1A3A7A;
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
     }
+
+    body.dark .option.selected { color: #93C5FD; }
 
     .option-key {
       display: inline-flex;
@@ -748,10 +738,12 @@
       flex: 0 0 30px;
       width: 30px;
       height: 30px;
-      border-radius: 50%;
-      background: #e8edf4;
-      color: #1f2a44;
+      border-radius: 8px;
+      background: #EEF2F8;
+      color: #2D3A55;
       font-weight: 800;
+      font-size: 13px;
+      transition: background var(--transition), color var(--transition);
     }
 
     .selected .option-key {
@@ -759,12 +751,15 @@
       color: #fff;
     }
 
+    /* Question animation */
+    .question-body { animation: slideRight 0.25s ease both; }
+
     .question-actions {
       display: flex;
       justify-content: space-between;
       gap: 10px;
       flex-wrap: wrap;
-      padding: 15px 16px;
+      padding: 14px 18px;
       border-top: 1px solid var(--line);
     }
 
@@ -772,9 +767,10 @@
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 10px;
+      gap: 8px;
     }
 
+    /* SIDE PANEL */
     .side-panel {
       align-self: start;
       padding: 16px;
@@ -785,91 +781,74 @@
     }
 
     .side-panel h2 {
-      margin: 0 0 12px;
-      font-size: 18px;
+      margin: 0 0 14px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
     }
 
     .stats {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 9px;
+      gap: 8px;
       margin-bottom: 14px;
     }
 
     .stat {
-      padding: 10px;
+      padding: 10px 12px;
       border: 1px solid var(--line);
-      border-radius: 7px;
-      background: #f8fafc;
+      border-radius: var(--radius-sm);
+      background: #F8FAFC;
+      transition: transform var(--transition);
     }
 
-    body.dark .stat,
-    body.dark .analysis-card,
-    body.dark .not-attempted {
-      background: #0B1220;
-    }
+    .stat:hover { transform: translateY(-1px); }
+
+    body.dark .stat, body.dark .analysis-card, body.dark .not-attempted { background: #0B1220; }
 
     .stat strong {
       display: block;
       margin-bottom: 2px;
       font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
     }
 
-    .stat span {
-      color: var(--muted);
-      font-size: 13px;
-      font-weight: 700;
-    }
+    .stat span { color: var(--muted); font-size: 12px; font-weight: 700; }
 
     .palette {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
-      gap: 8px;
-      max-height: 320px;
+      gap: 7px;
+      max-height: 300px;
       overflow-y: auto;
-      padding-right: 3px;
+      padding-right: 2px;
     }
 
     .palette button {
       aspect-ratio: 1;
       padding: 0;
-      border: 1px solid var(--line);
-      border-radius: 6px;
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius-sm);
       background: #fff;
-      color: #1f2a44;
-      font-weight: 800;
+      color: #2D3A55;
+      font-weight: 700;
+      font-size: 12px;
+      transition: transform var(--transition), box-shadow var(--transition);
     }
 
-    .palette .current {
-      border: 3px solid var(--primary);
-    }
-
-    .palette .answered {
-      background: var(--success-soft);
-      color: var(--success);
-      border-color: #8bd3a8;
-    }
-
-    .palette .unanswered {
-      background: var(--warning-soft);
-      color: var(--warning);
-      border-color: #f2c46d;
-    }
-
-    .palette .marked {
-      background: var(--mark-soft);
-      color: var(--mark);
-      border-color: #c4a7f0;
-    }
-
+    .palette button:hover { transform: scale(1.1); box-shadow: var(--shadow); }
+    .palette .current { border: 2.5px solid var(--primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+    .palette .answered { background: var(--success-soft); color: var(--success); border-color: #6EE7A0; }
+    .palette .unanswered { background: var(--warning-soft); color: var(--warning); border-color: #FCD47A; }
+    .palette .marked { background: var(--mark-soft); color: var(--mark); border-color: #C4B5FD; }
     .palette .answered-marked {
       background: linear-gradient(135deg, var(--success-soft) 0 50%, var(--mark-soft) 50% 100%);
       color: #334155;
-      border-color: #9fbcdf;
+      border-color: #9FBCDF;
     }
 
-    .palette-tools,
-    .palette-pager {
+    .palette-tools, .palette-pager {
       display: flex;
       gap: 8px;
       margin-bottom: 10px;
@@ -878,48 +857,42 @@
     .palette-tools input {
       min-width: 0;
       width: 100%;
-      padding: 9px 10px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
+      padding: 8px 10px;
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius-sm);
       background: var(--panel);
       color: var(--text);
       font: inherit;
-      font-weight: 700;
+      font-weight: 600;
+      font-size: 13px;
     }
 
-    .palette-tools button,
-    .palette-pager button {
-      padding: 9px 10px;
-      white-space: nowrap;
-    }
+    .palette-tools button, .palette-pager button { padding: 8px 10px; font-size: 13px; }
 
     .palette-pager {
       align-items: center;
       justify-content: space-between;
       color: var(--muted);
-      font-size: 13px;
-      font-weight: 800;
+      font-size: 12px;
+      font-weight: 700;
     }
 
-    .palette-pager button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
-    }
+    .palette-pager button:disabled { opacity: 0.4; cursor: not-allowed; }
 
     .legend {
       display: grid;
-      gap: 8px;
-      margin-top: 15px;
+      gap: 7px;
+      margin-top: 14px;
       color: var(--muted);
-      font-size: 13px;
-      font-weight: 700;
+      font-size: 12px;
+      font-weight: 600;
     }
 
     .legend span::before {
       content: "";
       display: inline-block;
-      width: 12px;
-      height: 12px;
+      width: 10px;
+      height: 10px;
       margin-right: 7px;
       border: 1px solid var(--line);
       border-radius: 3px;
@@ -927,256 +900,161 @@
       vertical-align: -1px;
     }
 
-    .legend .answered-dot::before {
-      background: var(--success-soft);
-      border-color: #8bd3a8;
-    }
+    .legend .answered-dot::before { background: var(--success-soft); border-color: #6EE7A0; }
+    .legend .unanswered-dot::before { background: var(--warning-soft); border-color: #FCD47A; }
+    .legend .marked-dot::before { background: var(--mark-soft); border-color: #C4B5FD; }
 
-    .legend .unanswered-dot::before {
-      background: var(--warning-soft);
-      border-color: #f2c46d;
-    }
-
-    .legend .marked-dot::before {
-      background: var(--mark-soft);
-      border-color: #c4a7f0;
-    }
-
+    /* RESULT */
     .result-page {
       display: none;
-      padding: 20px;
+      padding: 24px;
+      animation: fadeUp 0.4s ease both;
     }
 
     .score-card {
       display: grid;
       grid-template-columns: repeat(5, 1fr);
       gap: 10px;
-      margin: 14px 0;
+      margin: 16px 0;
     }
 
     .analysis-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
-      margin: 14px 0;
+      margin: 16px 0;
     }
 
     .result-filters {
       display: flex;
       align-items: center;
       flex-wrap: wrap;
-      gap: 10px;
-      margin: 16px 0 10px;
-      padding: 12px;
+      gap: 8px;
+      margin: 16px 0 12px;
+      padding: 12px 14px;
       border: 1px solid var(--line);
-      border-radius: 8px;
-      background: #f8fafc;
+      border-radius: var(--radius-sm);
+      background: #F8FAFC;
     }
 
-    body.dark .result-filters {
-      background: #0B1220;
-    }
+    body.dark .result-filters { background: #0B1220; }
 
-    .result-filters button {
-      background: #e8edf4;
-      color: #1f2a44;
-    }
+    .result-filters button { background: #EEF2F8; color: #2D3A55; font-size: 13px; padding: 7px 12px; }
+    body.dark .result-filters button { background: #1A2540; color: var(--text); border: 1px solid var(--line); }
+    .result-filters button.active { background: var(--primary); color: #fff; }
 
-    body.dark .result-filters button {
-      background: #1E293B;
-      color: #E5E7EB;
-      border: 1px solid #334155;
-    }
-
-    .result-filters button.active {
-      background: var(--primary);
-      color: #fff;
-    }
-
-    .result-filters select {
-      min-width: 180px;
-      padding: 9px 10px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
+    .result-filters select, .result-search {
+      padding: 8px 10px;
+      border: 1.5px solid var(--line);
+      border-radius: var(--radius-sm);
       background: var(--panel);
       color: var(--text);
       font: inherit;
-      font-weight: 700;
+      font-weight: 600;
+      font-size: 13px;
     }
 
-    .result-search {
-      min-width: 240px;
-      flex: 1;
-      padding: 9px 10px;
-      border: 1px solid var(--line);
-      border-radius: 6px;
-      background: var(--panel);
-      color: var(--text);
-      font: inherit;
-      font-weight: 700;
-    }
-
-    body.dark .result-filters select {
-      background: #0B1220;
-      color: #E5E7EB;
-      border-color: #334155;
-    }
-
-    body.dark .result-search {
-      background: #0B1220;
-      color: #E5E7EB;
-      border-color: #334155;
-    }
+    .result-filters select { min-width: 170px; }
+    .result-search { min-width: 220px; flex: 1; }
+    body.dark .result-filters select, body.dark .result-search { background: #0B1220; border-color: var(--line); }
 
     .analysis-card {
       border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 12px;
-      background: #f8fafc;
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      background: #F8FAFC;
+      transition: transform var(--transition);
     }
 
-    .analysis-card h3 {
-      margin: 0 0 8px;
-      font-size: 16px;
-    }
-
-    .analysis-card p {
-      margin: 5px 0;
-      color: var(--muted);
-      font-weight: 700;
-    }
+    .analysis-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .analysis-card h3 { margin: 0 0 10px; font-size: 14px; font-weight: 700; }
+    .analysis-card p { margin: 5px 0; color: var(--muted); font-weight: 600; font-size: 13px; }
 
     .review-item {
       margin-top: 12px;
-      padding: 15px;
+      padding: 16px;
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: var(--radius-sm);
       background: #fff;
+      transition: transform var(--transition);
+      animation: fadeUp 0.3s ease both;
     }
 
-    .review-item.correct {
-      border-color: #8bd3a8;
-      background: var(--success-soft);
-    }
+    .review-item:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+    .review-item.correct { border-color: #86EFAC; background: var(--success-soft); }
+    body.dark .review-item.correct { background: #052E16; color: #DCFCE7; }
+    .review-item.wrong { border-color: #FCA5A5; background: var(--danger-soft); }
+    body.dark .review-item.wrong { background: #3B0A0A; color: #FEE2E2; }
+    .review-item.not-attempted { background: #F8FAFC; }
+    body.dark .review-item { color: var(--text); }
+    .review-item h3 { margin: 0 0 10px; font-size: 17px; font-weight: 600; line-height: 1.45; }
 
-    body.dark .review-item.correct {
-      background: #052E1A;
-      color: #DCFCE7;
-    }
-
-    .review-item.wrong {
-      border-color: #fecdca;
-      background: var(--danger-soft);
-    }
-
-    body.dark .review-item.wrong {
-      background: #3B0A0A;
-      color: #FEE2E2;
-    }
-
-    .review-item.not-attempted {
-      background: #f8fafc;
-    }
-
-    body.dark .review-item {
-      color: #E5E7EB;
-    }
-
-    .review-item h3 {
-      margin: 0 0 10px;
-      font-size: 18px;
-      line-height: 1.4;
-    }
-
-    .review-options {
-      display: grid;
-      gap: 7px;
-      margin: 10px 0;
-    }
+    .review-options { display: grid; gap: 7px; margin: 10px 0; }
 
     .review-option {
       display: flex;
       gap: 10px;
-      padding: 9px 10px;
+      padding: 9px 12px;
       border: 1px solid var(--line);
-      border-radius: 6px;
+      border-radius: var(--radius-sm);
       background: #fff;
-      font-weight: 700;
+      font-weight: 600;
+      font-size: 13px;
       color: var(--text);
     }
 
-    body.dark .review-option {
-      background: #0B1220;
-      color: #E5E7EB;
-      border-color: #334155;
-    }
+    body.dark .review-option { background: #0B1220; color: var(--text); border-color: var(--line); }
+    .review-option.correct-option { border-color: #6EE7A0; background: #E8F5EE; color: var(--success); }
+    body.dark .review-option.correct-option { background: #064E2A; color: #86EFAC; border-color: #22C55E; }
+    .review-option.user-wrong-option { border-color: #FCA5A5; background: #FEF0F0; color: var(--danger); }
+    body.dark .review-option.user-wrong-option { background: #4C1010; color: #FCA5A5; border-color: #EF4444; }
 
-    .review-option.correct-option {
-      border-color: #75c596;
-      background: #dff6e8;
-      color: var(--success);
-    }
-
-    body.dark .review-option.correct-option {
-      background: #064E2A;
-      color: #86EFAC;
-      border-color: #22C55E;
-    }
-
-    .review-option.user-wrong-option {
-      border-color: #f2a39e;
-      background: #ffe1de;
-      color: var(--danger);
-    }
-
-    body.dark .review-option.user-wrong-option {
-      background: #4C1010;
-      color: #FCA5A5;
-      border-color: #EF4444;
-    }
-
-    .answer-line {
-      margin: 7px 0;
-      color: #344054;
-    }
-
-    body.dark .answer-line {
-      color: #CBD5E1;
-    }
+    .answer-line { margin: 6px 0; color: #344054; font-size: 13px; font-weight: 600; }
+    body.dark .answer-line { color: #94A3B8; }
 
     .explanation {
-      margin-top: 10px;
-      padding: 10px 12px;
-      border-left: 4px solid var(--primary);
-      border-radius: 5px;
-      background: #f5f8ff;
+      margin-top: 12px;
+      padding: 11px 14px;
+      border-left: 3px solid var(--primary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      background: #F5F8FF;
       color: #344054;
-      line-height: 1.45;
+      line-height: 1.5;
+      font-size: 13px;
     }
 
-    body.dark .explanation {
-      background: #0B1220;
-      color: #E5E7EB;
-      border-left-color: var(--primary);
+    body.dark .explanation { background: #0B1220; color: var(--text); }
+
+    /* Score animation */
+    @keyframes countUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .score-card .stat {
+      animation: countUp 0.4s ease both;
+    }
+
+    .score-card .stat:nth-child(1) { animation-delay: 0.05s; }
+    .score-card .stat:nth-child(2) { animation-delay: 0.1s; }
+    .score-card .stat:nth-child(3) { animation-delay: 0.15s; }
+    .score-card .stat:nth-child(4) { animation-delay: 0.2s; }
+    .score-card .stat:nth-child(5) { animation-delay: 0.25s; }
+
+    /* Progress bar on topbar */
+    .exam-progress {
+      position: absolute;
+      bottom: 0; left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #3B82F6, #60A5FA);
+      border-radius: 0 2px 0 0;
+      transition: width 0.4s ease;
     }
 
     @media print {
-      body {
-        background: #fff;
-      }
-
-      .topbar,
-      .result-actions,
-      .setup,
-      .exam {
-        display: none !important;
-      }
-
-      .result-page {
-        display: block !important;
-        box-shadow: none;
-        border: 0;
-      }
+      body { background: #fff; }
+      .topbar, .result-actions, .setup, .exam { display: none !important; }
+      .result-page { display: block !important; box-shadow: none; border: 0; }
     }
 
     @media (max-width: 900px) {
@@ -1185,57 +1063,35 @@
         grid-template-columns: repeat(2, minmax(0, 1fr));
         margin-bottom: 14px;
       }
-
-      .tool-button {
-        width: 100%;
-      }
-
-      .setup-grid,
-      .score-card,
-      .analysis-grid,
-      .chart-grid,
-      .topic-dashboard {
+      .tool-button { width: 100%; }
+      .setup-grid, .score-card, .analysis-grid, .chart-grid, .topic-dashboard {
         grid-template-columns: repeat(2, 1fr);
       }
-
-      .exam {
-        grid-template-columns: 1fr;
-      }
-
-      .side-panel {
-        order: -1;
-        position: static;
-        max-height: none;
-      }
+      .exam { grid-template-columns: 1fr; }
+      .side-panel { order: -1; position: static; max-height: none; }
     }
 
     @media (max-width: 560px) {
-      .app {
-        width: min(100% - 20px, 1180px);
-      }
-
-      .topbar,
-      .question-actions,
-      .setup-actions,
-      .result-actions {
+      .app { width: min(100% - 16px, 1180px); }
+      .topbar { padding: 10px 14px; }
+      .topbar h1 { font-size: 17px; }
+      .setup { padding: 16px; }
+      .topbar, .question-actions, .setup-actions, .result-actions {
         align-items: stretch;
         flex-direction: column;
       }
-
-      .setup-grid,
-      .score-card,
-      .analysis-grid,
-      .chart-grid,
-      .topic-dashboard {
+      .setup-grid, .score-card, .analysis-grid, .chart-grid, .topic-dashboard {
         grid-template-columns: 1fr;
       }
+      button { width: 100%; }
+      .palette button { width: auto; }
+      .question-text { font-size: 16px; }
+    }
 
-      button {
-        width: 100%;
-      }
-
-      .palette button {
-        width: auto;
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
       }
     }
   </style>
@@ -1244,15 +1100,16 @@
   <main class="app">
     <div class="topbar">
       <div class="brand">
-       <span class="logo" aria-hidden="true">
-  <img src="logo.png" width="36" height="36" alt="Logo" style="border-radius:6px;object-fit:cover;">
-</span>
+        <span class="logo" aria-hidden="true">
+          <img src="logo.png" width="38" height="38" alt="Logo" style="border-radius:8px;object-fit:cover;">
+        </span>
         <h1>CBT Exam Simulator</h1>
       </div>
       <div class="top-meta">
         <div id="top-question" class="top-question">Q 0/0</div>
         <div id="timer" class="timer">00:00</div>
       </div>
+      <div id="exam-progress" class="exam-progress" style="width:0%"></div>
     </div>
 
     <aside class="side-tools" aria-label="Quick tools">
@@ -1313,7 +1170,6 @@ Explanation: Power is measured in watt. One watt means one joule of work per sec
               <li>After importing a PDF, always review the extracted questions once before starting.</li>
             </ul>
           </section>
-
           <section>
             <h3>Best PDF Type</h3>
             <ul>
@@ -1323,7 +1179,6 @@ Explanation: Power is measured in watt. One watt means one joule of work per sec
               <li>If answers/solutions are at the end, keep them in the same PDF. The app will try to match them by question number.</li>
             </ul>
           </section>
-
           <section>
             <h3>Prompt for ChatGPT to Create Questions</h3>
             <p>Copy this prompt into ChatGPT when you want it to make questions for this app:</p>
@@ -1345,7 +1200,6 @@ Rules:
 - Keep the answer as only one letter after "Answer:".
 - Make explanations exam-focused and concise.</pre>
           </section>
-
           <section>
             <h3>Prompt for Extracting a PDF with ChatGPT/AI</h3>
             <p>Upload your PDF to ChatGPT or another AI and use this prompt:</p>
@@ -1369,7 +1223,6 @@ Important rules:
 - Put exactly one blank line between questions.
 - Return only the final formatted questions, no extra explanation.</pre>
           </section>
-
           <section>
             <h3>Prompt to Fix Extracted Text</h3>
             <p>If the app or PDF extraction gives mixed text, paste that text into ChatGPT with this:</p>
@@ -1403,17 +1256,14 @@ Fix these issues:
           Quiz time
           <input id="minutes" type="number" min="1" max="300" value="30">
         </label>
-
         <label class="field">
           Marks per correct
           <input id="positiveMarks" type="number" min="0.01" step="0.01" value="1">
         </label>
-
         <label class="field">
           Negative per wrong
           <input id="negativeMarksInput" type="number" min="0" step="0.01" value="0.25">
         </label>
-
         <label class="field">
           Test mode
           <select id="testMode">
@@ -1421,7 +1271,6 @@ Fix these issues:
             <option value="practice">Practice mode</option>
           </select>
         </label>
-
         <label class="field">
           Question order
           <select id="questionOrder">
@@ -1429,7 +1278,6 @@ Fix these issues:
             <option value="random">Random order</option>
           </select>
         </label>
-
         <label class="field">
           Option order
           <select id="optionOrder">
@@ -1477,14 +1325,12 @@ Fix these issues:
             <span id="question-status"></span>
           </span>
         </div>
-
         <div class="question-body">
           <span id="section-chip" class="section-chip"></span>
           <h2 id="question-text" class="question-text"></h2>
           <div id="options" class="options"></div>
           <div id="practice-feedback" class="practice-feedback"></div>
         </div>
-
         <div class="question-actions">
           <div>
             <button type="button" class="secondary" onclick="firstQuestion()">First</button>
@@ -1514,7 +1360,7 @@ Fix these issues:
           <button type="button" onclick="jumpToQuestionNumber()">Go</button>
         </div>
         <div class="palette-pager">
-          <button id="palette-prev" type="button" class="secondary" onclick="previousPalettePage()">Previous</button>
+          <button id="palette-prev" type="button" class="secondary" onclick="previousPalettePage()">Prev</button>
           <span id="palette-range">0-0</span>
           <button id="palette-next" type="button" class="secondary" onclick="nextPalettePage()">Next</button>
         </div>
@@ -1537,33 +1383,28 @@ Fix these issues:
   </script>
   <script nomodule src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
   <script>
-    let questions = [];
-    let current = 0;
-    let userAnswers = [];
-    let visited = [];
-    let marked = [];
-    let questionTimes = [];
-    let questionStartedAt = 0;
-    let remainingSeconds = 0;
-    let totalSeconds = 0;
-    let timerId = null;
-    let submitted = false;
-    let paused = false;
-    let positiveMarks = 1;
-    let negativeMarks = 0.25;
-    let testMode = 'exam';
-    let themeMode = 'light';
-    let viewMode = 'auto';
-    let palettePage = 0;
+    let questions = [], current = 0, userAnswers = [], visited = [], marked = [];
+    let questionTimes = [], questionStartedAt = 0, remainingSeconds = 0, totalSeconds = 0;
+    let timerId = null, submitted = false, paused = false;
+    let positiveMarks = 1, negativeMarks = 0.25, testMode = 'exam';
+    let themeMode = 'light', viewMode = 'auto', palettePage = 0;
     const palettePageSize = 30;
 
+    // Ripple effect
+    document.addEventListener('click', function(e) {
+      const btn = e.target.closest('button');
+      if (!btn || btn.disabled) return;
+      const r = document.createElement('span');
+      r.className = 'ripple';
+      const rect = btn.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height);
+      r.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px`;
+      btn.appendChild(r);
+      setTimeout(() => r.remove(), 600);
+    });
+
     function escapeHtml(value) {
-      return String(value)
-        .replaceAll('&', '&amp;')
-        .replaceAll('<', '&lt;')
-        .replaceAll('>', '&gt;')
-        .replaceAll('"', '&quot;')
-        .replaceAll("'", '&#039;');
+      return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
     }
 
     function showError(message) {
@@ -1588,36 +1429,30 @@ Fix these issues:
       return (text.match(/\nAnswer:\s*[A-D]/gi) || []).length;
     }
 
+    function updateProgress() {
+      const bar = document.getElementById('exam-progress');
+      if (!bar || !questions.length) return;
+      const answered = userAnswers.filter(Boolean).length;
+      bar.style.width = `${(answered / questions.length) * 100}%`;
+    }
+
     function autoArrangeText() {
       clearError();
       const input = document.getElementById('input');
       const raw = input.value.trim();
-
-      if (!raw) {
-        showError('Paste questions or import a PDF/TXT first.');
-        return;
-      }
-
+      if (!raw) { showError('Paste questions or import a PDF/TXT first.'); return; }
       const arranged = convertExtractedPdfText(raw);
       input.value = arranged;
-
       const count = countFormattedQuestions(arranged);
-      showPdfStatus(
-        count
-          ? `Auto arranged ${count} question(s). Review once before starting the test.`
-          : 'Auto arrange finished, but no complete answer-marked questions were detected. Review the text or use the AI prompt in Help.'
-      );
+      showPdfStatus(count ? `Auto arranged ${count} question(s). Review once before starting the test.` : 'Auto arrange finished, but no complete answer-marked questions were detected. Review the text or use the AI prompt in Help.');
       updateSetupCounts();
     }
 
-    function openHelpPage() {
-      window.open('help.html', '_blank', 'noopener');
-    }
+    function openHelpPage() { window.open('help.html', '_blank', 'noopener'); }
 
     function updateThemeButton() {
       const button = document.getElementById('themeToggle');
       if (!button) return;
-
       button.lastChild.textContent = themeMode === 'dark' ? ' Light' : ' Dark';
       button.title = themeMode === 'dark' ? 'Switch to light mode' : 'Switch to dark mode';
     }
@@ -1632,7 +1467,6 @@ Fix these issues:
       const button = document.getElementById('viewToggle');
       const icon = document.getElementById('viewIcon');
       if (!button || !icon) return;
-
       const showDesktopTarget = viewMode === 'mobile';
       button.lastChild.textContent = showDesktopTarget ? ' Desktop' : ' Mobile';
       button.title = showDesktopTarget ? 'Switch to desktop preview' : 'Switch to mobile preview';
@@ -1648,13 +1482,8 @@ Fix these issues:
       updateViewButton();
     }
 
-    function toggleViewMode() {
-      setViewMode(viewMode === 'mobile' ? 'desktop' : 'mobile');
-    }
-
-    function resetTopQuestion() {
-      document.getElementById('top-question').textContent = 'Q 0/0';
-    }
+    function toggleViewMode() { setViewMode(viewMode === 'mobile' ? 'desktop' : 'mobile'); }
+    function resetTopQuestion() { document.getElementById('top-question').textContent = 'Q 0/0'; }
 
     function shuffleArray(items) {
       const copy = [...items];
@@ -1686,16 +1515,11 @@ Fix these issues:
     }
 
     function loadJsonStorage(key, fallback) {
-      try {
-        return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback));
-      } catch (error) {
-        return fallback;
-      }
+      try { return JSON.parse(localStorage.getItem(key) || JSON.stringify(fallback)); }
+      catch (error) { return fallback; }
     }
 
-    function loadBookmarks() {
-      return loadJsonStorage('cbtBookmarks', []);
-    }
+    function loadBookmarks() { return loadJsonStorage('cbtBookmarks', []); }
 
     function saveBookmarks(bookmarks) {
       localStorage.setItem('cbtBookmarks', JSON.stringify(bookmarks));
@@ -1715,11 +1539,8 @@ Fix these issues:
     }
 
     function loadHistory() {
-      try {
-        return JSON.parse(localStorage.getItem('cbtExamHistory') || '[]');
-      } catch (error) {
-        return [];
-      }
+      try { return JSON.parse(localStorage.getItem('cbtExamHistory') || '[]'); }
+      catch (error) { return []; }
     }
 
     function saveHistory(summary) {
@@ -1733,20 +1554,16 @@ Fix these issues:
       const list = document.getElementById('history-list');
       const chart = document.getElementById('history-chart');
       if (!list) return;
-
       const history = loadHistory();
       if (!history.length) {
         list.textContent = 'No saved tests yet.';
         if (chart) chart.innerHTML = '';
         return;
       }
-
       list.innerHTML = history.slice(0, 5).map(item => `
         <div>${escapeHtml(item.date)} | Score ${escapeHtml(item.score)} | Accuracy ${item.accuracy}% | Attempted ${item.attempted}/${item.total}</div>
       `).join('');
-      if (chart) {
-        chart.innerHTML = buildHistoryAnalytics(history);
-      }
+      if (chart) chart.innerHTML = buildHistoryAnalytics(history);
     }
 
     function getHistoryScorePercent(item) {
@@ -1772,10 +1589,7 @@ Fix these issues:
         ['Highest Score', `${Math.max(...scoreValues)}%`],
         ['Lowest Score', `${Math.min(...scoreValues)}%`],
         ['Best Accuracy', `${Math.max(...accuracyValues)}%`]
-      ].map(([label, value]) => `
-        <div class="metric-card"><strong>${value}</strong><span>${label}</span></div>
-      `).join('');
-
+      ].map(([label, value]) => `<div class="metric-card"><strong>${value}</strong><span>${label}</span></div>`).join('');
       const trend = history.slice(0, 8).reverse();
       return `
         <div class="analytics-summary">${cards}</div>
@@ -1788,25 +1602,17 @@ Fix these issues:
     }
 
     function buildLineChart(title, items, valueGetter, label, isAccuracy) {
-      if (!items.length) {
-        return `<div class="chart-card"><h4>${title}</h4><p class="hint">Complete a test to see this chart.</p></div>`;
-      }
-
-      const width = 520;
-      const height = 180;
-      const padding = 28;
+      if (!items.length) return `<div class="chart-card"><h4>${title}</h4><p class="hint">Complete a test to see this chart.</p></div>`;
+      const width = 520, height = 180, padding = 28;
       const points = items.map((item, index) => {
         const value = Math.max(0, Math.min(100, Number(valueGetter(item)) || 0));
-        const x = items.length === 1
-          ? width / 2
-          : padding + (index * (width - padding * 2)) / (items.length - 1);
+        const x = items.length === 1 ? width / 2 : padding + (index * (width - padding * 2)) / (items.length - 1);
         const y = height - padding - (value * (height - padding * 2)) / 100;
         return { x, y, value, item };
       });
       const path = points.map((point, index) => `${index ? 'L' : 'M'} ${point.x.toFixed(1)} ${point.y.toFixed(1)}`).join(' ');
       const lineClass = isAccuracy ? 'chart-line accuracy-line' : 'chart-line';
       const pointClass = isAccuracy ? 'chart-point accuracy-point' : 'chart-point';
-
       return `<div class="chart-card">
         <h4>${title}</h4>
         <svg class="chart-svg" viewBox="0 0 ${width} ${height}" role="img" aria-label="${title}">
@@ -1815,11 +1621,7 @@ Fix these issues:
           <text class="chart-label" x="${padding}" y="16">100%</text>
           <text class="chart-label" x="${padding}" y="${height - 6}">0%</text>
           <path class="${lineClass}" d="${path}"></path>
-          ${points.map(point => `
-            <circle class="${pointClass}" cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="5">
-              <title>${escapeHtml(point.item.date)} - ${label}: ${point.value}%</title>
-            </circle>
-          `).join('')}
+          ${points.map(point => `<circle class="${pointClass}" cx="${point.x.toFixed(1)}" cy="${point.y.toFixed(1)}" r="5"><title>${escapeHtml(point.item.date)} - ${label}: ${point.value}%</title></circle>`).join('')}
         </svg>
       </div>`;
     }
@@ -1835,42 +1637,21 @@ Fix these issues:
           aggregate[name].attempted += Number(data.attempted) || 0;
         });
       });
-
-      const rows = Object.entries(aggregate).map(([name, data]) => ({
-        name,
-        ...data,
-        accuracy: data.attempted ? Math.round((data.correct / data.attempted) * 100) : 0
-      }));
+      const rows = Object.entries(aggregate).map(([name, data]) => ({ name, ...data, accuracy: data.attempted ? Math.round((data.correct / data.attempted) * 100) : 0 }));
       const strong = rows.filter(row => row.attempted).sort((a, b) => b.accuracy - a.accuracy).slice(0, 3);
       const weak = rows.filter(row => row.attempted).sort((a, b) => a.accuracy - b.accuracy).slice(0, 3);
       const mistakes = rows.sort((a, b) => b.wrong - a.wrong).slice(0, 3);
-      const renderList = (items, fallback, formatter) => items.length
-        ? `<ul>${items.map(item => `<li>${formatter(item)}</li>`).join('')}</ul>`
-        : `<p class="hint">${fallback}</p>`;
-
+      const renderList = (items, fallback, formatter) => items.length ? `<ul>${items.map(item => `<li>${formatter(item)}</li>`).join('')}</ul>` : `<p class="hint">${fallback}</p>`;
       return `<div class="topic-dashboard">
-        <div class="topic-card">
-          <h4>Strong Topics</h4>
-          ${renderList(strong, 'Topic data will appear after section-based tests.', item => `${escapeHtml(item.name)} - ${item.accuracy}%`)}
-        </div>
-        <div class="topic-card">
-          <h4>Weak Topics</h4>
-          ${renderList(weak, 'Weak topics will appear after more tests.', item => `${escapeHtml(item.name)} - ${item.accuracy}%`)}
-        </div>
-        <div class="topic-card">
-          <h4>Most Mistakes</h4>
-          ${renderList(mistakes, 'Mistake counts will appear after tests.', item => `${escapeHtml(item.name)} - ${item.wrong} wrong`)}
-        </div>
-        <div class="topic-card">
-          <h4>Frequently Incorrect Questions</h4>
-          <p class="hint">Question-level frequency is ready for future saved-test comparison.</p>
-        </div>
+        <div class="topic-card"><h4>Strong Topics</h4>${renderList(strong, 'Topic data will appear after section-based tests.', item => `${escapeHtml(item.name)} - ${item.accuracy}%`)}</div>
+        <div class="topic-card"><h4>Weak Topics</h4>${renderList(weak, 'Weak topics will appear after more tests.', item => `${escapeHtml(item.name)} - ${item.accuracy}%`)}</div>
+        <div class="topic-card"><h4>Most Mistakes</h4>${renderList(mistakes, 'Mistake counts will appear after tests.', item => `${escapeHtml(item.name)} - ${item.wrong} wrong`)}</div>
+        <div class="topic-card"><h4>Frequently Incorrect Questions</h4><p class="hint">Question-level frequency is ready for future saved-test comparison.</p></div>
       </div>`;
     }
 
     function saveMistakes(mistakes) {
       if (!mistakes.length) return;
-
       const existing = localStorage.getItem('cbtMistakeNotebook') || '';
       const next = mistakes.map(questionToText).join('\n\n');
       localStorage.setItem('cbtMistakeNotebook', existing ? `${next}\n\n${existing}` : next);
@@ -1879,12 +1660,7 @@ Fix these issues:
 
     function loadMistakeNotebook() {
       const mistakes = localStorage.getItem('cbtMistakeNotebook') || '';
-
-      if (!mistakes.trim()) {
-        showError('No mistakes saved yet. Complete a test first.');
-        return;
-      }
-
+      if (!mistakes.trim()) { showError('No mistakes saved yet. Complete a test first.'); return; }
       document.getElementById('input').value = mistakes.trim();
       showPdfStatus('Mistake notebook loaded. Review questions, then start a revision test.');
       clearError();
@@ -1893,11 +1669,7 @@ Fix these issues:
 
     function loadBookmarkedQuestions() {
       const bookmarks = loadBookmarks();
-      if (!bookmarks.length) {
-        showError('No bookmarked questions saved yet.');
-        return;
-      }
-
+      if (!bookmarks.length) { showError('No bookmarked questions saved yet.'); return; }
       document.getElementById('input').value = bookmarks.map(questionToText).join('\n\n');
       showPdfStatus('Bookmarked questions loaded. Review questions, then start a revision test.');
       clearError();
@@ -1909,10 +1681,7 @@ Fix these issues:
       const bookmarks = loadBookmarks();
       const signature = questionSignature(question);
       const exists = bookmarks.some(item => questionSignature(item) === signature);
-      const updated = exists
-        ? bookmarks.filter(item => questionSignature(item) !== signature)
-        : [question, ...bookmarks];
-
+      const updated = exists ? bookmarks.filter(item => questionSignature(item) !== signature) : [question, ...bookmarks];
       saveBookmarks(updated);
       showQuestion();
     }
@@ -1924,25 +1693,17 @@ Fix these issues:
     }
 
     function exportSavedData() {
-      const data = {
-        history: loadHistory(),
-        mistakes: localStorage.getItem('cbtMistakeNotebook') || '',
-        bookmarks: loadBookmarks(),
-        exportedAt: new Date().toISOString()
-      };
+      const data = { history: loadHistory(), mistakes: localStorage.getItem('cbtMistakeNotebook') || '', bookmarks: loadBookmarks(), exportedAt: new Date().toISOString() };
       const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const link = document.createElement('a');
-      link.href = url;
-      link.download = 'cbt-exam-simulator-data.json';
-      link.click();
+      link.href = url; link.download = 'cbt-exam-simulator-data.json'; link.click();
       URL.revokeObjectURL(url);
     }
 
     function importSavedData(event) {
       const file = event.target.files[0];
       if (!file) return;
-
       const reader = new FileReader();
       reader.onload = () => {
         try {
@@ -1950,129 +1711,68 @@ Fix these issues:
           if (Array.isArray(data.history)) localStorage.setItem('cbtExamHistory', JSON.stringify(data.history));
           if (typeof data.mistakes === 'string') localStorage.setItem('cbtMistakeNotebook', data.mistakes);
           if (Array.isArray(data.bookmarks)) localStorage.setItem('cbtBookmarks', JSON.stringify(data.bookmarks));
-          renderHistory();
-          updateSetupCounts();
+          renderHistory(); updateSetupCounts();
           showPdfStatus('Saved data imported successfully.');
-        } catch (error) {
-          showError('Could not import data. Please select a valid JSON export file.');
-        }
+        } catch (error) { showError('Could not import data. Please select a valid JSON export file.'); }
         event.target.value = '';
       };
       reader.readAsText(file);
     }
 
     function cleanExtractedText(text) {
-      return text
-        .replace(/\r/g, '')
-        .replace(/[ \t]+/g, ' ')
-        .replace(/\s+(\d{1,4}\.\s+[A-Z][^?\n]{8,}?\?)/g, '\n$1')
-        .replace(/\s+(\d{1,4}\.\s+(?:Which|What|When|Where|Why|How|If|In|On|For|The|A|An|Identify|Match|Define)\b)/g, '\n$1')
-        .replace(/[“”]/g, '"')
-        .replace(/[‘’]/g, "'")
-        .replace(/\n{3,}/g, '\n\n')
-        .trim();
+      return text.replace(/\r/g,'').replace(/[ \t]+/g,' ').replace(/\s+(\d{1,4}\.\s+[A-Z][^?\n]{8,}?\?)/g,'\n$1').replace(/\s+(\d{1,4}\.\s+(?:Which|What|When|Where|Why|How|If|In|On|For|The|A|An|Identify|Match|Define)\b)/g,'\n$1').replace(/[""]/g,'"').replace(/['']/g,"'").replace(/\n{3,}/g,'\n\n').trim();
     }
 
-    function cleanInlineText(text) {
-      return text
-        .replace(/\s+/g, ' ')
-        .replace(/\s+([,.;:?])/g, '$1')
-        .trim();
-    }
+    function cleanInlineText(text) { return text.replace(/\s+/g,' ').replace(/\s+([,.;:?])/g,'$1').trim(); }
 
     function cleanExplanationText(text) {
-      return cleanInlineText(text)
-        .replace(/(?:\s+\d{1,4}\s*[\).\:-]?\s*\(?[A-Da-d]\)\s*){2,}[\s\S]*$/i, '')
-        .replace(/\s+\d{1,4}\s*[\).\:-]?\s*\(?[A-Da-d]\)\s+\d{1,4}\s*[\).\:-]?[\s\S]*$/i, '')
-        .trim();
+      return cleanInlineText(text).replace(/(?:\s+\d{1,4}\s*[\).\:-]?\s*\(?[A-Da-d]\)\s*){2,}[\s\S]*$/i,'').replace(/\s+\d{1,4}\s*[\).\:-]?\s*\(?[A-Da-d]\)\s+\d{1,4}\s*[\).\:-]?[\s\S]*$/i,'').trim();
     }
 
-    function normalizeAnswer(answer) {
-      const value = String(answer || '').trim().toUpperCase();
-      return /^[A-D]$/.test(value) ? value : '';
-    }
+    function normalizeAnswer(answer) { const value = String(answer||'').trim().toUpperCase(); return /^[A-D]$/.test(value) ? value : ''; }
 
     function mergeAnswerData(target, number, answer, explanation, index) {
       const normalized = normalizeAnswer(answer);
       if (!number || !normalized) return;
-
-      if (!target[number]) {
-        target[number] = [];
-      }
-
-      target[number].push({
-        answer: normalized,
-        explanation: explanation || '',
-        index: Number.isFinite(index) ? index : 0
-      });
+      if (!target[number]) target[number] = [];
+      target[number].push({ answer: normalized, explanation: explanation || '', index: Number.isFinite(index) ? index : 0 });
     }
 
     function extractAnswerData(text) {
       const answers = {};
       const solutionPattern = /(?:^|\n)\s*(\d{1,4})\s*[\).\:-]\s*[\(\[]\s*([A-Da-d])\s*[\)\]]\s*([\s\S]*?)(?=(?:\n\s*\d{1,4}\s*[\).\:-]\s*[\(\[]\s*[A-Da-d]\s*[\)\]])|\n\s*(?:answer\s*key|answers|solutions?)\b|$)/g;
       let solutionMatch;
-
       while ((solutionMatch = solutionPattern.exec(text))) {
         let explanation = cleanExplanationText(solutionMatch[3] || '');
-        if (/^(?:\d{1,4}\s*[\).\:-]\s*[\(\[]\s*[A-Da-d]\s*[\)\]]\s*){1,}/.test(explanation)) {
-          explanation = '';
-        }
-
-        mergeAnswerData(
-          answers,
-          solutionMatch[1],
-          solutionMatch[2],
-          explanation,
-          solutionMatch.index
-        );
+        if (/^(?:\d{1,4}\s*[\).\:-]\s*[\(\[]\s*[A-Da-d]\s*[\)\]]\s*){1,}/.test(explanation)) explanation = '';
+        mergeAnswerData(answers, solutionMatch[1], solutionMatch[2], explanation, solutionMatch.index);
       }
-
       const keyStart = text.search(/answer\s*key|correct\s*answer|answers/i);
       const keyText = keyStart === -1 ? text : text.slice(keyStart);
       const keyPattern = /(?:^|\s)(\d{1,4})\s*[\).\-\:]\s*[\(\[]?\s*([A-Da-d])\s*[\)\]]?/g;
       let keyMatch;
-
-      while ((keyMatch = keyPattern.exec(keyText))) {
-        mergeAnswerData(answers, keyMatch[1], keyMatch[2], '', keyStart === -1 ? keyMatch.index : keyStart + keyMatch.index);
-      }
-
+      while ((keyMatch = keyPattern.exec(keyText))) mergeAnswerData(answers, keyMatch[1], keyMatch[2], '', keyStart === -1 ? keyMatch.index : keyStart + keyMatch.index);
       const inlinePattern = /(?:^|\n)\s*(\d{1,4})[\).\:-][\s\S]{0,900}?(?:answer|ans\.?|correct\s*answer)\s*[:\-]\s*[\(\[]?\s*([A-Da-d])\s*[\)\]]?/gi;
       let inlineMatch;
-
-      while ((inlineMatch = inlinePattern.exec(text))) {
-        mergeAnswerData(answers, inlineMatch[1], inlineMatch[2], '', inlineMatch.index);
-      }
-
+      while ((inlineMatch = inlinePattern.exec(text))) mergeAnswerData(answers, inlineMatch[1], inlineMatch[2], '', inlineMatch.index);
       return answers;
     }
 
     function getAnswerDataForQuestion(answerData, number, questionIndex) {
       const entries = answerData[number] || [];
       if (!entries.length) return {};
-
-      return entries
-        .slice()
-        .sort((a, b) => {
-          const aDistance = a.index > questionIndex ? a.index - questionIndex : Number.MAX_SAFE_INTEGER;
-          const bDistance = b.index > questionIndex ? b.index - questionIndex : Number.MAX_SAFE_INTEGER;
-          const aScore = aDistance + (a.explanation ? 0 : 50000);
-          const bScore = bDistance + (b.explanation ? 0 : 50000);
-          return aScore - bScore;
-        })[0];
+      return entries.slice().sort((a, b) => {
+        const aDistance = a.index > questionIndex ? a.index - questionIndex : Number.MAX_SAFE_INTEGER;
+        const bDistance = b.index > questionIndex ? b.index - questionIndex : Number.MAX_SAFE_INTEGER;
+        return (aDistance + (a.explanation ? 0 : 50000)) - (bDistance + (b.explanation ? 0 : 50000));
+      })[0];
     }
 
     function findQuestionStarts(text) {
       const starts = [];
       const startPattern = /(?:^|\n)\s*(?:(?:que|ques|question|q)\s*)?(\d{1,4})\s*[\).\:-]?\s+(?![\(\[]?\s*[A-Da-d]\s*[\)\]])/gi;
       let match;
-
-      while ((match = startPattern.exec(text))) {
-        starts.push({
-          number: match[1],
-          index: match.index + (match[0].startsWith('\n') ? 1 : 0)
-        });
-      }
-
+      while ((match = startPattern.exec(text))) starts.push({ number: match[1], index: match.index + (match[0].startsWith('\n') ? 1 : 0) });
       return starts;
     }
 
@@ -2081,22 +1781,13 @@ Fix these issues:
       const optionPattern = /(?:^|\s)[\(\[]?([A-Da-d])[\)\]]\s+([\s\S]*?)(?=(?:\s+[\(\[]?[A-Da-d][\)\]]\s+)|(?:\s+(?:answer|ans\.?|correct\s*answer)\s*[:\-])|$)/g;
       const found = [];
       let match;
-
       while ((match = optionPattern.exec(compact))) {
         const key = match[1].toUpperCase();
         const text = cleanInlineText(match[2] || '');
-
-        if (/^[A-D]$/.test(key) && text) {
-          found.push({ key, text, index: match.index });
-        }
+        if (/^[A-D]$/.test(key) && text) found.push({ key, text, index: match.index });
       }
-
       const unique = [];
-      ['A', 'B', 'C', 'D'].forEach(key => {
-        const option = found.find(item => item.key === key);
-        if (option) unique.push(option);
-      });
-
+      ['A','B','C','D'].forEach(key => { const option = found.find(item => item.key === key); if (option) unique.push(option); });
       return unique.length === 4 ? unique : [];
     }
 
@@ -2118,7 +1809,6 @@ Fix these issues:
     function convertQuestionBlock(number, body, answerData, questionIndex) {
       const options = extractOptionsFromBody(body);
       if (options.length !== 4) return null;
-
       const firstOptionIndex = body.search(/(?:^|\s|\n)[\(\[]?[A-Da-d][\)\]]\s+/);
       const rawQuestion = firstOptionIndex > -1 ? body.slice(0, firstOptionIndex) : body;
       const questionText = cleanInlineText(rawQuestion.replace(new RegExp(`^\\s*(?:que|ques|question|q)?\\s*${number}\\s*[\\).\\:-]?\\s*`, 'i'), ''));
@@ -2126,9 +1816,7 @@ Fix these issues:
       const inlineExplanation = extractInlineExplanation(body);
       const solution = getAnswerDataForQuestion(answerData, number, questionIndex);
       const answer = inlineAnswer || solution.answer;
-
       if (!questionText || !answer) return null;
-
       return [
         `Section: ${getSectionFromQuestion(questionText)}`,
         questionText,
@@ -2140,217 +1828,113 @@ Fix these issues:
 
     function convertExtractedPdfText(text) {
       const cleanText = cleanExtractedText(text);
-
-      if (/answer\s*:/i.test(cleanText) && /^[A-D]\)\s+/im.test(cleanText)) {
-        return cleanText;
-      }
-
+      if (/answer\s*:/i.test(cleanText) && /^[A-D]\)\s+/im.test(cleanText)) return cleanText;
       const answerData = extractAnswerData(cleanText);
       const starts = findQuestionStarts(cleanText);
-      const converted = [];
-      const seen = new Set();
-
+      const converted = [], seen = new Set();
       let consumedUntilStartIndex = -1;
-
       starts.forEach((start, index) => {
         if (index < consumedUntilStartIndex) return;
         if (seen.has(start.number)) return;
-
-        let convertedBlock = null;
-        let consumedEndIndex = index + 1;
-
+        let convertedBlock = null, consumedEndIndex = index + 1;
         for (let endIndex = index + 1; endIndex <= Math.min(index + 6, starts.length); endIndex++) {
           const next = starts[endIndex];
           const body = cleanText.slice(start.index, next ? next.index : cleanText.length).trim();
           convertedBlock = convertQuestionBlock(start.number, body, answerData, start.index);
-          if (convertedBlock) {
-            consumedEndIndex = endIndex;
-            break;
-          }
+          if (convertedBlock) { consumedEndIndex = endIndex; break; }
         }
-
         if (convertedBlock) {
           converted.push(convertedBlock);
           seen.add(start.number);
           consumedUntilStartIndex = Math.max(consumedUntilStartIndex, consumedEndIndex);
         }
       });
-
       return converted.length ? converted.join('\n\n') : cleanText;
     }
 
     function rowsFromItems(items) {
       const rows = [];
-
       items.forEach(item => {
         const y = Math.round(item.transform[5]);
         let row = rows.find(entry => Math.abs(entry.y - y) <= 2);
-
-        if (!row) {
-          row = { y, parts: [] };
-          rows.push(row);
-        }
-
-        row.parts.push({
-          x: item.transform[4],
-          text: item.str
-        });
+        if (!row) { row = { y, parts: [] }; rows.push(row); }
+        row.parts.push({ x: item.transform[4], text: item.str });
       });
-
-      return rows
-        .sort((a, b) => b.y - a.y)
-        .map(row => row.parts.sort((a, b) => a.x - b.x).map(part => part.text).join(' ').trim())
-        .filter(Boolean)
-        .join('\n');
+      return rows.sort((a,b)=>b.y-a.y).map(row=>row.parts.sort((a,b)=>a.x-b.x).map(part=>part.text).join(' ').trim()).filter(Boolean).join('\n');
     }
 
     function textContentToLines(items, pageWidth) {
       const usefulItems = items.filter(item => String(item.str || '').trim());
       const xValues = usefulItems.map(item => item.transform[4]);
-
       if (!xValues.length) return '';
-
-      const minX = Math.min(...xValues);
-      const maxX = Math.max(...xValues);
+      const minX = Math.min(...xValues), maxX = Math.max(...xValues);
       const middle = pageWidth ? pageWidth / 2 : (minX + maxX) / 2;
       const leftItems = usefulItems.filter(item => item.transform[4] < middle - 12);
       const rightItems = usefulItems.filter(item => item.transform[4] >= middle - 12);
-      const hasTwoColumns =
-        leftItems.length > 20 &&
-        rightItems.length > 20 &&
-        maxX - minX > 300;
-
-      if (!hasTwoColumns) {
-        return rowsFromItems(usefulItems);
-      }
-
-      const headerItems = usefulItems.filter(item => {
-        const text = String(item.str || '').trim();
-        return /engineer|wallah|mechanical|chapterwise/i.test(text);
-      });
-
+      const hasTwoColumns = leftItems.length > 20 && rightItems.length > 20 && maxX - minX > 300;
+      if (!hasTwoColumns) return rowsFromItems(usefulItems);
+      const headerItems = usefulItems.filter(item => /engineer|wallah|mechanical|chapterwise/i.test(String(item.str || '').trim()));
       const bodyItems = usefulItems.filter(item => !headerItems.includes(item));
-      const leftBody = bodyItems.filter(item => item.transform[4] < middle);
-      const rightBody = bodyItems.filter(item => item.transform[4] >= middle);
-      const parts = [
-        rowsFromItems(headerItems),
-        rowsFromItems(leftBody),
-        rowsFromItems(rightBody)
-      ].filter(Boolean);
-
-      return parts.join('\n');
+      return [rowsFromItems(headerItems), rowsFromItems(bodyItems.filter(item=>item.transform[4]<middle)), rowsFromItems(bodyItems.filter(item=>item.transform[4]>=middle))].filter(Boolean).join('\n');
     }
 
     function splitQuestionBlocks(text) {
       const normalized = text.trim();
       if (!normalized) return [];
-
       const markerPattern = /(?:^|\n)\s*(?:(?:que|ques|question|q)\s*)\d{1,4}\s*[\).\:-]?\s+/gi;
       const markers = [...normalized.matchAll(markerPattern)];
-
       if (markers.length >= 1) {
         const prefix = normalized.slice(0, markers[0].index).trim();
         const sharedSection = prefix.match(/^section\s*:.+/im)?.[0] || '';
-
         return markers.map((marker, index) => {
           const start = marker.index + (marker[0].startsWith('\n') ? 1 : 0);
           const next = markers[index + 1];
-          const end = next ? next.index : normalized.length;
-          const block = normalized.slice(start, end).trim();
+          const block = normalized.slice(start, next ? next.index : normalized.length).trim();
           return sharedSection && !/^section\s*:/im.test(block) ? `${sharedSection}\n${block}` : block;
         }).filter(Boolean);
       }
-
-      return normalized
-        .split(/\n\s*\n/)
-        .map(block => block.trim())
-        .filter(Boolean);
+      return normalized.split(/\n\s*\n/).map(block => block.trim()).filter(Boolean);
     }
 
-    function cleanQuestionMarker(line) {
-      return line.replace(/^\s*(?:(?:que|ques|question|q)\s*)?\d{1,4}\s*[\).\:-]?\s*/i, '').trim();
-    }
+    function cleanQuestionMarker(line) { return line.replace(/^\s*(?:(?:que|ques|question|q)\s*)?\d{1,4}\s*[\).\:-]?\s*/i, '').trim(); }
 
     function parseOptionLine(line) {
       const match = line.match(/^\s*[\(\[]?([A-Da-d])[\)\].:-]\s*(.+)$/);
       if (!match) return null;
-      return {
-        key: match[1].toUpperCase(),
-        text: match[2].trim()
-      };
+      return { key: match[1].toUpperCase(), text: match[2].trim() };
     }
 
     function parseQuiz(text) {
       const blocks = splitQuestionBlocks(text);
-
-      if (!blocks.length) {
-        throw new Error('Please paste at least one question.');
-      }
-
+      if (!blocks.length) throw new Error('Please paste at least one question.');
       return blocks.map((block, index) => {
-        const lines = block
-          .split('\n')
-          .map(line => line.trim())
-          .filter(Boolean);
-
+        const lines = block.split('\n').map(line => line.trim()).filter(Boolean);
         const sectionLine = lines.find(line => /^section\s*:/i.test(line));
         const answerLine = lines.find(line => /^answer\s*:/i.test(line));
         const explanationLineIndex = lines.findIndex(line => /^explanation\s*:/i.test(line));
         const optionLines = lines.map(parseOptionLine).filter(Boolean);
         const questionLines = lines.filter((line, lineIndex) =>
-          !/^section\s*:/i.test(line) &&
-          !parseOptionLine(line) &&
-          !/^answer\s*:/i.test(line) &&
-          !/^explanation\s*:/i.test(line) &&
-          (explanationLineIndex === -1 || lineIndex < explanationLineIndex)
+          !/^section\s*:/i.test(line) && !parseOptionLine(line) && !/^answer\s*:/i.test(line) && !/^explanation\s*:/i.test(line) && (explanationLineIndex === -1 || lineIndex < explanationLineIndex)
         ).map((line, lineIndex) => lineIndex === 0 ? cleanQuestionMarker(line) : line).filter(Boolean);
-
-        if (!questionLines.length) {
-          throw new Error(`Question ${index + 1} is missing the question text.`);
-        }
-
-        if (optionLines.length !== 4) {
-          throw new Error(`Question ${index + 1} must have exactly four options: A), B), C), and D).`);
-        }
-
-        if (!answerLine) {
-          throw new Error(`Question ${index + 1} is missing the Answer line.`);
-        }
-
+        if (!questionLines.length) throw new Error(`Question ${index + 1} is missing the question text.`);
+        if (optionLines.length !== 4) throw new Error(`Question ${index + 1} must have exactly four options: A), B), C), and D).`);
+        if (!answerLine) throw new Error(`Question ${index + 1} is missing the Answer line.`);
         const answer = answerLine.split(':').slice(1).join(':').trim().toUpperCase();
-        if (!/^[A-D]$/.test(answer)) {
-          throw new Error(`Question ${index + 1} answer must be A, B, C, or D.`);
-        }
-
+        if (!/^[A-D]$/.test(answer)) throw new Error(`Question ${index + 1} answer must be A, B, C, or D.`);
         let explanation = '';
-        if (explanationLineIndex !== -1) {
-          explanation = lines
-            .slice(explanationLineIndex)
-            .join(' ')
-            .replace(/^explanation\s*:/i, '')
-            .trim();
-        }
-
-        return {
-          q: questionLines.join(' '),
-          section: sectionLine ? sectionLine.split(':').slice(1).join(':').trim() || 'General' : 'General',
-          options: optionLines,
-          ans: answer,
-          explanation
-        };
+        if (explanationLineIndex !== -1) explanation = lines.slice(explanationLineIndex).join(' ').replace(/^explanation\s*:/i, '').trim();
+        return { q: questionLines.join(' '), section: sectionLine ? sectionLine.split(':').slice(1).join(':').trim() || 'General' : 'General', options: optionLines, ans: answer, explanation };
       });
     }
 
     function getQuestionIssues(question, seenQuestions) {
       const issues = [];
       const normalizedQuestion = question.q.toLowerCase().replace(/\s+/g, ' ').trim();
-
       if (seenQuestions.has(normalizedQuestion)) issues.push('Duplicate question');
       if (question.options.length !== 4) issues.push('Options should be exactly 4');
       if (!/^[A-D]$/.test(question.ans)) issues.push('Invalid or missing answer');
       if (!question.options.some(option => option.key === question.ans)) issues.push('Answer letter not found in options');
       if (!question.explanation) issues.push('Explanation missing');
-
       seenQuestions.add(normalizedQuestion);
       return issues;
     }
@@ -2359,22 +1943,12 @@ Fix these issues:
       const panel = document.getElementById('preview-panel');
       const summary = document.getElementById('preview-summary');
       const grid = document.getElementById('preview-grid');
-
       try {
         const parsed = parseQuiz(document.getElementById('input').value);
         const seen = new Set();
-        const rows = parsed.map((question, index) => ({
-          question,
-          index,
-          issues: getQuestionIssues(question, seen)
-        }));
+        const rows = parsed.map((question, index) => ({ question, index, issues: getQuestionIssues(question, seen) }));
         const problemCount = rows.filter(row => row.issues.length).length;
-
-        summary.innerHTML = `
-          <div>Total questions: ${parsed.length}</div>
-          <div>Need review: ${problemCount}</div>
-          <div>Ready: ${parsed.length - problemCount}</div>
-        `;
+        summary.innerHTML = `<div>Total questions: ${parsed.length}</div><div>Need review: ${problemCount}</div><div>Ready: ${parsed.length - problemCount}</div>`;
         grid.innerHTML = rows.map(row => `
           <div class="preview-card ${row.issues.length ? 'problem' : ''}">
             <h4>Q${row.index + 1}. ${escapeHtml(row.question.q)}</h4>
@@ -2382,8 +1956,7 @@ Fix these issues:
             <p>Options: ${row.question.options.length} | Answer: ${escapeHtml(row.question.ans || 'Missing')}</p>
             <p>Explanation: ${row.question.explanation ? 'Added' : 'Missing'}</p>
             <p>${row.issues.length ? `Issues: ${row.issues.map(escapeHtml).join(', ')}` : 'Looks good'}</p>
-          </div>
-        `).join('');
+          </div>`).join('');
         panel.style.display = 'block';
         updateSetupCounts();
       } catch (error) {
@@ -2395,73 +1968,34 @@ Fix these issues:
 
     function prepareQuestions(parsedQuestions) {
       let prepared = parsedQuestions.map(question => {
-        let options = question.options;
-        let answer = question.ans;
-
+        let options = question.options, answer = question.ans;
         if (document.getElementById('optionOrder').value === 'random') {
           const shuffled = shuffleArray(question.options);
-          const letters = ['A', 'B', 'C', 'D'];
-
-          options = shuffled.map((option, index) => ({
-            key: letters[index],
-            oldKey: option.key,
-            text: option.text
-          }));
+          const letters = ['A','B','C','D'];
+          options = shuffled.map((option, index) => ({ key: letters[index], oldKey: option.key, text: option.text }));
           answer = options.find(option => option.oldKey === question.ans).key;
-          options = options.map(option => ({
-            key: option.key,
-            text: option.text
-          }));
+          options = options.map(option => ({ key: option.key, text: option.text }));
         }
-
-        return {
-          ...question,
-          options,
-          ans: answer
-        };
+        return { ...question, options, ans: answer };
       });
-
-      if (document.getElementById('questionOrder').value === 'random') {
-        prepared = shuffleArray(prepared);
-      }
-
+      if (document.getElementById('questionOrder').value === 'random') prepared = shuffleArray(prepared);
       return prepared;
     }
 
     function startQuiz() {
       clearError();
-
       let parsedQuestions;
-      try {
-        parsedQuestions = parseQuiz(document.getElementById('input').value);
-      } catch (error) {
-        showError(error.message);
-        return;
-      }
-
+      try { parsedQuestions = parseQuiz(document.getElementById('input').value); }
+      catch (error) { showError(error.message); return; }
       const minutes = Number(document.getElementById('minutes').value);
-      if (!Number.isFinite(minutes) || minutes < 1) {
-        showError('Please enter a valid quiz time in minutes.');
-        return;
-      }
-
+      if (!Number.isFinite(minutes) || minutes < 1) { showError('Please enter a valid quiz time in minutes.'); return; }
       positiveMarks = Number(document.getElementById('positiveMarks').value);
       negativeMarks = Number(document.getElementById('negativeMarksInput').value);
       testMode = document.getElementById('testMode').value;
-
-      if (!Number.isFinite(positiveMarks) || positiveMarks <= 0) {
-        showError('Please enter valid marks per correct question.');
-        return;
-      }
-
-      if (!Number.isFinite(negativeMarks) || negativeMarks < 0) {
-        showError('Please enter valid negative marks per wrong answer.');
-        return;
-      }
-
+      if (!Number.isFinite(positiveMarks) || positiveMarks <= 0) { showError('Please enter valid marks per correct question.'); return; }
+      if (!Number.isFinite(negativeMarks) || negativeMarks < 0) { showError('Please enter valid negative marks per wrong answer.'); return; }
       questions = prepareQuestions(parsedQuestions);
-      current = 0;
-      palettePage = 0;
+      current = 0; palettePage = 0;
       userAnswers = Array(questions.length).fill(null);
       visited = Array(questions.length).fill(false);
       marked = Array(questions.length).fill(false);
@@ -2469,30 +2003,21 @@ Fix these issues:
       questionStartedAt = Date.now();
       totalSeconds = Math.round(minutes * 60);
       remainingSeconds = totalSeconds;
-      submitted = false;
-      paused = false;
-
+      submitted = false; paused = false;
       document.getElementById('setup').style.display = 'none';
       document.getElementById('result').style.display = 'none';
       document.getElementById('exam').style.display = 'grid';
-
-      startTimer();
-      resetQuestionTimer();
-      showQuestion();
+      startTimer(); resetQuestionTimer(); showQuestion();
     }
 
     function startTimer() {
       clearInterval(timerId);
       updateTimer();
-
       timerId = setInterval(() => {
         if (paused) return;
         remainingSeconds--;
         updateTimer();
-
-        if (remainingSeconds <= 0) {
-          submitQuiz();
-        }
+        if (remainingSeconds <= 0) submitQuiz();
       }, 1000);
     }
 
@@ -2500,31 +2025,24 @@ Fix these issues:
       const timer = document.getElementById('timer');
       const minutes = Math.floor(Math.max(remainingSeconds, 0) / 60);
       const seconds = Math.max(remainingSeconds, 0) % 60;
-      timer.textContent = `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      timer.textContent = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
       timer.classList.toggle('warning', remainingSeconds <= 60 && remainingSeconds > 0);
       updateQuestionTimerDisplay();
     }
 
     function formatTime(totalSecondsValue) {
       const safeSeconds = Math.max(0, Math.floor(totalSecondsValue || 0));
-      const minutes = Math.floor(safeSeconds / 60);
-      const seconds = safeSeconds % 60;
-      return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      return `${String(Math.floor(safeSeconds/60)).padStart(2,'0')}:${String(safeSeconds%60).padStart(2,'0')}`;
     }
 
     function saveCurrentQuestionTime() {
       if (!questions.length || !questionStartedAt) return;
-
-      const now = Date.now();
-      const elapsed = Math.max(0, Math.floor((now - questionStartedAt) / 1000));
+      const elapsed = Math.max(0, Math.floor((Date.now() - questionStartedAt) / 1000));
       questionTimes[current] = (questionTimes[current] || 0) + elapsed;
-      questionStartedAt = now;
+      questionStartedAt = Date.now();
     }
 
-    function resetQuestionTimer() {
-      questionStartedAt = Date.now();
-      updateQuestionTimerDisplay();
-    }
+    function resetQuestionTimer() { questionStartedAt = Date.now(); updateQuestionTimerDisplay(); }
 
     function getCurrentQuestionElapsed() {
       if (!questionStartedAt) return questionTimes[current] || 0;
@@ -2538,41 +2056,31 @@ Fix these issues:
     }
 
     function togglePause() {
-      if (testMode !== 'practice') {
-        showPdfStatus('Pause is available only in Practice mode.');
-        return;
-      }
-
-      if (!paused) {
-        saveCurrentQuestionTime();
-        paused = true;
-      } else {
-        paused = false;
-        resetQuestionTimer();
-      }
-
-      document.querySelectorAll('#options button, .question-actions button:not(.pause-btn)').forEach(button => {
-        button.disabled = paused;
-      });
+      if (testMode !== 'practice') { showPdfStatus('Pause is available only in Practice mode.'); return; }
+      if (!paused) { saveCurrentQuestionTime(); paused = true; }
+      else { paused = false; resetQuestionTimer(); }
+      document.querySelectorAll('#options button, .question-actions button:not(.pause-btn)').forEach(button => { button.disabled = paused; });
       updateQuestionTimerDisplay();
     }
 
     function showQuestion() {
       visited[current] = true;
       palettePage = Math.floor(current / palettePageSize);
-
       const question = questions[current];
       const statusParts = [];
       if (userAnswers[current]) statusParts.push('Answered');
       if (marked[current]) statusParts.push('Marked');
       if (!statusParts.length) statusParts.push('Not answered');
-
       document.getElementById('question-count').textContent = `Question ${current + 1} of ${questions.length}`;
       document.getElementById('top-question').textContent = `Q ${current + 1}/${questions.length}`;
       document.getElementById('question-status').textContent = statusParts.join(' | ');
       updateQuestionTimerDisplay();
       document.getElementById('section-chip').textContent = question.section;
       document.getElementById('question-text').textContent = question.q;
+
+      // Re-trigger animation
+      const body = document.querySelector('.question-body');
+      if (body) { body.style.animation = 'none'; body.offsetHeight; body.style.animation = ''; }
 
       document.getElementById('options').innerHTML = question.options.map(option => {
         const selected = userAnswers[current] === option.key ? ' selected' : '';
@@ -2581,97 +2089,54 @@ Fix these issues:
           <span>${escapeHtml(option.text)}</span>
         </button>`;
       }).join('');
-      document.querySelectorAll('#options button, .question-actions button:not(.pause-btn)').forEach(button => {
-        button.disabled = paused;
-      });
-
+      document.querySelectorAll('#options button, .question-actions button:not(.pause-btn)').forEach(button => { button.disabled = paused; });
       const feedback = document.getElementById('practice-feedback');
       if (testMode === 'practice' && userAnswers[current]) {
         const isCorrect = userAnswers[current] === question.ans;
         feedback.style.display = 'block';
-        feedback.innerHTML = `
-          <strong>${isCorrect ? 'Correct' : 'Incorrect'}.</strong>
-          Correct answer: ${escapeHtml(optionLabel(question, question.ans))}
-          <br>${escapeHtml(question.explanation || 'No explanation added for this question.')}
-        `;
-      } else {
-        feedback.style.display = 'none';
-        feedback.textContent = '';
-      }
-
+        feedback.innerHTML = `<strong>${isCorrect ? '✓ Correct' : '✗ Incorrect'}.</strong> Correct answer: ${escapeHtml(optionLabel(question, question.ans))}<br>${escapeHtml(question.explanation || 'No explanation added for this question.')}`;
+      } else { feedback.style.display = 'none'; feedback.textContent = ''; }
       updatePalette();
+      updateProgress();
     }
 
-    function selectAnswer(answer) {
-      userAnswers[current] = answer;
-      showQuestion();
-    }
+    function selectAnswer(answer) { userAnswers[current] = answer; showQuestion(); }
 
     function previousQuestion() {
-      if (current > 0) {
-        saveCurrentQuestionTime();
-        current--;
-        resetQuestionTimer();
-        showQuestion();
-      }
+      if (current > 0) { saveCurrentQuestionTime(); current--; resetQuestionTimer(); showQuestion(); }
     }
 
     function firstQuestion() {
       if (current === 0) return;
-      saveCurrentQuestionTime();
-      current = 0;
-      resetQuestionTimer();
-      showQuestion();
+      saveCurrentQuestionTime(); current = 0; resetQuestionTimer(); showQuestion();
     }
 
     function nextQuestion() {
-      if (current < questions.length - 1) {
-        saveCurrentQuestionTime();
-        current++;
-        resetQuestionTimer();
-        showQuestion();
-        return;
-      }
+      if (current < questions.length - 1) { saveCurrentQuestionTime(); current++; resetQuestionTimer(); showQuestion(); return; }
       confirmSubmit();
     }
 
     function lastQuestion() {
       if (current === questions.length - 1) return;
-      saveCurrentQuestionTime();
-      current = questions.length - 1;
-      resetQuestionTimer();
-      showQuestion();
+      saveCurrentQuestionTime(); current = questions.length - 1; resetQuestionTimer(); showQuestion();
     }
 
-    function clearAnswer() {
-      userAnswers[current] = null;
-      showQuestion();
-    }
-
-    function toggleMark() {
-      marked[current] = !marked[current];
-      showQuestion();
-    }
+    function clearAnswer() { userAnswers[current] = null; showQuestion(); }
+    function toggleMark() { marked[current] = !marked[current]; showQuestion(); }
 
     function goToQuestion(index) {
       if (index === current) return;
-      saveCurrentQuestionTime();
-      current = index;
-      palettePage = Math.floor(index / palettePageSize);
-      resetQuestionTimer();
-      showQuestion();
+      saveCurrentQuestionTime(); current = index; palettePage = Math.floor(index / palettePageSize); resetQuestionTimer(); showQuestion();
     }
 
     function updatePalette() {
       const answered = userAnswers.filter(Boolean).length;
       const visitedCount = visited.filter(Boolean).length;
       const markedCount = marked.filter(Boolean).length;
-
       document.getElementById('answered-count').textContent = answered;
       document.getElementById('unanswered-count').textContent = questions.length - answered;
       document.getElementById('marked-count').textContent = markedCount;
       document.getElementById('visited-count').textContent = visitedCount;
-
       const totalPages = Math.max(1, Math.ceil(questions.length / palettePageSize));
       palettePage = Math.min(Math.max(palettePage, 0), totalPages - 1);
       const start = palettePage * palettePageSize;
@@ -2682,7 +2147,6 @@ Fix these issues:
       if (range) range.textContent = `${questions.length ? start + 1 : 0}-${end} of ${questions.length}`;
       if (previous) previous.disabled = palettePage === 0;
       if (next) next.disabled = palettePage >= totalPages - 1;
-
       document.getElementById('palette').innerHTML = questions.slice(start, end).map((question, offset) => {
         const index = start + offset;
         let status = visited[index] ? 'unanswered' : '';
@@ -2694,92 +2158,52 @@ Fix these issues:
       }).join('');
     }
 
-    function previousPalettePage() {
-      if (palettePage > 0) {
-        palettePage--;
-        updatePalette();
-      }
-    }
-
-    function nextPalettePage() {
-      if ((palettePage + 1) * palettePageSize < questions.length) {
-        palettePage++;
-        updatePalette();
-      }
-    }
+    function previousPalettePage() { if (palettePage > 0) { palettePage--; updatePalette(); } }
+    function nextPalettePage() { if ((palettePage + 1) * palettePageSize < questions.length) { palettePage++; updatePalette(); } }
 
     function jumpToQuestionNumber() {
       const input = document.getElementById('paletteSearch');
       const value = Number(input?.value);
-      if (!Number.isInteger(value) || value < 1 || value > questions.length) {
-        showPdfStatus(`Enter a question number between 1 and ${questions.length}.`);
-        return;
-      }
+      if (!Number.isInteger(value) || value < 1 || value > questions.length) { showPdfStatus(`Enter a question number between 1 and ${questions.length}.`); return; }
       goToQuestion(value - 1);
       if (input) input.value = '';
     }
 
-    function handlePaletteSearchKey(event) {
-      if (event.key === 'Enter') jumpToQuestionNumber();
-    }
+    function handlePaletteSearchKey(event) { if (event.key === 'Enter') jumpToQuestionNumber(); }
 
     function confirmSubmit() {
       const unanswered = userAnswers.filter(answer => !answer).length;
-      const message = unanswered
-        ? `You have ${unanswered} unanswered question(s). Submit quiz now?`
-        : 'Submit quiz now?';
-
-      if (confirm(message)) {
-        submitQuiz();
-      }
+      if (confirm(unanswered ? `You have ${unanswered} unanswered question(s). Submit quiz now?` : 'Submit quiz now?')) submitQuiz();
     }
 
     function submitQuiz() {
       if (submitted) return;
-      saveCurrentQuestionTime();
-      submitted = true;
-      clearInterval(timerId);
-      showResult();
+      saveCurrentQuestionTime(); submitted = true; clearInterval(timerId); showResult();
     }
 
     function collectSectionStats() {
       const sections = {};
-
       questions.forEach((question, index) => {
-        if (!sections[question.section]) {
-          sections[question.section] = { total: 0, correct: 0, wrong: 0, attempted: 0 };
-        }
-
+        if (!sections[question.section]) sections[question.section] = { total: 0, correct: 0, wrong: 0, attempted: 0 };
         const section = sections[question.section];
         const user = userAnswers[index];
         section.total++;
-
         if (user) section.attempted++;
         if (user === question.ans) section.correct++;
         if (user && user !== question.ans) section.wrong++;
       });
-
       return sections;
     }
 
     function buildSectionAnalysis() {
       const sections = collectSectionStats();
-
       return Object.entries(sections).map(([name, data]) => {
         const accuracy = data.attempted ? Math.round((data.correct / data.attempted) * 100) : 0;
-        return `<div class="analysis-card">
-          <h3>${escapeHtml(name)}</h3>
-          <p>Total: ${data.total}</p>
-          <p>Correct: ${data.correct}</p>
-          <p>Wrong: ${data.wrong}</p>
-          <p>Accuracy: ${accuracy}%</p>
-        </div>`;
+        return `<div class="analysis-card"><h3>${escapeHtml(name)}</h3><p>Total: ${data.total}</p><p>Correct: ${data.correct}</p><p>Wrong: ${data.wrong}</p><p>Accuracy: ${accuracy}%</p></div>`;
       }).join('');
     }
 
-    function getUniqueSections() {
-      return [...new Set(questions.map(question => question.section))].sort((a, b) => a.localeCompare(b));
-    }
+    function getUniqueSections() { return [...new Set(questions.map(question => question.section))].sort((a, b) => a.localeCompare(b)); }
 
     function filterResults(status, section, query = '') {
       const normalizedQuery = query.trim().toLowerCase();
@@ -2789,29 +2213,12 @@ Fix these issues:
         const searchMatch = !normalizedQuery || item.innerText.toLowerCase().includes(normalizedQuery);
         item.style.display = statusMatch && sectionMatch && searchMatch ? 'block' : 'none';
       });
-
-      document.querySelectorAll('[data-filter-status]').forEach(button => {
-        button.classList.toggle('active', button.dataset.filterStatus === status);
-      });
+      document.querySelectorAll('[data-filter-status]').forEach(button => { button.classList.toggle('active', button.dataset.filterStatus === status); });
     }
 
-    function handleResultFilter(status) {
-      const section = document.getElementById('sectionFilter')?.value || 'all';
-      const query = document.getElementById('resultSearch')?.value || '';
-      filterResults(status, section, query);
-    }
-
-    function handleSectionFilter() {
-      const active = document.querySelector('[data-filter-status].active');
-      const query = document.getElementById('resultSearch')?.value || '';
-      filterResults(active ? active.dataset.filterStatus : 'all', document.getElementById('sectionFilter').value, query);
-    }
-
-    function handleResultSearch() {
-      const active = document.querySelector('[data-filter-status].active');
-      const section = document.getElementById('sectionFilter')?.value || 'all';
-      filterResults(active ? active.dataset.filterStatus : 'all', section, document.getElementById('resultSearch').value);
-    }
+    function handleResultFilter(status) { filterResults(status, document.getElementById('sectionFilter')?.value || 'all', document.getElementById('resultSearch')?.value || ''); }
+    function handleSectionFilter() { const active = document.querySelector('[data-filter-status].active'); filterResults(active ? active.dataset.filterStatus : 'all', document.getElementById('sectionFilter').value, document.getElementById('resultSearch')?.value || ''); }
+    function handleResultSearch() { const active = document.querySelector('[data-filter-status].active'); filterResults(active ? active.dataset.filterStatus : 'all', document.getElementById('sectionFilter')?.value || 'all', document.getElementById('resultSearch').value); }
 
     function performanceLabel(percentage, attempted, total, averageTime) {
       if (percentage >= 85 && attempted / total >= 0.85) return 'Excellent';
@@ -2821,77 +2228,39 @@ Fix these issues:
     }
 
     function buildTimeInsights() {
-      const rows = questions.map((question, index) => ({
-        index,
-        question,
-        time: questionTimes[index] || 0,
-        user: userAnswers[index]
-      }));
-      const fastestCorrect = rows.filter(row => row.user === row.question.ans).sort((a, b) => a.time - b.time)[0];
-      const slowestWrong = rows.filter(row => row.user && row.user !== row.question.ans).sort((a, b) => b.time - a.time)[0];
-      const slowest = rows.slice().sort((a, b) => b.time - a.time)[0];
+      const rows = questions.map((question, index) => ({ index, question, time: questionTimes[index] || 0, user: userAnswers[index] }));
+      const fastestCorrect = rows.filter(row => row.user === row.question.ans).sort((a,b)=>a.time-b.time)[0];
+      const slowestWrong = rows.filter(row => row.user && row.user !== row.question.ans).sort((a,b)=>b.time-a.time)[0];
+      const slowest = rows.slice().sort((a,b)=>b.time-a.time)[0];
       const careless = rows.filter(row => row.user && row.user !== row.question.ans && row.time <= 20).length;
-      const average = rows.length ? Math.round(rows.reduce((sum, row) => sum + row.time, 0) / rows.length) : 0;
-
-      return `<div class="analysis-card">
-        <h3>Time Insights</h3>
-        <p>Fastest correct: ${fastestCorrect ? `Q${fastestCorrect.index + 1} (${formatTime(fastestCorrect.time)})` : 'N/A'}</p>
-        <p>Slowest question: ${slowest ? `Q${slowest.index + 1} (${formatTime(slowest.time)})` : 'N/A'}</p>
-        <p>Slowest wrong: ${slowestWrong ? `Q${slowestWrong.index + 1} (${formatTime(slowestWrong.time)})` : 'N/A'}</p>
-        <p>Average time: ${formatTime(average)}</p>
-        <p>Fast wrong attempts: ${careless}</p>
-      </div>`;
+      const avg = rows.length ? Math.round(rows.reduce((sum,row)=>sum+row.time,0)/rows.length) : 0;
+      return `<div class="analysis-card"><h3>Time Insights</h3><p>Fastest correct: ${fastestCorrect ? `Q${fastestCorrect.index+1} (${formatTime(fastestCorrect.time)})` : 'N/A'}</p><p>Slowest question: ${slowest ? `Q${slowest.index+1} (${formatTime(slowest.time)})` : 'N/A'}</p><p>Slowest wrong: ${slowestWrong ? `Q${slowestWrong.index+1} (${formatTime(slowestWrong.time)})` : 'N/A'}</p><p>Average time: ${formatTime(avg)}</p><p>Fast wrong attempts: ${careless}</p></div>`;
     }
 
     function showResult() {
-      let correctCount = 0;
-      let wrongCount = 0;
-      let attempted = 0;
+      let correctCount = 0, wrongCount = 0, attempted = 0;
       const mistakes = [];
-
       const reviewHtml = questions.map((question, index) => {
-        const correct = question.ans;
-        const user = userAnswers[index];
+        const correct = question.ans, user = userAnswers[index];
         const status = !user ? 'not-attempted' : user === correct ? 'correct' : 'wrong';
-
         if (user) attempted++;
         if (user === correct) correctCount++;
-        if (user && user !== correct) {
-          wrongCount++;
-          mistakes.push(question);
-        }
-
+        if (user && user !== correct) { wrongCount++; mistakes.push(question); }
         const optionsHtml = question.options.map(option => {
-          const isCorrect = option.key === correct;
-          const isUserWrong = user === option.key && user !== correct;
-          const classes = [
-            'review-option',
-            isCorrect ? 'correct-option' : '',
-            isUserWrong ? 'user-wrong-option' : ''
-          ].filter(Boolean).join(' ');
+          const isCorrect = option.key === correct, isUserWrong = user === option.key && user !== correct;
+          const classes = ['review-option', isCorrect ? 'correct-option' : '', isUserWrong ? 'user-wrong-option' : ''].filter(Boolean).join(' ');
           const label = isCorrect ? 'Correct answer' : isUserWrong ? 'Your answer' : '';
-
-          return `<div class="${classes}">
-            <strong>${option.key})</strong>
-            <span>${escapeHtml(option.text)}${label ? ` - ${label}` : ''}</span>
-          </div>`;
+          return `<div class="${classes}"><strong>${option.key})</strong><span>${escapeHtml(option.text)}${label ? ` — ${label}` : ''}</span></div>`;
         }).join('');
-
-        const explanation = question.explanation
-          ? `<div class="explanation"><strong>Explanation:</strong> ${escapeHtml(question.explanation)}</div>`
-          : `<div class="explanation"><strong>Explanation:</strong> No explanation added for this question.</div>`;
-
+        const explanation = question.explanation ? `<div class="explanation"><strong>Explanation:</strong> ${escapeHtml(question.explanation)}</div>` : `<div class="explanation"><strong>Explanation:</strong> No explanation added for this question.</div>`;
         return `<div class="review-item ${status}" data-status="${status}" data-section="${escapeHtml(question.section)}">
           <h3>Q${index + 1}. ${escapeHtml(question.q)}</h3>
           <p class="answer-line"><strong>Your Answer:</strong> ${escapeHtml(optionLabel(question, user))}</p>
           <p class="answer-line"><strong>Correct Answer:</strong> ${escapeHtml(optionLabel(question, correct))}</p>
-          <p class="answer-line"><strong>Status:</strong> ${status === 'correct' ? 'Correct' : status === 'wrong' ? 'Wrong' : 'Not Attempted'}</p>
+          <p class="answer-line"><strong>Status:</strong> ${status === 'correct' ? '✓ Correct' : status === 'wrong' ? '✗ Wrong' : '— Not Attempted'}</p>
           <p class="answer-line"><strong>Time Spent:</strong> ${formatTime(questionTimes[index] || 0)}</p>
-          <div class="review-options">${optionsHtml}</div>
-          ${explanation}
-        </div>`;
+          <div class="review-options">${optionsHtml}</div>${explanation}</div>`;
       }).join('');
-
       const notAttempted = questions.length - attempted;
       const positiveScore = correctCount * positiveMarks;
       const negativeScore = wrongCount * negativeMarks;
@@ -2901,37 +2270,19 @@ Fix these issues:
       const timeTaken = totalSeconds - remainingSeconds;
       const takenMinutes = Math.floor(timeTaken / 60);
       const takenSeconds = timeTaken % 60;
-      const averageQuestionTime = questions.length
-        ? Math.round(questionTimes.reduce((sum, value) => sum + value, 0) / questions.length)
-        : 0;
-      const sectionOptions = getUniqueSections().map(section =>
-        `<option value="${escapeHtml(section)}">${escapeHtml(section)}</option>`
-      ).join('');
+      const averageQuestionTime = questions.length ? Math.round(questionTimes.reduce((sum,value)=>sum+value,0)/questions.length) : 0;
+      const sectionOptions = getUniqueSections().map(section => `<option value="${escapeHtml(section)}">${escapeHtml(section)}</option>`).join('');
       const label = performanceLabel(percentage, attempted, questions.length, averageQuestionTime);
       saveMistakes(mistakes);
-      saveHistory({
-        date: new Date().toLocaleString(),
-        score: `${finalScore.toFixed(2)}/${totalPossible.toFixed(2)}`,
-        scorePercent: percentage,
-        accuracy: percentage,
-        attempted,
-        total: questions.length,
-        correct: correctCount,
-        wrong: wrongCount,
-        skipped: notAttempted,
-        negativeScore: Number(negativeScore.toFixed(2)),
-        sectionStats: collectSectionStats()
-      });
-
+      saveHistory({ date: new Date().toLocaleString(), score: `${finalScore.toFixed(2)}/${totalPossible.toFixed(2)}`, scorePercent: percentage, accuracy: percentage, attempted, total: questions.length, correct: correctCount, wrong: wrongCount, skipped: notAttempted, negativeScore: Number(negativeScore.toFixed(2)), sectionStats: collectSectionStats() });
       document.getElementById('exam').style.display = 'none';
       document.getElementById('timer').textContent = 'Finished';
       document.getElementById('top-question').textContent = `Q ${questions.length}/${questions.length}`;
       document.getElementById('timer').classList.remove('warning');
-
       document.getElementById('result').style.display = 'block';
       document.getElementById('result').innerHTML = `
         <h2>Result</h2>
-        <p class="hint">Scoring: +${positiveMarks} for correct, -${negativeMarks} for wrong, 0 for not attempted.</p>
+        <p class="hint">Scoring: +${positiveMarks} for correct, −${negativeMarks} for wrong, 0 for not attempted.</p>
         <div class="score-card">
           <div class="stat"><strong>${finalScore.toFixed(2)}/${totalPossible.toFixed(2)}</strong><span>Final Score</span></div>
           <div class="stat"><strong>${correctCount}</strong><span>Correct</span></div>
@@ -2944,7 +2295,7 @@ Fix these issues:
           <div class="stat"><strong>${attempted}</strong><span>Attempted</span></div>
           <div class="stat"><strong>${positiveScore.toFixed(2)}</strong><span>Positive Marks</span></div>
           <div class="stat"><strong>${negativeScore.toFixed(2)}</strong><span>Negative Marks</span></div>
-          <div class="stat"><strong>${takenMinutes}:${String(takenSeconds).padStart(2, '0')}</strong><span>Time Taken</span></div>
+          <div class="stat"><strong>${takenMinutes}:${String(takenSeconds).padStart(2,'0')}</strong><span>Time Taken</span></div>
           <div class="stat"><strong>${marked.filter(Boolean).length}</strong><span>Marked</span></div>
           <div class="stat"><strong>${formatTime(averageQuestionTime)}</strong><span>Avg / Question</span></div>
           <div class="stat"><strong>N/A</strong><span>Rank / Percentile</span></div>
@@ -2962,21 +2313,18 @@ Fix these issues:
           <button type="button" data-filter-status="wrong" onclick="handleResultFilter('wrong')">Incorrect</button>
           <button type="button" data-filter-status="not-attempted" onclick="handleResultFilter('not-attempted')">Not Attempted</button>
           <select id="sectionFilter" onchange="handleSectionFilter()">
-            <option value="all">All Sections</option>
-            ${sectionOptions}
+            <option value="all">All Sections</option>${sectionOptions}
           </select>
         </div>
-        ${reviewHtml}
-      `;
+        ${reviewHtml}`;
     }
 
     function restart() {
       clearInterval(timerId);
       document.getElementById('timer').textContent = '00:00';
-      resetTopQuestion();
-      questionTimes = [];
-      questionStartedAt = 0;
-      paused = false;
+      resetTopQuestion(); questionTimes = []; questionStartedAt = 0; paused = false;
+      const bar = document.getElementById('exam-progress');
+      if (bar) bar.style.width = '0%';
       document.getElementById('setup').style.display = 'block';
       document.getElementById('result').style.display = 'none';
       document.getElementById('exam').style.display = 'none';
@@ -2985,13 +2333,11 @@ Fix these issues:
     function importFile(event) {
       const file = event.target.files[0];
       if (!file) return;
-
       const reader = new FileReader();
       reader.onload = () => {
         document.getElementById('input').value = reader.result;
         showPdfStatus('File imported. Click Auto Arrange Text if it is not already in quiz format.');
-        updateSetupCounts();
-        event.target.value = '';
+        updateSetupCounts(); event.target.value = '';
       };
       reader.readAsText(file);
     }
@@ -2999,43 +2345,27 @@ Fix these issues:
     async function importPdf(event) {
       const file = event.target.files[0];
       if (!file) return;
-
-      for (let attempt = 0; attempt < 10 && !window.pdfjsLib; attempt++) {
-        await new Promise(resolve => setTimeout(resolve, 100));
-      }
-
-      if (!window.pdfjsLib) {
-        showPdfStatus('PDF extractor could not load. Please check your internet connection and try again.');
-        event.target.value = '';
-        return;
-      }
-
+      for (let attempt = 0; attempt < 10 && !window.pdfjsLib; attempt++) await new Promise(resolve => setTimeout(resolve, 100));
+      if (!window.pdfjsLib) { showPdfStatus('PDF extractor could not load. Please check your internet connection and try again.'); event.target.value = ''; return; }
       showPdfStatus('Extracting PDF text...');
-
       try {
         pdfjsLib.GlobalWorkerOptions.workerSrc = './vendor/pdfjs/pdf.worker.min.mjs';
         const buffer = await file.arrayBuffer();
         const pdf = await pdfjsLib.getDocument({ data: buffer }).promise;
         const pages = [];
-
         for (let pageNumber = 1; pageNumber <= pdf.numPages; pageNumber++) {
           const page = await pdf.getPage(pageNumber);
           const viewport = page.getViewport({ scale: 1 });
           const content = await page.getTextContent();
-          const text = textContentToLines(content.items, viewport.width);
-          pages.push(text);
+          pages.push(textContentToLines(content.items, viewport.width));
         }
-
         const extracted = pages.join('\n\n');
         const converted = convertExtractedPdfText(extracted);
         document.getElementById('input').value = converted;
         const count = countFormattedQuestions(converted);
         showPdfStatus(`Extracted ${pdf.numPages} page(s) and arranged ${count} question(s). Review once before starting the test.`);
         updateSetupCounts();
-      } catch (error) {
-        showPdfStatus('PDF extraction failed. This can happen with scanned PDFs. Try OCR or paste the text manually.');
-      }
-
+      } catch (error) { showPdfStatus('PDF extraction failed. This can happen with scanned PDFs. Try OCR or paste the text manually.'); }
       event.target.value = '';
     }
 
