@@ -269,13 +269,13 @@
     }
 
     .timer.warning {
-      background: rgba(220,38,38,0.25);
+      background: rgba(220,38,38,0.18);
       border-color: #F87171;
-      animation: timerPulse 1s ease-in-out infinite;
+      animation: timerPulse 1.8s ease-in-out infinite;
     }
 
     @keyframes timerPulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); }
+      0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.28); }
       50% { box-shadow: 0 0 0 6px rgba(220,38,38,0); }
     }
 
@@ -751,6 +751,52 @@
 
     .question-time { color: var(--primary); font-weight: 700; }
 
+    .status-badges {
+      display: inline-flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      min-height: 24px;
+      padding: 3px 9px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #F8FAFC;
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      text-transform: uppercase;
+    }
+
+    .status-badge.answered {
+      background: var(--success-soft);
+      border-color: #86EFAC;
+      color: var(--success);
+    }
+
+    .status-badge.unanswered {
+      background: var(--warning-soft);
+      border-color: #FCD47A;
+      color: var(--warning);
+    }
+
+    .status-badge.marked {
+      background: var(--mark-soft);
+      border-color: #C4B5FD;
+      color: var(--mark);
+    }
+
+    body.dark .status-badge { background: #0B1220; }
+    body.dark .status-badge.answered { background: #052E16; color: #86EFAC; border-color: #15803D; }
+    body.dark .status-badge.unanswered { background: #3A2004; color: #FCD47A; border-color: #B45309; }
+    body.dark .status-badge.marked { background: #1E1040; color: #C4B5FD; border-color: #7C3AED; }
+
     .question-body {
       min-height: 340px;
       padding: 22px 20px;
@@ -934,11 +980,27 @@
       color: #2D3A55;
       font-weight: 700;
       font-size: 12px;
-      transition: transform var(--transition), box-shadow var(--transition);
+      position: relative;
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
     }
 
     .palette button:hover { transform: scale(1.1); box-shadow: var(--shadow); }
-    .palette .current { border: 2.5px solid var(--primary); box-shadow: 0 0 0 2px rgba(37,99,235,0.15); }
+    .palette .current {
+      border: 2.5px solid var(--primary);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.16), 0 8px 18px rgba(37,99,235,0.16);
+      transform: translateY(-1px);
+    }
+    .palette .current::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: 4px;
+      width: 14px;
+      height: 3px;
+      border-radius: 999px;
+      background: var(--primary);
+      transform: translateX(-50%);
+    }
     .palette .answered { background: var(--success-soft); color: var(--success); border-color: #6EE7A0; }
     .palette .unanswered { background: var(--warning-soft); color: var(--warning); border-color: #FCD47A; }
     .palette .marked { background: var(--mark-soft); color: var(--mark); border-color: #C4B5FD; }
@@ -1003,6 +1065,67 @@
     .legend .answered-dot::before { background: var(--success-soft); border-color: #6EE7A0; }
     .legend .unanswered-dot::before { background: var(--warning-soft); border-color: #FCD47A; }
     .legend .marked-dot::before { background: var(--mark-soft); border-color: #C4B5FD; }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      background: rgba(15,23,42,0.48);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+    }
+
+    .modal-backdrop.show { display: flex; }
+
+    .submit-modal {
+      width: min(440px, 100%);
+      border: 1px solid var(--glass-line);
+      border-radius: var(--radius);
+      background: var(--panel);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      animation: fadeUp 0.22s ease both;
+    }
+
+    .submit-modal header {
+      padding: 18px 20px 12px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .submit-modal h3 {
+      margin: 0 0 4px;
+      font-size: 18px;
+      letter-spacing: 0;
+    }
+
+    .submit-modal p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .submit-summary {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 16px 20px;
+    }
+
+    .submit-summary .stat {
+      margin: 0;
+      text-align: center;
+    }
+
+    .submit-modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      padding: 0 20px 18px;
+    }
 
     /* RESULT */
     .result-page {
@@ -1634,6 +1757,24 @@ Fix these issues:
       </aside>
     </section>
 
+    <div id="submit-modal" class="modal-backdrop" aria-hidden="true">
+      <div class="submit-modal" role="dialog" aria-modal="true" aria-labelledby="submit-title">
+        <header>
+          <h3 id="submit-title">Submit Test?</h3>
+          <p>Review your attempt summary before final submission.</p>
+        </header>
+        <div class="submit-summary">
+          <div class="stat"><strong id="submit-answered">0</strong><span>Answered</span></div>
+          <div class="stat"><strong id="submit-unanswered">0</strong><span>Unanswered</span></div>
+          <div class="stat"><strong id="submit-marked">0</strong><span>Marked</span></div>
+        </div>
+        <div class="submit-modal-actions">
+          <button type="button" class="secondary" onclick="closeSubmitModal()">Review More</button>
+          <button type="button" class="danger" onclick="submitFromModal()">Submit Test</button>
+        </div>
+      </div>
+    </div>
+
     <section id="result" class="panel result-page"></section>
     <footer class="creator-credit"><span>by its_vinitgujjar</span></footer>
   </main>
@@ -1680,6 +1821,7 @@ Fix these issues:
     document.addEventListener('keydown', function(e) {
       const examVisible = document.getElementById('exam').style.display !== 'none';
       if (!examVisible || submitted || paused) return;
+      if (document.getElementById('submit-modal')?.classList.contains('show')) return;
 
       // Don't fire if user is typing in an input
       if (['INPUT','TEXTAREA','SELECT'].includes(e.target.tagName)) return;
@@ -1702,6 +1844,14 @@ Fix these issues:
       if (key === 'M') { toggleMark(); return; }
       if (key === 'C' && !e.ctrlKey) { clearAnswer(); return; }
       if (e.ctrlKey && e.key === 'Enter') { confirmSubmit(); return; }
+    });
+
+    document.getElementById('submit-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeSubmitModal();
+    });
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeSubmitModal();
     });
 
     // Show keyboard shortcut tooltip on first exam load
@@ -2376,13 +2526,16 @@ Fix these issues:
       visited[current] = true;
       palettePage = Math.floor(current / palettePageSize);
       const question = questions[current];
-      const statusParts = [];
-      if (userAnswers[current]) statusParts.push('Answered');
-      if (marked[current]) statusParts.push('Marked');
-      if (!statusParts.length) statusParts.push('Not answered');
+      const statusBadges = [];
+      statusBadges.push(userAnswers[current]
+        ? { label: 'Answered', type: 'answered' }
+        : { label: 'Not answered', type: 'unanswered' });
+      if (marked[current]) statusBadges.push({ label: 'Marked', type: 'marked' });
       document.getElementById('question-count').textContent = `Question ${current + 1} of ${questions.length}`;
       document.getElementById('top-question').textContent = `Q ${current + 1}/${questions.length}`;
-      document.getElementById('question-status').textContent = statusParts.join(' | ');
+      document.getElementById('question-status').innerHTML = statusBadges
+        .map(status => `<span class="status-badge ${status.type}">${status.label}</span>`)
+        .join('');
       updateQuestionTimerDisplay();
       document.getElementById('section-chip').textContent = question.section;
       document.getElementById('question-text').textContent = question.q;
@@ -2486,13 +2639,41 @@ Fix these issues:
 
     function handlePaletteSearchKey(event) { if (event.key === 'Enter') jumpToQuestionNumber(); }
 
+    function getSubmitSummary() {
+      const answered = userAnswers.filter(Boolean).length;
+      return {
+        answered,
+        unanswered: Math.max(questions.length - answered, 0),
+        marked: marked.filter(Boolean).length
+      };
+    }
+
     function confirmSubmit() {
-      const unanswered = userAnswers.filter(answer => !answer).length;
-      if (confirm(unanswered ? `You have ${unanswered} unanswered question(s). Submit quiz now?` : 'Submit quiz now?')) submitQuiz();
+      const summary = getSubmitSummary();
+      document.getElementById('submit-answered').textContent = summary.answered;
+      document.getElementById('submit-unanswered').textContent = summary.unanswered;
+      document.getElementById('submit-marked').textContent = summary.marked;
+      const modal = document.getElementById('submit-modal');
+      if (!modal) return submitQuiz();
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeSubmitModal() {
+      const modal = document.getElementById('submit-modal');
+      if (!modal) return;
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    function submitFromModal() {
+      closeSubmitModal();
+      submitQuiz();
     }
 
     function submitQuiz() {
       if (submitted) return;
+      closeSubmitModal();
       saveCurrentQuestionTime(); submitted = true; clearInterval(timerId); showResult();
     }
 
