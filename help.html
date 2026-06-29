@@ -16,9 +16,7 @@
       --shadow: 0 14px 34px rgba(24, 32, 51, 0.08);
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
@@ -58,20 +56,9 @@
       flex: 0 0 44px;
     }
 
-    h1,
-    h2 {
-      margin: 0;
-      letter-spacing: 0;
-    }
-
-    h1 {
-      font-size: 26px;
-    }
-
-    h2 {
-      font-size: 19px;
-      margin-bottom: 8px;
-    }
+    h1, h2 { margin: 0; letter-spacing: 0; }
+    h1 { font-size: 26px; }
+    h2 { font-size: 19px; margin-bottom: 8px; }
 
     .card {
       padding: 18px;
@@ -83,16 +70,10 @@
       animation: fadeUp 0.32s ease both;
     }
 
-    .card p {
-      margin: 0 0 8px;
-      color: var(--muted);
-    }
+    .card p { margin: 0 0 8px; color: var(--muted); }
 
-    ul {
-      margin: 8px 0 0;
-      padding-left: 22px;
-      color: var(--muted);
-    }
+    ul { margin: 8px 0 0; padding-left: 22px; color: var(--muted); }
+    li { margin-bottom: 5px; }
 
     pre {
       margin: 10px 0 0;
@@ -104,6 +85,8 @@
       overflow-x: auto;
       white-space: pre-wrap;
       font-family: Consolas, Monaco, monospace;
+      font-size: 13px;
+      line-height: 1.6;
     }
 
     .back {
@@ -119,16 +102,21 @@
       font-weight: 800;
     }
 
-    @keyframes fadeUp {
-      from {
-        opacity: 0;
-        transform: translateY(8px);
-      }
+    .tip-badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: #DCFCE7;
+      color: #166534;
+      font-size: 11px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: 0.04em;
+    }
 
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
@@ -143,18 +131,21 @@
       </span>
       <div>
         <h1>CBT Exam Simulator Help</h1>
-        <p>Use these guidelines to prepare questions, PDFs, and AI-generated quiz text.</p>
+        <p style="margin:4px 0 0;opacity:0.75;">Prompts, format guide, and tips for best results.</p>
       </div>
     </section>
 
     <section class="card">
       <h2>How to Use</h2>
       <ul>
-        <li>Paste questions manually, import TXT/CSV, or use Extract from PDF.</li>
-        <li>If pasted/imported text is messy, use Auto Arrange Text to convert it into the app format.</li>
+        <li>Paste questions manually, import TXT/CSV, or use <strong>Extract from PDF</strong>.</li>
+        <li>If text is messy after extraction, use <strong>Auto Arrange Text</strong> to fix format.</li>
         <li>Set quiz time, marks per correct answer, and negative marks per wrong answer.</li>
-        <li>Use Exam mode for real test practice. Use Practice mode when you want instant explanations.</li>
-        <li>Always review extracted PDF text once before starting the test.</li>
+        <li>Use <strong>Exam mode</strong> for real test practice. Use <strong>Practice mode</strong> for instant explanations.</li>
+        <li>Use <strong>🔖 Save</strong> button during exam to bookmark important/tricky questions.</li>
+        <li>After quiz results, you can Repeat, Redo Incorrect, practice Not Attempted, or Marked Questions.</li>
+        <li>Use <strong>Reset Analysis</strong> in the summary pills to start fresh tracking for a new subject/chapter.</li>
+        <li>Questions with year tags like <code>[SSC-JE-2023]</code> or <code>[2021 Shift 1]</code> show a blue badge automatically.</li>
       </ul>
     </section>
 
@@ -162,111 +153,118 @@
       <h2>Question Format</h2>
       <pre>Section: Physics
 Que 1
-What is the SI unit of power?
+What is the SI unit of power? [SSC-JE-2019]
 A) Newton
 B) Joule
 C) Watt
 D) Pascal
 Answer: C
-Explanation: Power is measured in watt. One watt equals one joule per second.</pre>
+Explanation: Power is measured in watts. One watt equals one joule per second.</pre>
+      <p style="margin-top:10px;font-size:13px;color:var(--muted);">💡 Adding <code>[SSC-JE-2023]</code> or <code>[RRB-JE 2021 Shift 1]</code> in the question shows a blue year badge automatically during exam and result review.</p>
     </section>
 
     <section class="card">
       <h2>Best PDF Type</h2>
       <ul>
-        <li>Text-based PDFs work best. You should be able to select and copy text from the PDF.</li>
-        <li>Scanned/image PDFs need OCR first.</li>
+        <li>Text-based PDFs work best — you should be able to select and copy text from the PDF.</li>
+        <li>Scanned/image PDFs need OCR first (use Adobe Acrobat or free online OCR tools).</li>
         <li>Two-column PDFs are supported, but tables, formulas, and diagrams may need manual correction.</li>
         <li>If answers or solutions are at the end, keep them in the same PDF so the app can match by question number.</li>
       </ul>
     </section>
 
     <section class="card">
-      <h2>Prompt for ChatGPT to Create Questions</h2>
-      <pre>Create MCQ questions for CBT Exam Simulator in exactly this format:
+      <h2>Prompt for ChatGPT / Claude to Create Questions</h2>
+      <span class="tip-badge">✅ Best Results</span>
+      <pre>Create MCQ questions for SSC JE / RRB JE exam practice in exactly this format for CBT Exam Simulator:
 
 Section: [topic name]
 Que 1
-Question text?
+Question text here? [SSC-JE-2023]
 A) option 1
 B) option 2
 C) option 3
 D) option 4
-Answer: A/B/C/D
-Explanation: short explanation of the correct answer
+Answer: C
+Explanation: Concise, exam-focused explanation of why this answer is correct.
 
-Rules:
-- Start every question with a question marker: Que 1, Que 2, Que 3, and so on.
+Que 2
+...and so on
+
+Strict rules:
+- Start every question with Que 1, Que 2, Que 3... (sequential, no gaps).
 - Use only four options: A, B, C, D.
-- Do not put blank lines inside one question set.
+- If you know the exam year/shift this question appeared in, add it in the question line as [SSC-JE-2023] or [RRB-JE 2021 Shift 1]. If unknown, leave it out — do not guess or make up years.
+- Do not put any blank lines inside one question block.
 - Keep Question, A, B, C, D, Answer, and Explanation on consecutive lines.
-- For statement/assertion questions, do not add a blank line between the question and statements.
-- Put exactly one blank line only after the full Explanation line, before the next question starts.
-- Do not use bullets, tables, markdown headings, or extra numbering.
-- Do not add introductory lines like "Here are the questions", "Sure", or "Below is the formatted quiz".
-- Keep the answer as only one letter after "Answer:".
-- Make explanations exam-focused and concise.</pre>
+- Put exactly one blank line only after the Explanation line, before the next question.
+- Do not add introductory lines like "Here are the questions", "Sure", or any preamble.
+- Answer must be only one letter: A, B, C, or D.
+- Explanations must be concise and exam-focused (1–3 lines).
+- Do not use bullets, markdown headings, tables, or extra numbering inside questions.</pre>
     </section>
 
     <section class="card">
-      <h2>Prompt for Extracting a PDF with ChatGPT/AI</h2>
-      <pre>Extract all MCQs from this PDF and convert them into this exact format:
+      <h2>Prompt for Extracting a PDF with ChatGPT / Claude</h2>
+      <p>Upload your PDF and use this prompt to extract MCQs:</p>
+      <pre>Extract all MCQs from this PDF and convert them into this exact format for CBT Exam Simulator:
 
-Section: [subject/topic/chapter name]
+Section: [subject/topic/chapter name — use what the PDF mentions]
 Que 1
-Question text?
+Question text here? [SSC-JE-2023]
 A) option 1
 B) option 2
 C) option 3
 D) option 4
-Answer: A/B/C/D
-Explanation: solution or reason for the correct answer
+Answer: C
+Explanation: Reason or solution for the correct answer.
 
 Important rules:
-- Start every question with a question marker: Que 1, Que 2, Que 3, and so on.
+- Start every question with Que 1, Que 2, Que 3... sequentially.
 - If answers or solutions are at the end of the PDF, match them with the correct question number.
-- Preserve technical terms, units, formulas, and year tags like [SSC-JE-2023].
+- If the PDF mentions the exam year, paper, or shift for a question (e.g. SSC-JE 2023, RRB-JE 2021 Shift 1), add it in the question line as a tag like [SSC-JE-2023]. If the PDF does not mention it, do not add any year tag — never guess years.
+- Preserve all technical terms, units, formulas as-is.
 - Do not mix two questions together.
 - Do not include page headers, footers, watermarks, or page numbers.
 - If a question has a table or assertion-reason format, rewrite it clearly as plain text.
-- Do not put blank lines inside one question set.
+- Do not put blank lines inside one question block.
 - Keep Question, A, B, C, D, Answer, and Explanation on consecutive lines.
-- For statement/assertion questions, do not add a blank line between the question and statements.
-- Put exactly one blank line only after the full Explanation line, before the next question starts.
-- Do not add introductory lines like "Here are the questions", "Sure", or "Below is the formatted quiz".
-- Return only the final formatted questions, no extra explanation.</pre>
+- Put exactly one blank line only after the Explanation line, before the next question.
+- Do not add introductory lines or preamble text.
+- Return only the final formatted questions, nothing else.</pre>
     </section>
 
     <section class="card">
       <h2>Prompt to Fix Messy Extracted Text</h2>
+      <p>If Auto Arrange Text doesn't fix everything, paste the raw text into ChatGPT/Claude with this:</p>
       <pre>Clean and repair this extracted quiz text for CBT Exam Simulator.
 
 Convert it into exactly this format:
-Section:
+Section: [topic]
 Que 1
-Question
-A)
-B)
-C)
-D)
-Answer:
-Explanation:
+Question text?
+A) option
+B) option
+C) option
+D) option
+Answer: A/B/C/D
+Explanation: reason for correct answer
 
-Fix these issues:
-- Start every question with a question marker: Que 1, Que 2, Que 3, and so on.
-- Separate mixed questions.
-- Remove page headers/footers.
-- Keep only four options per question.
-- Match answers and explanations correctly.
-- Do not put blank lines inside one question set.
+Fix all these issues:
+- Start every question with Que 1, Que 2, Que 3... sequentially.
+- Separate mixed or merged questions.
+- Remove page headers, footers, watermarks, and page numbers.
+- Keep only four options per question: A, B, C, D.
+- Match answers and explanations to the correct question.
+- Do not put blank lines inside one question block.
 - Keep Question, A, B, C, D, Answer, and Explanation on consecutive lines.
-- For statement/assertion questions, do not add a blank line between the question and statements.
-- Put exactly one blank line only after the full Explanation line, before the next question starts.
-- Do not add introductory lines like "Here are the questions", "Sure", or "Below is the formatted quiz".
-- Return only the corrected quiz text.</pre>
+- Put exactly one blank line only after the Explanation line, before the next question.
+- If the source mentions exam year or shift, add it in the question line as [SSC-JE-2023]. If not mentioned, do not add year tags.
+- Do not add any introductory lines or preamble.
+- Return only the corrected quiz text, nothing else.</pre>
     </section>
 
-    <a class="back" href="index.html">Back to Simulator</a>
+    <a class="back" href="index.html">← Back to Simulator</a>
   </main>
 </body>
 </html>

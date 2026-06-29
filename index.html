@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>CBT Exam Simulator</title>
-  <link rel="icon" type="image/png" href="favicon.png" sizes="64x64">
+  <link rel="icon" type="image/png" href="favicon.png" sizes="32x32">
   <link rel="apple-touch-icon" href="favicon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -1467,6 +1467,108 @@
       .question-text { font-size: 16px; }
     }
 
+    /* Year badge */
+    .year-badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #1E3A8A, #2563EB);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      margin-left: 6px;
+      vertical-align: middle;
+      box-shadow: 0 2px 8px rgba(37,99,235,0.28);
+    }
+
+    /* Pill mini buttons */
+    .pill-mini-btn {
+      display: inline-flex;
+      align-items: center;
+      margin-left: 8px;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      font-weight: 700;
+      background: var(--primary);
+      color: #fff;
+      box-shadow: none;
+      border: none;
+      cursor: pointer;
+    }
+    .pill-mini-btn.danger-mini { background: var(--danger); }
+    .pill-mini-btn:hover { filter: brightness(1.1); transform: none; }
+
+    /* Saved questions panel */
+    .saved-panel {
+      margin-top: 16px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: #F8FAFC;
+      animation: fadeUp 0.3s ease;
+    }
+    body.dark .saved-panel { background: #0B1220; }
+    .saved-panel h3 { font-size: 15px; font-weight: 700; margin-bottom: 10px; }
+    .saved-panel-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+
+    .saved-list {
+      display: grid;
+      gap: 8px;
+      max-height: 320px;
+      overflow-y: auto;
+    }
+    .saved-item {
+      padding: 10px 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      background: var(--panel);
+      cursor: pointer;
+      transition: transform var(--transition), box-shadow var(--transition);
+      font-size: 13px;
+      font-weight: 600;
+    }
+    .saved-item:hover { transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+    .saved-item-meta { color: var(--muted); font-size: 11px; font-weight: 600; margin-top: 3px; }
+
+    /* New result action buttons style */
+    .result-actions { flex-wrap: wrap; }
+
+    /* Analysis reset modal */
+    #analysis-reset-modal.show { display: flex; }
+
+    /* Toast notification */
+    .cbt-toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(12px);
+      background: #1E293B;
+      color: #E2E8F0;
+      padding: 10px 22px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 9999;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+      opacity: 0;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+    .cbt-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* Save/Bookmark button in exam */
+    .save-btn { background: #0EA5E9; }
+    .save-btn:hover { box-shadow: 0 6px 20px rgba(14,165,233,0.3); }
+    .save-btn.active { background: #0369A1; }
+
+    /* Marked questions review style */
+    .review-item.saved { border-color: #7C3AED; background: var(--mark-soft); }
+    body.dark .review-item.saved { background: #1E1040; }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -1663,7 +1765,7 @@ Fix these issues:
 
       <div class="setup-actions">
         <button type="button" onclick="startQuiz()">Start Quiz</button>
-        <button type="button" class="secondary" onclick="showQuestionPreview()">Preview & Check</button>
+        <button type="button" class="secondary" onclick="clearQuestions()">Clear Questions</button>
         <button type="button" class="secondary" onclick="loadSample()">Load Sample</button>
         <button type="button" class="secondary" onclick="exportSavedData()">Export Data</button>
         <button type="button" class="secondary" onclick="document.getElementById('dataInput').click()">Import Data</button>
@@ -1672,7 +1774,9 @@ Fix these issues:
 
       <div class="setup-summary">
         <div class="summary-pill">Ready Questions: <span id="ready-count">0</span></div>
-        <div class="summary-pill">Saved Mistakes: <span id="mistake-count">0</span></div>
+        <div class="summary-pill">Saved Mistakes: <span id="mistake-count">0</span> <button type="button" class="pill-mini-btn" onclick="loadMistakeNotebook()">Load</button></div>
+        <div class="summary-pill">Bookmarked: <span id="bookmark-count">0</span> <button type="button" class="pill-mini-btn" onclick="loadBookmarkedQuestions()">Load</button></div>
+        <div class="summary-pill analysis-reset-pill">Analysis: <span id="analysis-label">All Time</span> <button type="button" class="pill-mini-btn danger-mini" onclick="showAnalysisResetDialog()">Reset</button></div>
       </div>
 
       <div class="history-panel">
@@ -1701,6 +1805,7 @@ Fix these issues:
         </div>
         <div class="question-body">
           <span id="section-chip" class="section-chip"></span>
+          <span id="question-year-badge" class="year-badge" style="display:none;margin-left:8px;"></span>
           <h2 id="question-text" class="question-text"></h2>
           <div id="options" class="options"></div>
           <div id="practice-feedback" class="practice-feedback"></div>
@@ -1711,6 +1816,7 @@ Fix these issues:
             <button type="button" class="secondary" onclick="previousQuestion()">Previous</button>
             <button type="button" class="secondary" onclick="clearAnswer()">Clear</button>
             <button type="button" class="mark-btn" onclick="toggleMark()">Mark</button>
+            <button type="button" id="bookmarkBtn" class="save-btn" onclick="toggleBookmarkCurrent()" title="Save to Mistake Notebook">🔖 Save</button>
           </div>
           <div>
             <button type="button" onclick="nextQuestion()">Save & Next</button>
@@ -1746,6 +1852,24 @@ Fix these issues:
         </div>
       </aside>
     </section>
+
+    <div id="analysis-reset-modal" class="modal-backdrop" aria-hidden="true">
+      <div class="submit-modal" role="dialog" aria-modal="true" aria-labelledby="reset-title">
+        <header>
+          <h3 id="reset-title">Start New Analysis?</h3>
+          <p>This will reset all history, graphs, accuracy trend, strong/weak topics, and mistake data. Your current questions will stay.</p>
+        </header>
+        <div class="submit-summary">
+          <div class="stat"><strong id="reset-test-count">0</strong><span>Tests Done</span></div>
+          <div class="stat"><strong id="reset-mistake-count">0</strong><span>Mistakes Saved</span></div>
+          <div class="stat"><strong id="reset-bookmark-count">0</strong><span>Bookmarked</span></div>
+        </div>
+        <div class="submit-modal-actions">
+          <button type="button" class="secondary" onclick="closeAnalysisResetModal()">Cancel</button>
+          <button type="button" class="danger" onclick="confirmAnalysisReset()">Reset Analysis</button>
+        </div>
+      </div>
+    </div>
 
     <div id="submit-modal" class="modal-backdrop" aria-hidden="true">
       <div class="submit-modal" role="dialog" aria-modal="true" aria-labelledby="submit-title">
@@ -1990,8 +2114,10 @@ Fix these issues:
     function updateSetupCounts() {
       const ready = document.getElementById('ready-count');
       const mistakes = document.getElementById('mistake-count');
+      const bookmarkEl = document.getElementById('bookmark-count');
       if (ready) ready.textContent = countFormattedQuestions(`\n${document.getElementById('input').value || ''}`);
       if (mistakes) mistakes.textContent = getMistakeQuestionCount();
+      if (bookmarkEl) bookmarkEl.textContent = loadBookmarks().length;
     }
 
     function loadHistory() {
@@ -2139,7 +2265,17 @@ Fix these issues:
       const exists = bookmarks.some(item => questionSignature(item) === signature);
       const updated = exists ? bookmarks.filter(item => questionSignature(item) !== signature) : [question, ...bookmarks];
       saveBookmarks(updated);
+      showToast(exists ? '🗑 Removed from saved questions' : '🔖 Question saved!');
+      updateBookmarkBtn();
       showQuestion();
+    }
+
+    function updateBookmarkBtn() {
+      const btn = document.getElementById('bookmarkBtn');
+      if (!btn || !questions.length) return;
+      const saved = isCurrentBookmarked();
+      btn.classList.toggle('active', saved);
+      btn.textContent = saved ? '✅ Saved' : '🔖 Save';
     }
 
     function isCurrentBookmarked() {
@@ -2451,6 +2587,9 @@ Fix these issues:
       if (!Number.isFinite(positiveMarks) || positiveMarks <= 0) { showError('Please enter valid marks per correct question.'); return; }
       if (!Number.isFinite(negativeMarks) || negativeMarks < 0) { showError('Please enter valid negative marks per wrong answer.'); return; }
       questions = prepareQuestions(parsedQuestions);
+      lastQuizQuestions = questions.map(q => ({...q}));
+      lastQuizMinutes = minutes;
+      lastQuizSettings = { positiveMarks, negativeMarks, testMode: 'exam' };
       current = 0; palettePage = 0;
       userAnswers = Array(questions.length).fill(null);
       visited = Array(questions.length).fill(false);
@@ -2528,6 +2667,9 @@ Fix these issues:
         .join('');
       updateQuestionTimerDisplay();
       document.getElementById('section-chip').textContent = question.section;
+      const qYearTag = extractYearTag(question.q);
+      const qYearEl = document.getElementById('question-year-badge');
+      if (qYearEl) { qYearEl.textContent = qYearTag || ''; qYearEl.style.display = qYearTag ? 'inline-flex' : 'none'; }
       document.getElementById('question-text').textContent = question.q;
 
       document.getElementById('options').innerHTML = question.options.map(option => {
@@ -2547,6 +2689,7 @@ Fix these issues:
       } else { feedback.style.display = 'none'; feedback.textContent = ''; }
       updatePalette();
       updateProgress();
+      updateBookmarkBtn();
       if (focusQuestion) focusQuestionPanel();
     }
 
@@ -2664,7 +2807,10 @@ Fix these issues:
     function submitQuiz() {
       if (submitted) return;
       closeSubmitModal();
-      saveCurrentQuestionTime(); submitted = true; clearInterval(timerId); showResult();
+      saveCurrentQuestionTime();
+      lastQuizAnswers = [...userAnswers];
+      lastQuizMarked = [...marked];
+      submitted = true; clearInterval(timerId); showResult();
     }
 
     function collectSectionStats() {
@@ -2739,8 +2885,10 @@ Fix these issues:
           return `<div class="${classes}"><strong>${option.key})</strong><span>${escapeHtml(option.text)}${label ? ` — ${label}` : ''}</span></div>`;
         }).join('');
         const explanation = question.explanation ? `<div class="explanation"><strong>Explanation:</strong> ${escapeHtml(question.explanation)}</div>` : `<div class="explanation"><strong>Explanation:</strong> No explanation added for this question.</div>`;
+        const yearTag = extractYearTag(question.q);
+        const yearBadge = yearTag ? `<span class="year-badge">${escapeHtml(yearTag)}</span>` : '';
         return `<div class="review-item ${status}" data-status="${status}" data-section="${escapeHtml(question.section)}">
-          <h3>Q${index + 1}. ${escapeHtml(question.q)}</h3>
+          <h3>Q${index + 1}. ${escapeHtml(question.q)} ${yearBadge}</h3>
           <p class="answer-line"><strong>Your Answer:</strong> ${escapeHtml(optionLabel(question, user))}</p>
           <p class="answer-line"><strong>Correct Answer:</strong> ${escapeHtml(optionLabel(question, correct))}</p>
           <p class="answer-line"><strong>Status:</strong> ${status === 'correct' ? '✓ Correct' : status === 'wrong' ? '✗ Wrong' : '— Not Attempted'}</p>
@@ -2797,8 +2945,13 @@ Fix these issues:
         <h2>Section Analysis</h2>
         <div class="analysis-grid">${buildSectionAnalysis()}${buildTimeInsights()}</div>
         <div class="result-actions">
-          <button type="button" onclick="restart()">Create New Quiz</button>
-          <button type="button" class="secondary" onclick="window.print()">Save as PDF</button>
+          <button type="button" onclick="restart()">🆕 New Quiz</button>
+          <button type="button" class="secondary" onclick="repeatCurrentQuiz()">🔄 Repeat Quiz</button>
+          <button type="button" class="secondary" onclick="startIncorrectQuiz()">❌ Redo Incorrect</button>
+          <button type="button" class="secondary" onclick="startNotAttemptedQuiz()">⏭ Not Attempted</button>
+          <button type="button" class="mark-btn" onclick="startMarkedQuiz()">🔖 Marked Questions</button>
+          <button type="button" class="secondary" onclick="startSavedMistakesQuiz()">📚 Mistake Notebook</button>
+          <button type="button" class="secondary" onclick="window.print()">💾 Save as PDF</button>
         </div>
         <div class="result-filters">
           <input id="resultSearch" class="result-search" type="search" placeholder="Search question, section, explanation..." oninput="handleResultSearch()">
@@ -2819,9 +2972,13 @@ Fix these issues:
       resetTopQuestion(); questionTimes = []; questionStartedAt = 0; paused = false;
       const bar = document.getElementById('exam-progress');
       if (bar) bar.style.width = '0%';
+      // Clear textarea so user can paste new questions fresh
+      document.getElementById('input').value = '';
+      document.getElementById('pdfStatus').style.display = 'none';
       document.getElementById('setup').style.display = 'block';
       document.getElementById('result').style.display = 'none';
       document.getElementById('exam').style.display = 'none';
+      updateSetupCounts();
     }
 
     function importFile(event) {
@@ -3151,10 +3308,157 @@ Explanation: Power is the rate of doing work. Its SI unit is watt, where one wat
     }
     // ────────────────────────────────────────────────────────────────
 
+    // ── Year Tag Extraction ──────────────────────────────────────────
+    function extractYearTag(text) {
+      const match = text.match(/\[([^\]]*(?:20\d{2}|19\d{2})[^\]]*)\]/i) ||
+                    text.match(/\(([^)]*(?:20\d{2}|19\d{2})[^)]*)\)/i);
+      if (match) return match[1].replace(/\s+/g,' ').trim();
+      return null;
+    }
+    // ────────────────────────────────────────────────────────────────
+
+    // ── Toast Notification ───────────────────────────────────────────
+    function showToast(message, duration = 2400) {
+      let toast = document.querySelector('.cbt-toast');
+      if (!toast) { toast = document.createElement('div'); toast.className = 'cbt-toast'; document.body.appendChild(toast); }
+      toast.textContent = message;
+      toast.classList.add('show');
+      clearTimeout(toast._timer);
+      toast._timer = setTimeout(() => { toast.classList.remove('show'); }, duration);
+    }
+    // ────────────────────────────────────────────────────────────────
+
+    // ── Clear Questions ───────────────────────────────────────────────
+    function clearQuestions() {
+      const input = document.getElementById('input');
+      if (!input.value.trim()) return;
+      if (confirm('Clear all pasted questions from the textarea?')) {
+        input.value = '';
+        document.getElementById('pdfStatus').style.display = 'none';
+        updateSetupCounts();
+        showToast('Questions cleared.');
+      }
+    }
+    // ────────────────────────────────────────────────────────────────
+
+    // ── Analysis Reset ────────────────────────────────────────────────
+    function showAnalysisResetDialog() {
+      const history = loadHistory();
+      document.getElementById('reset-test-count').textContent = history.length;
+      document.getElementById('reset-mistake-count').textContent = getMistakeQuestionCount();
+      document.getElementById('reset-bookmark-count').textContent = loadBookmarks().length;
+      const modal = document.getElementById('analysis-reset-modal');
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden', 'false');
+    }
+
+    function closeAnalysisResetModal() {
+      const modal = document.getElementById('analysis-reset-modal');
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    function confirmAnalysisReset() {
+      localStorage.removeItem('cbtExamHistory');
+      localStorage.removeItem('cbtMistakeNotebook');
+      localStorage.removeItem('cbtBookmarks');
+      closeAnalysisResetModal();
+      renderHistory();
+      updateSetupCounts();
+      showToast('✅ Analysis reset. Fresh start!');
+    }
+
+    document.getElementById('analysis-reset-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeAnalysisResetModal();
+    });
+    // ────────────────────────────────────────────────────────────────
+
+    // ── Post-Quiz Options ─────────────────────────────────────────────
+    let lastQuizQuestions = [], lastQuizMinutes = 30, lastQuizSettings = {};
+    let lastQuizAnswers = [], lastQuizMarked = [];
+
+    function repeatCurrentQuiz() {
+      if (!lastQuizQuestions.length) { showToast('No quiz to repeat.'); return; }
+      questions = lastQuizQuestions.map(q => ({...q}));
+      current = 0; palettePage = 0;
+      userAnswers = Array(questions.length).fill(null);
+      visited = Array(questions.length).fill(false);
+      marked = Array(questions.length).fill(false);
+      questionTimes = Array(questions.length).fill(0);
+      questionStartedAt = Date.now();
+      totalSeconds = Math.round(lastQuizMinutes * 60);
+      remainingSeconds = totalSeconds;
+      submitted = false; paused = false;
+      positiveMarks = lastQuizSettings.positiveMarks || 1;
+      negativeMarks = lastQuizSettings.negativeMarks || 0.25;
+      document.getElementById('setup').style.display = 'none';
+      document.getElementById('result').style.display = 'none';
+      document.getElementById('exam').style.display = 'grid';
+      startTimer(); resetQuestionTimer(); showQuestion('', true);
+      showToast('🔄 Repeating same quiz!');
+    }
+
+    function startSubsetQuiz(subset, label) {
+      if (!subset.length) { showToast(`No ${label} questions available.`); return; }
+      questions = subset.map(q => ({...q}));
+      current = 0; palettePage = 0;
+      userAnswers = Array(questions.length).fill(null);
+      visited = Array(questions.length).fill(false);
+      marked = Array(questions.length).fill(false);
+      questionTimes = Array(questions.length).fill(0);
+      questionStartedAt = Date.now();
+      totalSeconds = Math.round(lastQuizMinutes * 60);
+      remainingSeconds = totalSeconds;
+      submitted = false; paused = false;
+      document.getElementById('setup').style.display = 'none';
+      document.getElementById('result').style.display = 'none';
+      document.getElementById('exam').style.display = 'grid';
+      startTimer(); resetQuestionTimer(); showQuestion('', true);
+      showToast(`▶ ${label} — ${subset.length} questions`);
+    }
+
+    function startIncorrectQuiz() {
+      const incorrect = lastQuizQuestions.filter((q, i) => lastQuizAnswers[i] && lastQuizAnswers[i] !== q.ans);
+      startSubsetQuiz(incorrect, 'Incorrect Questions');
+    }
+
+    function startNotAttemptedQuiz() {
+      const notAttempted = lastQuizQuestions.filter((q, i) => !lastQuizAnswers[i]);
+      startSubsetQuiz(notAttempted, 'Not Attempted Questions');
+    }
+
+    function startMarkedQuiz() {
+      const markedQs = lastQuizQuestions.filter((q, i) => lastQuizMarked[i]);
+      startSubsetQuiz(markedQs, 'Marked Questions');
+    }
+
+    function startSavedMistakesQuiz() {
+      const mistakeText = localStorage.getItem('cbtMistakeNotebook') || '';
+      if (!mistakeText.trim()) { showToast('No mistakes saved yet. Complete a test first.'); return; }
+      try {
+        const parsed = parseQuiz(mistakeText.trim());
+        questions = prepareQuestions(parsed);
+        current = 0; palettePage = 0;
+        userAnswers = Array(questions.length).fill(null);
+        visited = Array(questions.length).fill(false);
+        marked = Array(questions.length).fill(false);
+        questionTimes = Array(questions.length).fill(0);
+        questionStartedAt = Date.now();
+        totalSeconds = Math.round(lastQuizMinutes * 60);
+        remainingSeconds = totalSeconds;
+        submitted = false; paused = false;
+        document.getElementById('setup').style.display = 'none';
+        document.getElementById('result').style.display = 'none';
+        document.getElementById('exam').style.display = 'grid';
+        startTimer(); resetQuestionTimer(); showQuestion('', true);
+        showToast(`📚 Mistake notebook — ${questions.length} questions`);
+      } catch(e) { showToast('Could not load mistake notebook.'); }
+    }
+    // ────────────────────────────────────────────────────────────────
+
     renderHistory();
     resetTopQuestion();
     updateThemeButton();
-    updateViewButton();
     updateSetupCounts();
     setTimeout(initSideDecorations, 100);
   </script>
