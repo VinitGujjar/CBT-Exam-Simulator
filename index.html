@@ -824,6 +824,7 @@
       font-weight: 600;
       line-height: 1.5;
       letter-spacing: -0.01em;
+      white-space: pre-line;
     }
 
     .options { display: grid; gap: 10px; }
@@ -1211,7 +1212,7 @@
     body.dark .review-item.wrong { background: #3B0A0A; color: #FEE2E2; }
     .review-item.not-attempted { background: #F8FAFC; }
     body.dark .review-item { color: var(--text); }
-    .review-item h3 { margin: 0 0 10px; font-size: 17px; font-weight: 600; line-height: 1.45; }
+    .review-item h3 { margin: 0 0 10px; font-size: 17px; font-weight: 600; line-height: 1.45; white-space: pre-line; }
 
     .review-options { display: grid; gap: 7px; margin: 10px 0; }
 
@@ -1467,13 +1468,428 @@
       .question-text { font-size: 16px; }
     }
 
-    /* Year badge */
-    .year-badge {
+    /* ═══════════════════════════════════════════════════════
+       UPGRADE PACK — Design, Animation & Features
+    ═══════════════════════════════════════════════════════ */
+
+    /* ── Animated gradient background ────────────────────── */
+    body {
+      background:
+        radial-gradient(circle at 12% 8%, rgba(37,99,235,0.18), transparent 30%),
+        radial-gradient(circle at 88% 12%, rgba(34,197,94,0.13), transparent 28%),
+        radial-gradient(circle at 50% 95%, rgba(139,92,246,0.1), transparent 30%),
+        linear-gradient(135deg, #F0F6FF 0%, #EAF1FB 48%, #EEF4FF 100%);
+      background-attachment: fixed;
+    }
+    body.dark {
+      background:
+        radial-gradient(circle at 12% 8%, rgba(37,99,235,0.12), transparent 30%),
+        radial-gradient(circle at 88% 12%, rgba(16,185,129,0.08), transparent 28%),
+        radial-gradient(circle at 50% 95%, rgba(139,92,246,0.08), transparent 30%),
+        #090E1A;
+      background-attachment: fixed;
+    }
+
+    /* ── Question slide animation ─────────────────────────── */
+    @keyframes slideInRight {
+      from { opacity: 0; transform: translateX(28px) scale(0.99); }
+      to   { opacity: 1; transform: translateX(0)    scale(1); }
+    }
+    @keyframes slideInLeft {
+      from { opacity: 0; transform: translateX(-28px) scale(0.99); }
+      to   { opacity: 1; transform: translateX(0)     scale(1); }
+    }
+    .question-body.slide-right { animation: slideInRight 0.24s cubic-bezier(0.4,0,0.2,1) both; }
+    .question-body.slide-left  { animation: slideInLeft  0.24s cubic-bezier(0.4,0,0.2,1) both; }
+
+    /* ── Options stagger animation ────────────────────────── */
+    @keyframes optionIn {
+      from { opacity: 0; transform: translateX(-12px); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+    .option { animation: optionIn 0.22s ease both; }
+    .option:nth-child(1) { animation-delay: 0.04s; }
+    .option:nth-child(2) { animation-delay: 0.09s; }
+    .option:nth-child(3) { animation-delay: 0.14s; }
+    .option:nth-child(4) { animation-delay: 0.19s; }
+
+    /* ── Enhanced options ─────────────────────────────────── */
+    .option {
+      border-radius: 10px;
+      font-size: 15px;
+      padding: 14px 16px;
+      border-width: 1.5px;
+      letter-spacing: -0.01em;
+    }
+    .option:hover {
+      transform: translateX(5px);
+      border-color: var(--primary);
+      box-shadow: 0 4px 16px rgba(37,99,235,0.10);
+    }
+    .option.selected {
+      background: linear-gradient(135deg, var(--primary-soft), #E0EDFF);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.12), 0 4px 16px rgba(37,99,235,0.10);
+    }
+    body.dark .option.selected {
+      background: linear-gradient(135deg, #172554, #1e3a8a22);
+    }
+    .option-key {
+      border-radius: 10px;
+      width: 32px; height: 32px;
+      font-size: 14px;
+      box-shadow: inset 0 1px 0 rgba(255,255,255,0.5);
+      transition: background var(--transition), color var(--transition), transform 0.15s ease;
+    }
+    .option:hover .option-key { transform: scale(1.08); }
+    .selected .option-key {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 4px 10px rgba(37,99,235,0.3);
+    }
+
+    /* ── Live score chip in exam ──────────────────────────── */
+    .live-score-chip {
       display: inline-flex;
       align-items: center;
-      padding: 2px 10px;
+      gap: 6px;
+      padding: 5px 13px;
       border-radius: 999px;
-      background: linear-gradient(135deg, #1E3A8A, #2563EB);
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.22);
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      backdrop-filter: blur(10px);
+      transition: background 0.3s ease;
+    }
+    .live-score-chip .lsc-correct { color: #86EFAC; }
+    .live-score-chip .lsc-wrong   { color: #FCA5A5; }
+
+    /* ── Streak display ───────────────────────────────────── */
+    .streak-chip {
+      display: none;
+      align-items: center;
+      gap: 5px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(251,191,36,0.22), rgba(245,158,11,0.18));
+      border: 1px solid rgba(251,191,36,0.35);
+      font-size: 13px;
+      font-weight: 800;
+      color: #FCD34D;
+      animation: streakPop 0.3s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+    .streak-chip.visible { display: inline-flex; }
+    @keyframes streakPop {
+      from { transform: scale(0.7); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    /* ── Focus mode ───────────────────────────────────────── */
+    body.focus-mode .side-deco,
+    body.focus-mode .intro-strip,
+    body.focus-mode .history-panel { display: none !important; }
+    body.focus-mode .topbar { border-radius: 0; margin-bottom: 0; }
+
+    /* ── Enhanced stat cards ──────────────────────────────── */
+    .stat {
+      border-radius: 10px;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+    .stat:hover { border-color: rgba(37,99,235,0.25); }
+    .stat strong {
+      font-size: 22px;
+      background: linear-gradient(135deg, var(--text), var(--muted));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    /* Fallback for dark - gradient text not great there */
+    body.dark .stat strong { -webkit-text-fill-color: var(--text); background: none; }
+
+    /* ── Enhanced section chip ────────────────────────────── */
+    .section-chip {
+      font-size: 11px;
+      padding: 5px 14px;
+      letter-spacing: 0.06em;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #EEF4FF, #E0EAFF);
+      border: 1px solid rgba(37,99,235,0.18);
+      box-shadow: 0 2px 8px rgba(37,99,235,0.08);
+    }
+    body.dark .section-chip { background: linear-gradient(135deg, #172554, #1e3270); border-color: rgba(96,165,250,0.2); }
+
+    /* ── Enhanced topbar ──────────────────────────────────── */
+    .topbar {
+      background: linear-gradient(135deg, rgba(9,14,30,0.92) 0%, rgba(15,28,58,0.88) 50%, rgba(20,38,80,0.82) 100%);
+      border: 1px solid rgba(255,255,255,0.12);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.18), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    .topbar h1 { font-size: 22px; letter-spacing: -0.03em; }
+
+    /* ── Enhanced panel ───────────────────────────────────── */
+    .panel {
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,0.6);
+      box-shadow: 0 4px 24px rgba(15,23,42,0.08), inset 0 1px 0 rgba(255,255,255,0.7);
+    }
+    body.dark .panel {
+      border-color: rgba(148,163,184,0.1);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+
+    /* ── Enhanced question panel ──────────────────────────── */
+    .question-panel {
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      box-shadow: 0 4px 20px rgba(15,23,42,0.07);
+    }
+    body.dark .question-panel { box-shadow: 0 4px 20px rgba(0,0,0,0.25); }
+
+    .question-header {
+      background: linear-gradient(90deg, rgba(37,99,235,0.04), transparent);
+      padding: 12px 18px;
+    }
+    body.dark .question-header { background: linear-gradient(90deg, rgba(37,99,235,0.08), transparent); }
+
+    .question-text { font-size: 18px; line-height: 1.55; }
+
+    /* ── Question number pulse (current question badge) ───── */
+    .question-count-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: 700;
+      font-size: 13px;
+      color: var(--primary);
+    }
+
+    /* ── Palette button improvements ──────────────────────── */
+    .palette button {
+      border-radius: 8px;
+      font-size: 11px;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .palette button:hover { transform: scale(1.15); z-index: 1; position: relative; }
+    .palette .current { animation: currentPulse 2s ease infinite; }
+    @keyframes currentPulse {
+      0%,100% { box-shadow: 0 0 0 3px rgba(37,99,235,0.16), 0 4px 14px rgba(37,99,235,0.16); }
+      50%      { box-shadow: 0 0 0 5px rgba(37,99,235,0.10), 0 4px 18px rgba(37,99,235,0.22); }
+    }
+
+    /* ── Enhanced score card ──────────────────────────────── */
+    .score-card .stat {
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      box-shadow: 0 2px 8px rgba(15,23,42,0.06);
+    }
+    body.dark .score-card .stat { background: #0F1929; }
+
+    /* ── Enhanced analysis card ───────────────────────────── */
+    .analysis-card {
+      border-radius: 12px;
+      background: var(--panel);
+      box-shadow: 0 2px 8px rgba(15,23,42,0.06);
+    }
+    .analysis-card h3 {
+      font-size: 13px;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    body.dark .analysis-card { background: #0F1929; }
+
+    /* ── Enhanced review items ────────────────────────────── */
+    .review-item {
+      border-radius: 12px;
+      padding: 18px;
+      border-width: 1.5px;
+    }
+    .review-item h3 { font-size: 16px; font-weight: 600; line-height: 1.5; }
+    .review-item.correct { box-shadow: 0 2px 12px rgba(22,163,74,0.08); }
+    .review-item.wrong   { box-shadow: 0 2px 12px rgba(220,38,38,0.08); }
+
+    /* ── Result actions upgrade ───────────────────────────── */
+    .result-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 16px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(37,99,235,0.04), rgba(139,92,246,0.04));
+      border: 1px solid rgba(37,99,235,0.1);
+      margin: 12px 0;
+    }
+    body.dark .result-actions { background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(139,92,246,0.06)); border-color: rgba(37,99,235,0.18); }
+
+    /* ── Keyboard shortcuts panel ─────────────────────────── */
+    .shortcuts-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 8000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(9,14,26,0.6);
+      backdrop-filter: blur(10px);
+      animation: fadeIn 0.2s ease both;
+    }
+    .shortcuts-panel {
+      width: min(480px, calc(100vw - 32px));
+      background: var(--panel);
+      border-radius: 20px;
+      padding: 28px;
+      box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+      border: 1px solid var(--line);
+      animation: fadeUp 0.25s cubic-bezier(0.4,0,0.2,1) both;
+    }
+    .shortcuts-panel h3 { font-size: 18px; font-weight: 800; margin-bottom: 18px; letter-spacing: -0.02em; }
+    .shortcuts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .shortcut-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; background: #F8FAFC; }
+    body.dark .shortcut-row { background: #0B1220; }
+    .shortcut-key {
+      display: inline-flex; align-items: center; justify-content: center;
+      min-width: 36px; height: 28px; padding: 0 8px;
+      border-radius: 6px; background: #1E293B; color: #E2E8F0;
+      font-size: 12px; font-weight: 800; font-family: monospace;
+      box-shadow: 0 2px 0 #0F172A; border: 1px solid #334155;
+      letter-spacing: 0.02em;
+    }
+    .shortcut-desc { font-size: 13px; font-weight: 600; color: var(--muted); }
+    .shortcuts-close { margin-top: 18px; width: 100%; }
+
+    /* ── Focus mode button ─────────────────────────────────── */
+    .focus-btn { background: #7C3AED; }
+    .focus-btn:hover { box-shadow: 0 6px 20px rgba(124,58,237,0.3); }
+    body.focus-mode .focus-btn { background: #16A34A; }
+
+    /* ── Intro strip upgrade ──────────────────────────────── */
+    .intro-strip {
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.78), rgba(255,255,255,0.64));
+      box-shadow: 0 4px 20px rgba(15,23,42,0.07), inset 0 1px 0 rgba(255,255,255,0.9);
+    }
+    body.dark .intro-strip {
+      background: linear-gradient(135deg, rgba(17,24,39,0.78), rgba(11,18,32,0.72));
+      box-shadow: 0 4px 20px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.04);
+    }
+    .quote-card strong { font-size: 17px; color: var(--text); font-weight: 700; }
+
+    /* ── Smooth scrollbar ─────────────────────────────────── */
+    .side-panel::-webkit-scrollbar { width: 4px; }
+    .side-panel::-webkit-scrollbar-track { background: transparent; }
+    .side-panel::-webkit-scrollbar-thumb { background: var(--line); border-radius: 999px; }
+
+    /* ── History panel upgrade ───────────────────────────────*/
+    .history-panel {
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+    }
+    .history-panel h3 {
+      font-size: 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    /* ── Metric card upgrade ──────────────────────────────── */
+    .metric-card {
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: var(--panel);
+      padding: 14px;
+      transition: transform 0.18s ease;
+    }
+    .metric-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+    .metric-card strong { color: var(--primary); }
+
+    /* ── Summary pills upgrade ────────────────────────────── */
+    .summary-pill {
+      border-radius: 10px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: 0 2px 8px rgba(15,23,42,0.05);
+      transition: transform 0.18s ease;
+    }
+    .summary-pill:hover { transform: translateY(-1px); }
+
+    /* ── Tooltip on palette ─────────────────────────────────*/
+    .palette button { position: relative; }
+
+    /* ── Progress micro animation ─────────────────────────── */
+    .exam-progress {
+      height: 3px;
+      background: linear-gradient(90deg, #3B82F6, #8B5CF6, #06B6D4);
+      background-size: 200% 100%;
+      animation: progressShimmer 2.5s linear infinite;
+      border-radius: 0 2px 0 0;
+      transition: width 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
+    @keyframes progressShimmer {
+      0%   { background-position: 0% 0%; }
+      100% { background-position: 200% 0%; }
+    }
+
+    /* ── Review item stagger ──────────────────────────────── */
+    .review-item:nth-child(1)  { animation-delay: 0.02s; }
+    .review-item:nth-child(2)  { animation-delay: 0.05s; }
+    .review-item:nth-child(3)  { animation-delay: 0.08s; }
+    .review-item:nth-child(4)  { animation-delay: 0.11s; }
+    .review-item:nth-child(5)  { animation-delay: 0.14s; }
+    .review-item:nth-child(6)  { animation-delay: 0.17s; }
+    .review-item:nth-child(7)  { animation-delay: 0.20s; }
+    .review-item:nth-child(8)  { animation-delay: 0.23s; }
+    .review-item:nth-child(9)  { animation-delay: 0.26s; }
+    .review-item:nth-child(10) { animation-delay: 0.29s; }
+
+    /* ── Explanation upgrade ──────────────────────────────── */
+    .explanation {
+      border-radius: 0 10px 10px 0;
+      border-left-width: 4px;
+      background: linear-gradient(135deg, #F5F8FF, #F0F5FF);
+    }
+    body.dark .explanation { background: linear-gradient(135deg, #0B1525, #0D1730); }
+
+    /* ── Focus mode indicator ─────────────────────────────── */
+    .focus-indicator {
+      display: none;
+      position: fixed;
+      top: 12px;
+      right: 16px;
+      z-index: 500;
+      padding: 5px 14px;
+      border-radius: 999px;
+      background: rgba(124,58,237,0.9);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      backdrop-filter: blur(10px);
+      animation: fadeIn 0.3s ease both;
+      border: 1px solid rgba(196,181,253,0.3);
+    }
+    body.focus-mode .focus-indicator { display: block; }
+
+    /* ── Error box upgrade ────────────────────────────────── */
+    .error {
+      border-radius: 10px;
+      border-left: 4px solid var(--danger);
+      font-size: 13px;
+    }
+
+    /* ── PDF status upgrade ───────────────────────────────── */
+    .pdf-status {
+      border-radius: 8px;
+      border-left: 3px solid var(--primary);
+    }
+
+    /* Year badge */
+    .year-badge {
       color: #fff;
       font-size: 11px;
       font-weight: 700;
@@ -1569,6 +1985,129 @@
     .review-item.saved { border-color: #7C3AED; background: var(--mark-soft); }
     body.dark .review-item.saved { background: #1E1040; }
 
+    /* ── Floating Timer (sticky, always visible in side panel) ── */
+    .floating-timer {
+      margin-bottom: 14px;
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(15,23,42,0.94), rgba(30,45,80,0.9));
+      border: 1px solid rgba(255,255,255,0.14);
+      box-shadow: 0 6px 22px rgba(15,23,42,0.22);
+      backdrop-filter: blur(14px);
+    }
+    .ft-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .ft-label { font-size: 11px; font-weight: 700; color: #94A3B8; text-transform: uppercase; letter-spacing: 0.05em; }
+    .ft-value {
+      font-size: 19px;
+      font-weight: 800;
+      color: #fff;
+      font-variant-numeric: tabular-nums;
+      letter-spacing: 0.03em;
+    }
+    .floating-timer.ft-warning .ft-value { color: #FCA5A5; animation: timerPulse 1.8s ease-in-out infinite; }
+    .floating-timer.ft-warning { border-color: rgba(248,113,113,0.4); }
+    .ft-bar-track {
+      margin-top: 8px;
+      height: 4px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.12);
+      overflow: hidden;
+    }
+    .ft-bar-fill {
+      height: 100%;
+      width: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #3B82F6, #8B5CF6);
+      transition: width 1s linear, background 0.4s ease;
+    }
+    .floating-timer.ft-warning .ft-bar-fill { background: linear-gradient(90deg, #EF4444, #F87171); }
+
+    /* Mobile mini timer FAB — fixed corner, always visible regardless of scroll */
+    .mini-timer-fab {
+      display: none;
+      position: fixed;
+      top: 14px;
+      right: 14px;
+      z-index: 700;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(15,23,42,0.95);
+      border: 1px solid rgba(255,255,255,0.16);
+      color: #fff;
+      font-size: 14px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      box-shadow: 0 8px 22px rgba(0,0,0,0.3);
+      backdrop-filter: blur(12px);
+      letter-spacing: 0.03em;
+      align-items: center;
+      gap: 6px;
+    }
+    .mini-timer-fab.mtf-warning { background: rgba(127,29,29,0.96); animation: timerPulse 1.8s ease-in-out infinite; }
+    body.exam-active .mini-timer-fab { display: inline-flex; }
+    @media (min-width: 901px) { .mini-timer-fab { display: none !important; } }
+
+    /* ── Repeat Quiz Selector Modal ───────────────────────────── */
+    .repeat-modal .submit-modal { width: min(440px, calc(100vw - 32px)); }
+    .repeat-options { display: grid; gap: 10px; margin: 16px 0; }
+    .repeat-option-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 14px;
+      border: 1.5px solid var(--line);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: border-color 0.18s ease, background 0.18s ease, transform 0.15s ease;
+      background: var(--panel);
+    }
+    .repeat-option-row:hover { transform: translateX(2px); border-color: var(--primary); }
+    .repeat-option-row.checked {
+      border-color: var(--primary);
+      background: var(--primary-soft);
+    }
+    body.dark .repeat-option-row.checked { background: #172554; }
+    .repeat-option-row input[type="checkbox"] {
+      width: 19px; height: 19px;
+      accent-color: var(--primary);
+      cursor: pointer;
+      flex: 0 0 19px;
+    }
+    .repeat-option-row .ro-text { flex: 1; }
+    .repeat-option-row .ro-title { font-weight: 700; font-size: 14px; }
+    .repeat-option-row .ro-count { font-size: 12px; color: var(--muted); font-weight: 600; margin-top: 2px; }
+    .repeat-option-row .ro-icon { font-size: 20px; flex: 0 0 24px; text-align: center; }
+
+    .repeat-config {
+      display: none;
+      gap: 12px;
+      margin-top: 6px;
+      padding-top: 14px;
+      border-top: 1px solid var(--line);
+    }
+    .repeat-config.show { display: grid; grid-template-columns: 1fr 1fr; }
+    .repeat-config .field { display: grid; gap: 5px; }
+    .repeat-config .field label { font-size: 12px; font-weight: 700; color: var(--muted); }
+    .repeat-config .field input, .repeat-config .field select {
+      padding: 9px 10px;
+      border: 1.5px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      color: var(--text);
+      font: inherit;
+    }
+    .repeat-summary-line {
+      grid-column: 1 / -1;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--primary);
+      padding: 8px 12px;
+      background: var(--primary-soft);
+      border-radius: 8px;
+      text-align: center;
+    }
+    body.dark .repeat-summary-line { background: #172554; }
+
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
         animation-duration: 0.01ms !important;
@@ -1581,6 +2120,9 @@
   <!-- Side decorations -->
   <div class="side-deco left"  id="sideDecoLeft"><canvas id="leftCanvas"></canvas></div>
   <div class="side-deco right" id="sideDecoRight"><canvas id="rightCanvas"></canvas></div>
+
+  <!-- Always-visible mini timer (mobile) -->
+  <div id="miniTimerFab" class="mini-timer-fab">⏱ <span id="miniTimerFabValue">00:00</span></div>
 
   <main class="app">
     <div class="topbar">
@@ -1827,6 +2369,13 @@ Fix these issues:
       </div>
 
       <aside class="side-panel">
+        <div id="floatingTimer" class="floating-timer">
+          <div class="ft-row">
+            <span class="ft-label">⏱ Time Left</span>
+            <span id="floatingTimerValue" class="ft-value">00:00</span>
+          </div>
+          <div class="ft-bar-track"><div id="floatingTimerBar" class="ft-bar-fill"></div></div>
+        </div>
         <h2>Question Palette</h2>
         <div class="stats">
           <div class="stat"><strong id="answered-count">0</strong><span>Answered</span></div>
@@ -1852,6 +2401,67 @@ Fix these issues:
         </div>
       </aside>
     </section>
+
+    <div id="repeat-modal" class="modal-backdrop repeat-modal" aria-hidden="true">
+      <div class="submit-modal" role="dialog" aria-modal="true" aria-labelledby="repeat-title">
+        <header>
+          <h3 id="repeat-title">Repeat Quiz</h3>
+          <p>Select what to include. Combine options to build a custom mix.</p>
+        </header>
+        <div class="repeat-options">
+          <label class="repeat-option-row" id="ro-full">
+            <input type="checkbox" id="ro-full-cb" onchange="onRepeatOptionChange('full')">
+            <span class="ro-icon">📋</span>
+            <span class="ro-text">
+              <div class="ro-title">Full Quiz (all questions)</div>
+              <div class="ro-count" id="ro-full-count">0 questions</div>
+            </span>
+          </label>
+          <label class="repeat-option-row" id="ro-incorrect">
+            <input type="checkbox" id="ro-incorrect-cb" onchange="onRepeatOptionChange('incorrect')">
+            <span class="ro-icon">❌</span>
+            <span class="ro-text">
+              <div class="ro-title">Incorrect Questions</div>
+              <div class="ro-count" id="ro-incorrect-count">0 questions</div>
+            </span>
+          </label>
+          <label class="repeat-option-row" id="ro-notattempted">
+            <input type="checkbox" id="ro-notattempted-cb" onchange="onRepeatOptionChange('notattempted')">
+            <span class="ro-icon">⏭</span>
+            <span class="ro-text">
+              <div class="ro-title">Not Attempted</div>
+              <div class="ro-count" id="ro-notattempted-count">0 questions</div>
+            </span>
+          </label>
+          <label class="repeat-option-row" id="ro-marked">
+            <input type="checkbox" id="ro-marked-cb" onchange="onRepeatOptionChange('marked')">
+            <span class="ro-icon">🔖</span>
+            <span class="ro-text">
+              <div class="ro-title">Marked for Review</div>
+              <div class="ro-count" id="ro-marked-count">0 questions</div>
+            </span>
+          </label>
+        </div>
+        <div id="repeat-config" class="repeat-config">
+          <div class="repeat-summary-line" id="repeat-summary-line">Select an option above</div>
+          <div class="field">
+            <label for="repeat-time">Time (minutes)</label>
+            <input type="number" id="repeat-time" min="1" value="30">
+          </div>
+          <div class="field">
+            <label for="repeat-mode">Mode</label>
+            <select id="repeat-mode">
+              <option value="exam">Exam Mode</option>
+              <option value="practice">Practice Mode</option>
+            </select>
+          </div>
+        </div>
+        <div class="submit-modal-actions">
+          <button type="button" class="secondary" onclick="closeRepeatModal()">Cancel</button>
+          <button type="button" id="repeat-start-btn" onclick="confirmRepeatQuiz()" disabled>Start Quiz</button>
+        </div>
+      </div>
+    </div>
 
     <div id="analysis-reset-modal" class="modal-backdrop" aria-hidden="true">
       <div class="submit-modal" role="dialog" aria-modal="true" aria-labelledby="reset-title">
@@ -2496,6 +3106,21 @@ Fix these issues:
       return { key: match[1].toUpperCase(), text: match[2].trim() };
     }
 
+    // Detects "match the following" style content: List-I / List-II rows, Roman numeral
+    // items (I./II./III.), or lettered sub-items (a./b./c.) that look like options but
+    // are actually part of the question body. These must NOT be parsed as A/B/C/D options.
+    function isMatchTheFollowingLine(line) {
+      return /^(list[\s-]?(i|ii|1|2)\b|column[\s-]?(i|ii|a|b)\b|\(?\s*[ivx]{1,4}\s*\)?[\.\)]\s|\(?[a-d]\)?\s*[-–—:]\s|^\d\.\s.*[-–—:].*\d\.\s)/i.test(line.trim())
+        || /match\s+(the\s+)?following/i.test(line)
+        || /^\s*[a-d]\s*[-–—]\s*\(?\d\)?/i.test(line.trim());
+    }
+
+    function containsMatchTheFollowing(lines) {
+      return lines.some(line => /match\s+(the\s+)?following/i.test(line))
+        || lines.some(line => /^list[\s-]?(i|ii|1|2)\b/i.test(line.trim()))
+        || lines.some(line => /^column[\s-]?(i|ii|a|b)\b/i.test(line.trim()));
+    }
+
     function parseQuiz(text) {
       const blocks = splitQuestionBlocks(text);
       if (!blocks.length) throw new Error('Please paste at least one question.');
@@ -2504,18 +3129,47 @@ Fix these issues:
         const sectionLine = lines.find(line => /^section\s*:/i.test(line));
         const answerLine = lines.find(line => /^answer\s*:/i.test(line));
         const explanationLineIndex = lines.findIndex(line => /^explanation\s*:/i.test(line));
-        const optionLines = lines.map(parseOptionLine).filter(Boolean);
-        const questionLines = lines.filter((line, lineIndex) =>
-          !/^section\s*:/i.test(line) && !parseOptionLine(line) && !/^answer\s*:/i.test(line) && !/^explanation\s*:/i.test(line) && (explanationLineIndex === -1 || lineIndex < explanationLineIndex)
-        ).map((line, lineIndex) => lineIndex === 0 ? cleanQuestionMarker(line) : line).filter(Boolean);
+        const isMatchType = containsMatchTheFollowing(lines);
+
+        // For match-the-following questions, the FINAL four consecutive A)/B)/C)/D)
+        // lines right before the Answer line are the real options (e.g. "A) 1-ii,2-i,3-iv,4-iii").
+        // Any earlier lines that look like options are actually List-I/List-II rows and
+        // must stay inside the question text.
+        let optionLines, questionLines;
+        if (isMatchType) {
+          const answerIdx = lines.findIndex(line => /^answer\s*:/i.test(line));
+          const searchEnd = answerIdx !== -1 ? answerIdx : lines.length;
+          // Walk backward from just before the Answer line to collect up to 4 trailing option lines
+          const trailingOptions = [];
+          for (let i = searchEnd - 1; i >= 0 && trailingOptions.length < 4; i--) {
+            const parsed = parseOptionLine(lines[i]);
+            if (parsed) trailingOptions.unshift({ idx: i, parsed });
+            else if (trailingOptions.length) break; // stop once option block ends
+          }
+          optionLines = trailingOptions.map(item => item.parsed);
+          const optionIndices = new Set(trailingOptions.map(item => item.idx));
+          questionLines = lines.filter((line, lineIndex) =>
+            !optionIndices.has(lineIndex) &&
+            !/^section\s*:/i.test(line) && !/^answer\s*:/i.test(line) && !/^explanation\s*:/i.test(line) &&
+            (explanationLineIndex === -1 || lineIndex < explanationLineIndex)
+          ).map((line, lineIndex) => lineIndex === 0 ? cleanQuestionMarker(line) : line).filter(Boolean);
+        } else {
+          optionLines = lines.map(parseOptionLine).filter(Boolean);
+          questionLines = lines.filter((line, lineIndex) =>
+            !/^section\s*:/i.test(line) && !parseOptionLine(line) && !/^answer\s*:/i.test(line) && !/^explanation\s*:/i.test(line) && (explanationLineIndex === -1 || lineIndex < explanationLineIndex)
+          ).map((line, lineIndex) => lineIndex === 0 ? cleanQuestionMarker(line) : line).filter(Boolean);
+        }
+
         if (!questionLines.length) throw new Error(`Question ${index + 1} is missing the question text.`);
-        if (optionLines.length !== 4) throw new Error(`Question ${index + 1} must have exactly four options: A), B), C), and D).`);
+        if (optionLines.length !== 4) throw new Error(`Question ${index + 1} must have exactly four options: A), B), C), and D).${isMatchType ? ' For "Match the Following" questions, make sure the final 4 lines before Answer are the A)/B)/C)/D) combination options (e.g. A) 1-ii, 2-i, 3-iv, 4-iii).' : ''}`);
         if (!answerLine) throw new Error(`Question ${index + 1} is missing the Answer line.`);
         const answer = answerLine.split(':').slice(1).join(':').trim().toUpperCase();
         if (!/^[A-D]$/.test(answer)) throw new Error(`Question ${index + 1} answer must be A, B, C, or D.`);
         let explanation = '';
         if (explanationLineIndex !== -1) explanation = lines.slice(explanationLineIndex).join(' ').replace(/^explanation\s*:/i, '').trim();
-        return { q: questionLines.join(' '), section: sectionLine ? sectionLine.split(':').slice(1).join(':').trim() || 'General' : 'General', options: optionLines, ans: answer, explanation };
+        // Use \n join (not space) for match-the-following so List I/List II stay readable as separate lines
+        const questionText = isMatchType ? questionLines.join('\n') : questionLines.join(' ');
+        return { q: questionText, section: sectionLine ? sectionLine.split(':').slice(1).join(':').trim() || 'General' : 'General', options: optionLines, ans: answer, explanation, isMatchType };
       });
     }
 
@@ -2602,6 +3256,7 @@ Fix these issues:
       document.getElementById('setup').style.display = 'none';
       document.getElementById('result').style.display = 'none';
       document.getElementById('exam').style.display = 'grid';
+      document.body.classList.add('exam-active');
       startTimer(); resetQuestionTimer(); showQuestion('', true);
       setTimeout(showShortcutToast, 1200);
     }
@@ -2621,8 +3276,30 @@ Fix these issues:
       const timer = document.getElementById('timer');
       const minutes = Math.floor(Math.max(remainingSeconds, 0) / 60);
       const seconds = Math.max(remainingSeconds, 0) % 60;
-      timer.textContent = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
-      timer.classList.toggle('warning', remainingSeconds <= 60 && remainingSeconds > 0);
+      const timeStr = `${String(minutes).padStart(2,'0')}:${String(seconds).padStart(2,'0')}`;
+      const isWarning = remainingSeconds <= 60 && remainingSeconds > 0;
+      timer.textContent = timeStr;
+      timer.classList.toggle('warning', isWarning);
+
+      // Sync floating sticky timer in side panel
+      const ft = document.getElementById('floatingTimer');
+      const ftVal = document.getElementById('floatingTimerValue');
+      const ftBar = document.getElementById('floatingTimerBar');
+      if (ft && ftVal) {
+        ftVal.textContent = timeStr;
+        ft.classList.toggle('ft-warning', isWarning);
+        const pct = totalSeconds > 0 ? Math.max(0, Math.min(100, (remainingSeconds / totalSeconds) * 100)) : 0;
+        if (ftBar) ftBar.style.width = pct + '%';
+      }
+
+      // Sync mobile mini-timer FAB
+      const mtf = document.getElementById('miniTimerFab');
+      const mtfVal = document.getElementById('miniTimerFabValue');
+      if (mtf && mtfVal) {
+        mtfVal.textContent = timeStr;
+        mtf.classList.toggle('mtf-warning', isWarning);
+      }
+
       updateQuestionTimerDisplay();
     }
 
@@ -2870,6 +3547,7 @@ Fix these issues:
     }
 
     function showResult() {
+      document.body.classList.remove('exam-active');
       let correctCount = 0, wrongCount = 0, attempted = 0;
       const mistakes = [];
       const reviewHtml = questions.map((question, index) => {
@@ -2917,6 +3595,7 @@ Fix these issues:
       setTimeout(() => showPerfBanner(percentage, correctCount, wrongCount, notAttempted), 300);
 
       document.getElementById('exam').style.display = 'none';
+      document.body.classList.remove('exam-active');
       document.getElementById('timer').textContent = 'Finished';
       document.getElementById('top-question').textContent = `Q ${questions.length}/${questions.length}`;
       document.getElementById('timer').classList.remove('warning');
@@ -2946,10 +3625,7 @@ Fix these issues:
         <div class="analysis-grid">${buildSectionAnalysis()}${buildTimeInsights()}</div>
         <div class="result-actions">
           <button type="button" onclick="restart()">🆕 New Quiz</button>
-          <button type="button" class="secondary" onclick="repeatCurrentQuiz()">🔄 Repeat Quiz</button>
-          <button type="button" class="secondary" onclick="startIncorrectQuiz()">❌ Redo Incorrect</button>
-          <button type="button" class="secondary" onclick="startNotAttemptedQuiz()">⏭ Not Attempted</button>
-          <button type="button" class="mark-btn" onclick="startMarkedQuiz()">🔖 Marked Questions</button>
+          <button type="button" class="secondary" onclick="openRepeatModal()">🔄 Repeat Quiz</button>
           <button type="button" class="secondary" onclick="startSavedMistakesQuiz()">📚 Mistake Notebook</button>
           <button type="button" class="secondary" onclick="window.print()">💾 Save as PDF</button>
         </div>
@@ -2978,6 +3654,7 @@ Fix these issues:
       document.getElementById('setup').style.display = 'block';
       document.getElementById('result').style.display = 'none';
       document.getElementById('exam').style.display = 'none';
+      document.body.classList.remove('exam-active');
       updateSetupCounts();
     }
 
@@ -3394,11 +4071,12 @@ Explanation: Power is the rate of doing work. Its SI unit is watt, where one wat
       document.getElementById('setup').style.display = 'none';
       document.getElementById('result').style.display = 'none';
       document.getElementById('exam').style.display = 'grid';
+      document.body.classList.add('exam-active');
       startTimer(); resetQuestionTimer(); showQuestion('', true);
       showToast('🔄 Repeating same quiz!');
     }
 
-    function startSubsetQuiz(subset, label) {
+    function startSubsetQuiz(subset, label, minutesOverride, modeOverride) {
       if (!subset.length) { showToast(`No ${label} questions available.`); return; }
       questions = subset.map(q => ({...q}));
       current = 0; palettePage = 0;
@@ -3407,30 +4085,133 @@ Explanation: Power is the rate of doing work. Its SI unit is watt, where one wat
       marked = Array(questions.length).fill(false);
       questionTimes = Array(questions.length).fill(0);
       questionStartedAt = Date.now();
-      totalSeconds = Math.round(lastQuizMinutes * 60);
+      const useMinutes = minutesOverride || lastQuizMinutes;
+      totalSeconds = Math.round(useMinutes * 60);
       remainingSeconds = totalSeconds;
       submitted = false; paused = false;
+      if (modeOverride) testMode = modeOverride;
       document.getElementById('setup').style.display = 'none';
       document.getElementById('result').style.display = 'none';
       document.getElementById('exam').style.display = 'grid';
+      document.body.classList.add('exam-active');
       startTimer(); resetQuestionTimer(); showQuestion('', true);
       showToast(`▶ ${label} — ${subset.length} questions`);
     }
 
-    function startIncorrectQuiz() {
+    // ── Repeat Quiz Combo Modal ────────────────────────────────────────
+    let repeatSelections = { full: false, incorrect: false, notattempted: false, marked: false };
+
+    function getRepeatSubsets() {
       const incorrect = lastQuizQuestions.filter((q, i) => lastQuizAnswers[i] && lastQuizAnswers[i] !== q.ans);
-      startSubsetQuiz(incorrect, 'Incorrect Questions');
-    }
-
-    function startNotAttemptedQuiz() {
       const notAttempted = lastQuizQuestions.filter((q, i) => !lastQuizAnswers[i]);
-      startSubsetQuiz(notAttempted, 'Not Attempted Questions');
+      const markedQs = lastQuizQuestions.filter((q, i) => lastQuizMarked[i]);
+      return { full: lastQuizQuestions, incorrect, notattempted: notAttempted, marked: markedQs };
     }
 
-    function startMarkedQuiz() {
-      const markedQs = lastQuizQuestions.filter((q, i) => lastQuizMarked[i]);
-      startSubsetQuiz(markedQs, 'Marked Questions');
+    function openRepeatModal() {
+      if (!lastQuizQuestions.length) { showToast('No previous quiz found to repeat.'); return; }
+      repeatSelections = { full: false, incorrect: false, notattempted: false, marked: false };
+      const subsets = getRepeatSubsets();
+      document.getElementById('ro-full-count').textContent = `${subsets.full.length} questions`;
+      document.getElementById('ro-incorrect-count').textContent = `${subsets.incorrect.length} questions`;
+      document.getElementById('ro-notattempted-count').textContent = `${subsets.notattempted.length} questions`;
+      document.getElementById('ro-marked-count').textContent = `${subsets.marked.length} questions`;
+
+      // Disable rows that have 0 questions (except full)
+      ['incorrect','notattempted','marked'].forEach(key => {
+        const row = document.getElementById(`ro-${key}`);
+        const cb = document.getElementById(`ro-${key}-cb`);
+        const empty = subsets[key].length === 0;
+        cb.disabled = empty;
+        row.style.opacity = empty ? '0.45' : '1';
+        row.style.cursor = empty ? 'not-allowed' : 'pointer';
+        cb.checked = false;
+        row.classList.remove('checked');
+      });
+      document.getElementById('ro-full-cb').checked = false;
+      document.getElementById('ro-full').classList.remove('checked');
+
+      document.getElementById('repeat-time').value = lastQuizMinutes;
+      document.getElementById('repeat-mode').value = testMode || 'exam';
+      document.getElementById('repeat-config').classList.remove('show');
+      document.getElementById('repeat-summary-line').textContent = 'Select an option above';
+      document.getElementById('repeat-start-btn').disabled = true;
+
+      const modal = document.getElementById('repeat-modal');
+      modal.classList.add('show');
+      modal.setAttribute('aria-hidden', 'false');
     }
+
+    function closeRepeatModal() {
+      const modal = document.getElementById('repeat-modal');
+      modal.classList.remove('show');
+      modal.setAttribute('aria-hidden', 'true');
+    }
+
+    function onRepeatOptionChange(key) {
+      const cb = document.getElementById(`ro-${key}-cb`);
+      const row = document.getElementById(`ro-${key}`);
+
+      if (key === 'full' && cb.checked) {
+        // Full quiz is exclusive — uncheck everything else
+        ['incorrect','notattempted','marked'].forEach(k => {
+          document.getElementById(`ro-${k}-cb`).checked = false;
+          document.getElementById(`ro-${k}`).classList.remove('checked');
+        });
+      } else if (key !== 'full' && cb.checked) {
+        // If any subset option is checked, uncheck Full quiz
+        document.getElementById('ro-full-cb').checked = false;
+        document.getElementById('ro-full').classList.remove('checked');
+      }
+
+      row.classList.toggle('checked', cb.checked);
+      repeatSelections[key] = cb.checked;
+
+      const anyChecked = Object.values(repeatSelections).some(Boolean);
+      document.getElementById('repeat-config').classList.toggle('show', anyChecked);
+      document.getElementById('repeat-start-btn').disabled = !anyChecked;
+
+      if (anyChecked) {
+        const subsets = getRepeatSubsets();
+        const combined = buildCombinedRepeatSet(subsets);
+        const labels = Object.entries(repeatSelections).filter(([,v]) => v).map(([k]) => {
+          return { full: 'Full Quiz', incorrect: 'Incorrect', notattempted: 'Not Attempted', marked: 'Marked' }[k];
+        });
+        document.getElementById('repeat-summary-line').textContent = `${labels.join(' + ')} — ${combined.length} question${combined.length === 1 ? '' : 's'} total`;
+      } else {
+        document.getElementById('repeat-summary-line').textContent = 'Select an option above';
+      }
+    }
+
+    function buildCombinedRepeatSet(subsets) {
+      if (repeatSelections.full) return subsets.full;
+      const seen = new Set();
+      const combined = [];
+      ['incorrect','notattempted','marked'].forEach(key => {
+        if (!repeatSelections[key]) return;
+        subsets[key].forEach(q => {
+          const sig = `${q.q}|${q.ans}`;
+          if (!seen.has(sig)) { seen.add(sig); combined.push(q); }
+        });
+      });
+      return combined;
+    }
+
+    function confirmRepeatQuiz() {
+      const subsets = getRepeatSubsets();
+      const combined = buildCombinedRepeatSet(subsets);
+      if (!combined.length) { showToast('No questions match your selection.'); return; }
+      const minutes = Math.max(1, parseFloat(document.getElementById('repeat-time').value) || lastQuizMinutes);
+      const mode = document.getElementById('repeat-mode').value;
+      const label = repeatSelections.full ? 'Full Quiz' : 'Custom Mix';
+      closeRepeatModal();
+      startSubsetQuiz(combined, label, minutes, mode);
+    }
+
+    document.getElementById('repeat-modal')?.addEventListener('click', function(e) {
+      if (e.target === this) closeRepeatModal();
+    });
+    // ────────────────────────────────────────────────────────────────
 
     function startSavedMistakesQuiz() {
       const mistakeText = localStorage.getItem('cbtMistakeNotebook') || '';
@@ -3450,6 +4231,7 @@ Explanation: Power is the rate of doing work. Its SI unit is watt, where one wat
         document.getElementById('setup').style.display = 'none';
         document.getElementById('result').style.display = 'none';
         document.getElementById('exam').style.display = 'grid';
+      document.body.classList.add('exam-active');
         startTimer(); resetQuestionTimer(); showQuestion('', true);
         showToast(`📚 Mistake notebook — ${questions.length} questions`);
       } catch(e) { showToast('Could not load mistake notebook.'); }

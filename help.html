@@ -164,12 +164,39 @@ Explanation: Power is measured in watts. One watt equals one joule per second.</
     </section>
 
     <section class="card">
+      <h2>Match the Following Format</h2>
+      <span class="tip-badge">✅ Now Supported</span>
+      <p style="margin-top:8px;">For "Match the Following" questions, keep List-I and List-II on their own lines inside the question, and put the four combination options (A, B, C, D) as the <strong>last four lines before Answer</strong>. The app now detects this automatically.</p>
+      <pre>Section: Physics
+Que 1
+Match the following:
+List I
+1. Force
+2. Work
+3. Power
+4. Pressure
+List II
+i. Watt
+ii. Newton
+iii. Pascal
+iv. Joule
+A) 1-ii, 2-iv, 3-i, 4-iii
+B) 1-i, 2-ii, 3-iii, 4-iv
+C) 1-iii, 2-i, 3-iv, 4-ii
+D) 1-iv, 2-iii, 3-ii, 4-i
+Answer: A
+Explanation: Force is measured in Newton, Work in Joule, Power in Watt, Pressure in Pascal.</pre>
+      <p style="margin-top:10px;font-size:13px;color:var(--muted);">⚠️ Important: each combination option (A, B, C, D) must be on its own line, written like <code>A) 1-ii, 2-iv, 3-i, 4-iii</code>. Do not put List I / List II items on the same line as A)/B)/C)/D) options, or the app may misread them.</p>
+    </section>
+
+    <section class="card">
       <h2>Best PDF Type</h2>
       <ul>
         <li>Text-based PDFs work best — you should be able to select and copy text from the PDF.</li>
         <li>Scanned/image PDFs need OCR first (use Adobe Acrobat or free online OCR tools).</li>
         <li>Two-column PDFs are supported, but tables, formulas, and diagrams may need manual correction.</li>
         <li>If answers or solutions are at the end, keep them in the same PDF so the app can match by question number.</li>
+        <li>Match-the-following tables in PDFs often need manual review after extraction — verify List I / List II items lined up correctly with their options.</li>
       </ul>
     </section>
 
@@ -201,7 +228,8 @@ Strict rules:
 - Do not add introductory lines like "Here are the questions", "Sure", or any preamble.
 - Answer must be only one letter: A, B, C, or D.
 - Explanations must be concise and exam-focused (1–3 lines).
-- Do not use bullets, markdown headings, tables, or extra numbering inside questions.</pre>
+- Do not use bullets, markdown headings, tables, or extra numbering inside questions.
+- For "Match the Following" type questions: write "List I" on its own line followed by numbered items (1. 2. 3. 4.), then "List II" on its own line followed by roman-numeral items (i. ii. iii. iv.), and only then the four A)/B)/C)/D) combination options like "A) 1-ii, 2-iv, 3-i, 4-iii" as the last four lines before Answer. Never mix List I/List II items into the same line as an A)/B)/C)/D) option.</pre>
     </section>
 
     <section class="card">
@@ -226,7 +254,8 @@ Important rules:
 - Preserve all technical terms, units, formulas as-is.
 - Do not mix two questions together.
 - Do not include page headers, footers, watermarks, or page numbers.
-- If a question has a table or assertion-reason format, rewrite it clearly as plain text.
+- If a question has a table or assertion-reason format (other than match-the-following), rewrite it clearly as plain text.
+- For "Match the Following" type questions: write "List I" on its own line followed by numbered items (1. 2. 3. 4.), then "List II" on its own line followed by roman-numeral items (i. ii. iii. iv.), and only then the four A)/B)/C)/D) combination options like "A) 1-ii, 2-iv, 3-i, 4-iii" as the last four lines before Answer. Never mix List I/List II items into the same line as an A)/B)/C)/D) option.
 - Do not put blank lines inside one question block.
 - Keep Question, A, B, C, D, Answer, and Explanation on consecutive lines.
 - Put exactly one blank line only after the Explanation line, before the next question.
@@ -256,6 +285,7 @@ Fix all these issues:
 - Remove page headers, footers, watermarks, and page numbers.
 - Keep only four options per question: A, B, C, D.
 - Match answers and explanations to the correct question.
+- For "Match the Following" type questions: keep "List I" (numbered 1. 2. 3. 4.) and "List II" (roman numerals i. ii. iii. iv.) as separate lines inside the question text, and make sure only the four real combination options (like "A) 1-ii, 2-iv, 3-i, 4-iii") appear as the last four lines before Answer.
 - Do not put blank lines inside one question block.
 - Keep Question, A, B, C, D, Answer, and Explanation on consecutive lines.
 - Put exactly one blank line only after the Explanation line, before the next question.
